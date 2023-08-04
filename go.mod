@@ -2,7 +2,7 @@ module reviewer
 
 go 1.20
 
-require github.com/gogf/gf/v2 v2.3.1
+require github.com/gogf/gf/v2 v2.5.1
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
@@ -24,5 +24,5 @@ require (
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	golang.org/x/text v0.3.8-0.20211105212822-18b340fc7af2 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
