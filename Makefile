@@ -18,7 +18,7 @@ get-tools:
 lint: get-tools ## Lint Golang files
 	@echo;
 	@echo "Linting go codes with revive...";
-	@revive -config ./.revive.toml -formatter stylish ${PKG_LIST}
+	@REVIVE_FORCE_COLOR=1 revive -config ./.revive.toml -formatter stylish ${PKG_LIST}
 
 vet:
 	@echo "Checking go codes with go vet..."
