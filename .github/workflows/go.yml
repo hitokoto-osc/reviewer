@@ -86,5 +86,7 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+      - name: Get dependencies
+        run: make get-gf && make dep
       - name: Build
         run: make build

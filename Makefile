@@ -5,17 +5,28 @@ DOCKER_NAME = "template-single"
 
 include ./hack/hack.mk
 
-init-env:
+get-gf:
+	@echo "Installing gf..."
+	wget -O gf "https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH)" && chmod +x gf && ./gf install -y && rm ./gf
+
+init-env: dep
 	@echo "Initializing environment..."
 	@go mod tidy;
 	@npm install;
 
-get-tools:
-	@echo "Installing tools..."
+dep: # get dependencies
+	@echo "Installing Dependencies..."
+	go mod download
+
+get-lint-tools:
+	@echo "Installing lint tools..."
 	go install github.com/mgechev/revive@latest
 
+get-tools: get-lint-tools
+	@echo "Install tools done."
 
-lint: get-tools ## Lint Golang files
+
+lint: get-lint-tools ## Lint Golang files
 	@echo;
 	@echo "Linting go codes with revive...";
 	@REVIVE_FORCE_COLOR=1 revive -config ./.revive.toml -formatter stylish ${PKG_LIST}
