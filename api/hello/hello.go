@@ -7,7 +7,7 @@ package hello
 import (
 	"context"
 
-	"reviewer/api/hello/v1"
+	v1 "github.com/hitokoto-osc/reviewer/api/hello/v1"
 )
 
 type IHelloV1 interface {

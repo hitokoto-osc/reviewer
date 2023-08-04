@@ -5,7 +5,7 @@
 package hello
 
 import (
-	"reviewer/api/hello"
+	"github.com/hitokoto-osc/reviewer/api/hello"
 )
 
 type ControllerV1 struct{}

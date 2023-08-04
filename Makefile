@@ -18,18 +18,10 @@ dep: # get dependencies
 	@echo "Installing Dependencies..."
 	go mod download
 
-get-lint-tools:
-	@echo "Installing lint tools..."
-	go install github.com/mgechev/revive@latest
-
-get-tools: get-lint-tools
-	@echo "Install tools done."
-
-
-lint: get-lint-tools ## Lint Golang files
+lint: ## Lint Golang files
 	@echo;
-	@echo "Linting go codes with revive...";
-	@REVIVE_FORCE_COLOR=1 revive -config ./.revive.toml -formatter stylish ${PKG_LIST}
+	@echo "Linting go codes with golangci-lint...";
+	@golangci-lint run ./... --color always
 
 vet:
 	@echo "Checking go codes with go vet..."

@@ -1,0 +1,145 @@
+linters-settings:
+#  depguard:
+
+  dupl:
+    threshold: 100
+  funlen:
+    lines: -1 # the number of lines (code + empty lines) is not a right metric and leads to code without empty line or one-liner.
+    statements: 50
+  goconst:
+    min-len: 2
+    min-occurrences: 3
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - dupImport # https://github.com/go-critic/go-critic/issues/845
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+  gocyclo:
+    min-complexity: 15
+  gofmt:
+    rewrite-rules:
+      - pattern: 'interface{}'
+        replacement: 'any'
+  goimports:
+    local-prefixes: github.com/hitokoto-osc/reviewer
+  gomnd:
+    # don't include the "operation" and "assign"
+    checks:
+      - argument
+      - case
+      - condition
+      - return
+    ignored-numbers:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+    ignored-functions:
+      - strings.SplitN
+
+  govet:
+    check-shadowing: true
+    settings:
+      printf:
+        funcs:
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+  lll:
+    line-length: 140
+  misspell:
+    locale: US
+  nolintlint:
+    allow-unused: false # report any unused nolint directives
+    require-explanation: false # don't require an explanation for nolint directives
+    require-specific: false # don't require nolint directives to be specific about which linter is being skipped
+  revive:
+    severity: error
+    enable-all-rules: true
+    confidence: 0.5
+    rules:
+      - name: package-comments
+        severity: warning
+      - name: unexported-return
+        severity: warning
+      - name: bare-return
+        disabled: true
+      - name: unused-receiver
+        severity: warning
+        disabled: true
+      - name: unused-parameter
+        severity: warning
+        disabled: true
+      - name: function-length
+        arguments: [ 10, 0 ]
+      - name: cyclomatic
+        arguments: [3]
+      - name: cognitive-complexity
+        arguments: [ 7 ]
+      - name: argument-limit
+        arguments: [ 5 ]
+      - name: file-header
+        disabled: true
+      - name: banned-characters
+        disabled: true
+      - name: comment-spacings
+        arguments: []
+      - name: function-result-limit
+        arguments: [ 4 ]
+      - name: function-length
+        arguments: [ 10, 0 ]
+      - name: line-length-limit
+        arguments: [ 140 ]
+      - name: max-public-structs
+        arguments: [ 5 ]
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+#    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exportloopref
+    - funlen
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - gomnd
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - revive
+    - staticcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+
+issues:
+  # Excluding configuration per-path, per-linter, per-text and per-source
+  # exclude-rules:
+
+run:
+  timeout: 5m

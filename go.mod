@@ -1,4 +1,4 @@
-module reviewer
+module github.com/hitokoto-osc/reviewer
 
 go 1.20
 

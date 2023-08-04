@@ -1,11 +1,11 @@
 package main
 
 import (
-	_ "reviewer/internal/packed"
+	_ "github.com/hitokoto-osc/reviewer/internal/packed"
 
 	"github.com/gogf/gf/v2/os/gctx"
 
-	"reviewer/internal/cmd"
+	"github.com/hitokoto-osc/reviewer/internal/cmd"
 )
 
 func main() {
