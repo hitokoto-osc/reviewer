@@ -1,11 +1,11 @@
 package main
 
 import (
-	_ "poll/internal/packed"
+	_ "reviewer/internal/packed"
 
 	"github.com/gogf/gf/v2/os/gctx"
 
-	"poll/internal/cmd"
+	"reviewer/internal/cmd"
 )
 
 func main() {

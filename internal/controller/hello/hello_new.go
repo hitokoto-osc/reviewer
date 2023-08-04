@@ -5,7 +5,7 @@
 package hello
 
 import (
-	"poll/api/hello"
+	"reviewer/api/hello"
 )
 
 type ControllerV1 struct{}

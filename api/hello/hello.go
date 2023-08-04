@@ -7,7 +7,7 @@ package hello
 import (
 	"context"
 
-	"poll/api/hello/v1"
+	"reviewer/api/hello/v1"
 )
 
 type IHelloV1 interface {
