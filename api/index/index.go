@@ -2,14 +2,14 @@
 // Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
 // =================================================================================
 
-package hello
+package index
 
 import (
 	"context"
 
-	v1 "github.com/hitokoto-osc/reviewer/api/hello/v1"
+	v1 "github.com/hitokoto-osc/reviewer/api/index/v1"
 )
 
-type IHelloV1 interface {
-	Hello(ctx context.Context, req *v1.HelloReq) (res *v1.HelloRes, err error)
+type IIndexV1 interface {
+	GetInfo(ctx context.Context, req *v1.GetInfoReq) (res *v1.GetInfoRes, err error)
 }

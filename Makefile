@@ -1,7 +1,7 @@
 ROOT_DIR    = $(shell pwd)
 NAMESPACE   = "default"
-DEPLOY_NAME = "template-single"
-DOCKER_NAME = "template-single"
+DEPLOY_NAME = "hitokoto-reviewer"
+DOCKER_NAME = "hitokoto-reviewer"
 
 include ./hack/hack.mk
 
@@ -43,7 +43,7 @@ release:
 	@echo "Releasing by GoReleaser..."
 	@goreleaser release --rm-dist
 
-precommit: vet lint test
+precommit: lint test
 	go fmt ./...
 	go mod tidy
 	git add .

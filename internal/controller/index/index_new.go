@@ -2,14 +2,14 @@
 // Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
 // =================================================================================
 
-package hello
+package index
 
 import (
-	"github.com/hitokoto-osc/reviewer/api/hello"
+	"github.com/hitokoto-osc/reviewer/api/index"
 )
 
 type ControllerV1 struct{}
 
-func NewV1() hello.IHelloV1 {
+func NewV1() index.IIndexV1 {
 	return &ControllerV1{}
 }
