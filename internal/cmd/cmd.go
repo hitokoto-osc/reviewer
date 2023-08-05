@@ -15,7 +15,6 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
-
 	_ "github.com/hitokoto-osc/reviewer/internal/boot"
 )
 
@@ -26,6 +25,7 @@ var (
 		Brief: "start http server",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
+			s.AddSearchPath("resource/public")
 			s.Use(service.Middleware().HandlerResponse)
 			s.Group("/api/v1", func(group *ghttp.RouterGroup) {
 				group.Middleware(service.Middleware().AuthorizationV1)

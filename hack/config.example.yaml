@@ -6,3 +6,6 @@ gfcli:
     build: "-a amd64 -s linux -p temp -ew"
     tagPrefixes:
       - my.image.pub/my-app
+  gen:
+    dao:
+      - link: "mysql:root:123456@tcp(localhost:3305)/hitokoto"

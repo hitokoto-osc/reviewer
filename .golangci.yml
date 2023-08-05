@@ -121,3 +121,5 @@ issues:
 
 run:
   timeout: 5m
+  skip-files:
+    - internal/packed/data.go
