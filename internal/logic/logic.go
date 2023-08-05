@@ -6,4 +6,5 @@ package logic
 
 import (
 	_ "github.com/hitokoto-osc/reviewer/internal/logic/middleware"
+	_ "github.com/hitokoto-osc/reviewer/internal/logic/user"
 )

@@ -1,5 +1,9 @@
 package consts
 
+const (
+	UserAccessTokenV1Length = 40 // 用户访问令牌长度
+)
+
 type UserRole string
 
 const (

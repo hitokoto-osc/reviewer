@@ -3,6 +3,8 @@ package cmd
 import (
 	"context"
 
+	"github.com/hitokoto-osc/reviewer/internal/consts"
+
 	"github.com/hitokoto-osc/reviewer/internal/controller/admin"
 
 	"github.com/hitokoto-osc/reviewer/internal/controller/poll"
@@ -25,15 +27,21 @@ var (
 		Brief: "start http server",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
-			s.AddSearchPath("resource/public")
-			s.Use(service.Middleware().HandlerResponse)
+			s.SetServerAgent(consts.AppName + " " + consts.Version) // 设置服务名称
+			s.AddSearchPath("resource/public")                      // 静态文件
+			s.Use(service.Middleware().HandlerResponse)             // 统一返回格式
+			s.BindHandler("/", index.NewCommon().Index)             // 首页
 			s.Group("/api/v1", func(group *ghttp.RouterGroup) {
-				group.Middleware(service.Middleware().AuthorizationV1)
-				group.Bind(index.NewV1(), user.NewV1(), poll.NewV1())
-				group.Group("/admin", func(group *ghttp.RouterGroup) {
-					group.Middleware(service.Middleware().AuthorizationAdminV1)
-					group.Bind(admin.NewV1())
+				group.Bind(index.NewV1())
+				group.Group("/", func(group *ghttp.RouterGroup) {
+					group.Middleware(service.Middleware().AuthorizationV1)
+					group.Bind(user.NewV1(), poll.NewV1())
+					group.Group("/admin", func(group *ghttp.RouterGroup) {
+						group.Middleware(service.Middleware().AuthorizationAdminV1)
+						group.Bind(admin.NewV1())
+					})
 				})
+
 			})
 			s.Run()
 			return nil

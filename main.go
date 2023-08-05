@@ -1,9 +1,9 @@
 package main
 
 import (
-	_ "github.com/hitokoto-osc/reviewer/internal/packed"
-
+	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	_ "github.com/hitokoto-osc/reviewer/internal/logic"
+	_ "github.com/hitokoto-osc/reviewer/internal/packed"
 
 	"github.com/gogf/gf/v2/os/gctx"
 

@@ -13,3 +13,9 @@ type ControllerV1 struct{}
 func NewV1() index.IIndexV1 {
 	return &ControllerV1{}
 }
+
+type ControllerCommon struct{}
+
+func NewCommon() index.IIndexCommon {
+	return &ControllerCommon{}
+}
