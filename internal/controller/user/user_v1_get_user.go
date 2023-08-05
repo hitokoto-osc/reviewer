@@ -18,16 +18,19 @@ import (
 )
 
 func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (*v1.GetUserRes, error) {
-	bizctx := service.BizCtx().Get(ctx)
 	var err error
+	// 从 BizCtx 中获取用户信息
+	bizctx := service.BizCtx().Get(ctx)
 	if bizctx == nil || bizctx.User == nil { // 正常情况下不会出现
 		g.Log().Error(ctx, service.BizCtx().Get(ctx))
 		err = gerror.NewCode(gcode.CodeUnknown, "bizctx or bizctx.User is nil")
 		return nil, err
 	}
 	user := bizctx.User
+
 	var pollLogs []v1.UserPollLog
 	var count int
+	// 是否需要附带投票记录
 	if req.WithPollLogs {
 		var pollLogsList []entity.PollLog
 		pollLogsList, err = service.User().GetUserPollLogByUserID(ctx, user.Id)
