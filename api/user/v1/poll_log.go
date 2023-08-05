@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 )
 
@@ -16,8 +17,8 @@ type UserPollLog struct {
 	SentenceUUID string            `json:"sentence_uuid" dc:"句子 UUID"`
 	Type         consts.PollStatus `json:"type" dc:"投票类型"`
 	Comment      string            `json:"comment" dc:"理由"`
-	CreatedAt    string            `json:"created_at" dc:"投票时间"`
-	UpdatedAt    string            `json:"updated_at" dc:"更新时间"`
+	CreatedAt    *gtime.Time       `json:"created_at" dc:"投票时间"`
+	UpdatedAt    *gtime.Time       `json:"updated_at" dc:"更新时间"`
 }
 
 type GetUserPollLogRes []UserPollLog

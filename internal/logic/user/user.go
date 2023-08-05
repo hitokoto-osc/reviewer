@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/hitokoto-osc/reviewer/internal/model/do"
+
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
@@ -45,7 +47,7 @@ func (s *sUser) GetUserByToken(ctx context.Context, token string) (user *entity.
 		Duration: time.Hour, // 缓存一小时
 		Name:     "user:token:" + token,
 		Force:    false,
-	}).Where("token = ?", token).Scan(&user)
+	}).Where(do.Users{Token: token}).Scan(&user)
 	return
 }
 
@@ -54,15 +56,15 @@ func (s *sUser) GetUserByID(ctx context.Context, id uint) (user *entity.Users, e
 		Duration: time.Hour, // 缓存一小时
 		Name:     "user:id:" + gconv.String(id),
 		Force:    false,
-	}).Where("id = ?", id).Scan(&user)
+	}).Where(do.Users{Id: id}).Scan(&user)
 	return
 }
 
-func (s *sUser) GetPollUserByUserID(ctx context.Context, id uint) (user *entity.PollUsers, err error) {
+func (s *sUser) GetPollUserByUserID(ctx context.Context, uid uint) (user *entity.PollUsers, err error) {
 	err = dao.PollUsers.Ctx(ctx).Cache(gdb.CacheOption{
 		Duration: time.Hour, // 缓存一小时
-		Name:     "user:poll:id:" + gconv.String(id),
+		Name:     "user:poll:uid:" + gconv.String(uid),
 		Force:    false,
-	}).Where("user_id = ?", id).Scan(&user)
+	}).Where(do.PollUsers{UserId: uid}).Scan(&user)
 	return
 }

@@ -32,6 +32,7 @@ type GetUserRes struct {
 	Email     string          `json:"email" dc:"邮箱"`
 	Role      consts.UserRole `json:"role" dc:"角色"`
 	Poll      UserPoll        `json:"poll" dc:"投票信息"`
+	PollLog   []UserPollLog   `json:"poll_log" dc:"投票记录"`
 	CreatedAt *gtime.Time     `json:"created_at" dc:"创建时间"`
 	UpdatedAt *gtime.Time     `json:"updated_at" dc:"更新时间"`
 }
