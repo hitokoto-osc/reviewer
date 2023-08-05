@@ -3,11 +3,14 @@ NAMESPACE   = "default"
 DEPLOY_NAME = "hitokoto-reviewer"
 DOCKER_NAME = "hitokoto-reviewer"
 
+GOOS        = $(shell go env GOOS)
+GOARCH      = $(shell go env GOARCH)
+
 include ./hack/hack.mk
 
 get-gf:
 	@echo "Installing gf..."
-	wget -O gf "https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH)" && chmod +x gf && ./gf install -y && rm ./gf
+	wget -O gf "https://github.com/gogf/gf/releases/latest/download/gf_${GOOS}_${GOARCH}" && chmod +x gf && ./gf install -y && rm ./gf
 
 init-env: dep
 	@echo "Initializing environment..."
