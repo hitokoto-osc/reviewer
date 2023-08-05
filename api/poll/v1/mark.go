@@ -10,7 +10,7 @@ type GetPollMarksReq struct {
 }
 
 type PollMark struct {
-	ID        int64                   `json:"id" dc:"标记 ID"`
+	ID        uint                    `json:"id" dc:"标记 ID"`
 	Text      string                  `json:"text" dc:"标记文本"`
 	Level     consts.PollMarkLevel    `json:"level" dc:"标记等级"`
 	Property  consts.PollMarkProperty `json:"property" dc:"标记属性"`

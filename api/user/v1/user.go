@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 )
 
@@ -21,16 +22,16 @@ type UserPoll struct {
 	Points    UserPollPoints `json:"points" dc:"投票点数"`
 	Count     int            `json:"count" dc:"投票次数"`
 	Score     int            `json:"score" dc:"投票得分"`
-	CreatedAt string         `json:"created_at" dc:"创建时间"`
-	UpdatedAt string         `json:"updated_at" dc:"更新时间"`
+	CreatedAt *gtime.Time    `json:"created_at" dc:"创建时间"`
+	UpdatedAt *gtime.Time    `json:"updated_at" dc:"更新时间"`
 }
 
 type GetUserRes struct {
-	ID        int64           `json:"id" dc:"用户 ID"`
+	ID        uint            `json:"id" dc:"用户 ID"`
 	Name      string          `json:"name" dc:"用户名"`
 	Email     string          `json:"email" dc:"邮箱"`
 	Role      consts.UserRole `json:"role" dc:"角色"`
 	Poll      UserPoll        `json:"poll" dc:"投票信息"`
-	CreatedAt string          `json:"created_at" dc:"创建时间"`
-	UpdatedAt string          `json:"updated_at" dc:"更新时间"`
+	CreatedAt *gtime.Time     `json:"created_at" dc:"创建时间"`
+	UpdatedAt *gtime.Time     `json:"updated_at" dc:"更新时间"`
 }

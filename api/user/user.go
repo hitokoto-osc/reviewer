@@ -7,7 +7,7 @@ package user
 import (
 	"context"
 
-	v1 "github.com/hitokoto-osc/reviewer/api/user/v1"
+	"github.com/hitokoto-osc/reviewer/api/user/v1"
 )
 
 type IUserV1 interface {

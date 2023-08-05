@@ -14,11 +14,11 @@ type GetUserPollResultReq struct {
 type UserPollElement struct {
 	UserPollLog
 	PollInfo v1.PollSchema `json:"poll_info" dc:"投票信息"`
-	Marks    []int64       `json:"marks" dc:"投票标记"`
+	Marks    []uint        `json:"marks" dc:"投票标记"`
 }
 
 type UserPollResult struct {
-	Total      int64             `json:"total" dc:"总数"`
+	Total      uint              `json:"total" dc:"总数"`
 	Collection []UserPollElement `json:"collection" dc:"数据"`
 }
 

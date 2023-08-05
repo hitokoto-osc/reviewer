@@ -7,7 +7,7 @@ package poll
 import (
 	"context"
 
-	v1 "github.com/hitokoto-osc/reviewer/api/poll/v1"
+	"github.com/hitokoto-osc/reviewer/api/poll/v1"
 )
 
 type IPollV1 interface {

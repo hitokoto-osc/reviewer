@@ -34,7 +34,7 @@ var (
 			s.Group("/api/v1", func(group *ghttp.RouterGroup) {
 				group.Bind(index.NewV1())
 				group.Group("/", func(group *ghttp.RouterGroup) {
-					group.Middleware(service.Middleware().AuthorizationV1)
+					group.Middleware(service.Middleware().Ctx, service.Middleware().AuthorizationV1)
 					group.Bind(user.NewV1(), poll.NewV1())
 					group.Group("/admin", func(group *ghttp.RouterGroup) {
 						group.Middleware(service.Middleware().AuthorizationAdminV1)

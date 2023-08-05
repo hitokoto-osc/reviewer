@@ -11,7 +11,7 @@ type GetPollDetailReq struct {
 }
 
 type PollRecord struct {
-	UserID    int64             `json:"user_id" dc:"用户 ID"`
+	UserID    uint              `json:"user_id" dc:"用户 ID"`
 	Point     int               `json:"point" dc:"投票点数"`
 	Type      consts.PollMethod `json:"type" dc:"投票类型"`
 	Comment   string            `json:"comment" dc:"理由"`

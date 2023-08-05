@@ -7,7 +7,7 @@ package admin
 import (
 	"context"
 
-	v1 "github.com/hitokoto-osc/reviewer/api/admin/v1"
+	"github.com/hitokoto-osc/reviewer/api/admin/v1"
 )
 
 type IAdminV1 interface {

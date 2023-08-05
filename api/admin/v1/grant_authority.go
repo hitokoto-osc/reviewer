@@ -12,7 +12,7 @@ type GrantUserAuthorityReq struct {
 }
 
 type GrantUserAuthorityRes struct {
-	ID        int64             `json:"id" dc:"用户 ID"`
+	ID        uint              `json:"id" dc:"用户 ID"`
 	Name      string            `json:"name" dc:"用户名"`
 	Email     string            `json:"email" dc:"邮箱"`
 	Token     string            `json:"token" dc:"Token"`

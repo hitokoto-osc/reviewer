@@ -4,6 +4,10 @@ import (
 	"context"
 	"time"
 
+	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/hitokoto-osc/reviewer/internal/consts"
+	"github.com/hitokoto-osc/reviewer/internal/model/entity"
+
 	"github.com/hitokoto-osc/reviewer/internal/service"
 
 	"github.com/gogf/gf/v2/database/gdb"
@@ -23,14 +27,42 @@ func New() service.IUser {
 
 // VerifyAPIV1Token 用于 v1 接口校验用户是否登录
 // TODO: v2 中会使用新的用户系统，并且将会使用带有 ACL、签名的授权机制。目前的 token 机制会被废弃。
-func (s *sUser) VerifyAPIV1Token(ctx context.Context, token string) (bool, error) {
-	user, err := dao.Users.Ctx(ctx).Cache(gdb.CacheOption{
+func (s *sUser) VerifyAPIV1Token(ctx context.Context, token string) (flag bool, err error) {
+	var user *entity.Users
+	user, err = s.GetUserByToken(ctx, token)
+	if err != nil || user == nil {
+		return
+	}
+	if userStatus, _ := s.GetUserStatusByUser(ctx, user); userStatus != consts.UserStatusNormal { // User 必定非空，因此不用判断错误
+		return
+	}
+	flag = true
+	return
+}
+
+func (s *sUser) GetUserByToken(ctx context.Context, token string) (user *entity.Users, err error) {
+	err = dao.Users.Ctx(ctx).Cache(gdb.CacheOption{
 		Duration: time.Hour, // 缓存一小时
 		Name:     "user:token:" + token,
 		Force:    false,
-	}).Where("token = ?", token).One()
-	if err != nil || user == nil {
-		return false, err
-	}
-	return true, nil
+	}).Where("token = ?", token).Scan(&user)
+	return
+}
+
+func (s *sUser) GetUserByID(ctx context.Context, id uint) (user *entity.Users, err error) {
+	err = dao.Users.Ctx(ctx).Cache(gdb.CacheOption{
+		Duration: time.Hour, // 缓存一小时
+		Name:     "user:id:" + gconv.String(id),
+		Force:    false,
+	}).Where("id = ?", id).Scan(&user)
+	return
+}
+
+func (s *sUser) GetPollUserByUserID(ctx context.Context, id uint) (user *entity.PollUsers, err error) {
+	err = dao.PollUsers.Ctx(ctx).Cache(gdb.CacheOption{
+		Duration: time.Hour, // 缓存一小时
+		Name:     "user:poll:id:" + gconv.String(id),
+		Force:    false,
+	}).Where("user_id = ?", id).Scan(&user)
+	return
 }
