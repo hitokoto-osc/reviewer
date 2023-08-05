@@ -18,3 +18,5 @@ temp.yaml
 bin
 **/config/config.yaml
 node_modules/
+
+hack/config.example.yaml
