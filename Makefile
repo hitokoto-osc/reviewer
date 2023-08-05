@@ -8,6 +8,9 @@ GOARCH      = $(shell go env GOARCH)
 
 include ./hack/hack.mk
 
+dev:
+	gf run main.go
+
 get-gf:
 	@echo "Installing gf..."
 	wget -O gf "https://github.com/gogf/gf/releases/latest/download/gf_${GOOS}_${GOARCH}" && chmod +x gf && ./gf install -y && rm ./gf
