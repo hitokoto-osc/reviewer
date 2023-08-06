@@ -18,7 +18,8 @@ type (
 		MustGetRoleByUser(ctx context.Context, user *entity.Users) (role consts.UserRole)
 		GetUserStatusByUser(ctx context.Context, user *entity.Users) (status consts.UserStatus, err error)
 		MustGetUserStatusByUser(ctx context.Context, user *entity.Users) (status consts.UserStatus)
-		GetUserPollPointsByUserRole(ctx context.Context, role consts.UserRole) (points consts.UserPollPoints)
+		GetUserPollPointsByUserRole(role consts.UserRole) (points consts.UserPollPoints)
+		GetUserRoleCodeByUserRole(role consts.UserRole) (code consts.UserRoleCode)
 		GetUserPollLogByUserID(ctx context.Context, userID uint) (res []entity.PollLog, err error)
 		GetUserPollLog(ctx context.Context) (res []entity.PollLog, err error)
 		// VerifyAPIV1Token 用于 v1 接口校验用户是否登录
@@ -27,6 +28,7 @@ type (
 		GetUserByToken(ctx context.Context, token string) (user *entity.Users, err error)
 		GetUserByID(ctx context.Context, id uint) (user *entity.Users, err error)
 		GetPollUserByUserID(ctx context.Context, uid uint) (user *entity.PollUsers, err error)
+		CreatePollUser(ctx context.Context, uid uint) (err error)
 	}
 )
 

@@ -4,13 +4,24 @@ const (
 	UserAccessTokenV1Length = 40 // 用户访问令牌长度
 )
 
+// UserRole 用户角色，用于前端显示
 type UserRole string
 
 const (
-	UserRoleGuest    UserRole = "游客"
-	UserRoleAdmin    UserRole = "管理员"
-	UserRoleUser     UserRole = "普通用户"
-	UserRoleReviewer UserRole = "审核员"
+	UserRoleGuest    UserRole = "guest"
+	UserRoleAdmin    UserRole = "admin"
+	UserRoleUser     UserRole = "user"
+	UserRoleReviewer UserRole = "reviewer"
+)
+
+// UserRoleCode 用户角色代码
+type UserRoleCode int
+
+const (
+	UserRoleCodeGuest    UserRoleCode = -1
+	UserRoleCodeUser     UserRoleCode = 1
+	UserRoleCodeReviewer UserRoleCode = 10
+	UserRoleCodeAdmin    UserRoleCode = 1000
 )
 
 type UserStatus int

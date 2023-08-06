@@ -52,13 +52,27 @@ func (s *sUser) MustGetUserStatusByUser(ctx context.Context, user *entity.Users)
 	return
 }
 
-func (s *sUser) GetUserPollPointsByUserRole(ctx context.Context, role consts.UserRole) (points consts.UserPollPoints) {
+func (s *sUser) GetUserPollPointsByUserRole(role consts.UserRole) (points consts.UserPollPoints) {
 	points = consts.UserPollPointsNormal
 	if role == consts.UserRoleReviewer {
 		points = consts.UserPollPointsReviewer
 	}
 	if role == consts.UserRoleAdmin {
 		points = consts.UserPollPointsAdmin
+	}
+	return
+}
+
+func (s *sUser) GetUserRoleCodeByUserRole(role consts.UserRole) (code consts.UserRoleCode) {
+	code = consts.UserRoleCodeGuest
+	if role == consts.UserRoleUser {
+		code = consts.UserRoleCodeUser
+	}
+	if role == consts.UserRoleReviewer {
+		code = consts.UserRoleCodeReviewer
+	}
+	if role == consts.UserRoleAdmin {
+		code = consts.UserRoleCodeAdmin
 	}
 	return
 }

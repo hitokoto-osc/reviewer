@@ -54,9 +54,19 @@ func (s *sMiddleware) AuthorizationV1(r *ghttp.Request) {
 	if err != nil {
 		g.Log().Error(r.GetCtx(), gerror.Wrap(err, "获取用户投票信息时发生错误"))
 	} else if userPoll == nil {
-		g.Log().Error(r.GetCtx(), gerror.New("获取用户投票信息时发生错误，用户投票信息为空"))
-		r.Response.Status = http.StatusInternalServerError
-		return
+		g.Log().Debug(r.GetCtx(), "获取用户投票信息时发生错误，用户投票信息为空，尝试新建记录")
+		err = service.User().CreatePollUser(r.GetCtx(), user.Id)
+		if err != nil {
+			g.Log().Error(r.GetCtx(), gerror.Wrap(err, "新建用户投票信息时发生错误"))
+			r.Response.Status = http.StatusInternalServerError
+			return
+		}
+		userPoll, err = service.User().GetPollUserByUserID(r.GetCtx(), user.Id) // Acquire again
+		if err != nil {
+			g.Log().Error(r.GetCtx(), gerror.Wrap(err, "获取用户投票信息时发生错误"))
+			r.Response.Status = http.StatusInternalServerError
+			return
+		}
 	}
 	userPattern := &model.UserCtxSchema{
 		Users:  *user,
@@ -65,10 +75,5 @@ func (s *sMiddleware) AuthorizationV1(r *ghttp.Request) {
 		Status: service.User().MustGetUserStatusByUser(r.GetCtx(), user),
 	}
 	service.BizCtx().SetUser(r.GetCtx(), (*model.ContextUser)(userPattern))
-	r.Middleware.Next()
-}
-
-// AuthorizationAdminV1 用于 v1 接口校验用户是否登录且是否具有管理员权限
-func (s *sMiddleware) AuthorizationAdminV1(r *ghttp.Request) {
 	r.Middleware.Next()
 }

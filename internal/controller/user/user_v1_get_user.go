@@ -54,7 +54,7 @@ func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (*v1.Get
 			}
 		}
 	} else {
-		count = user.Poll.Points / int(service.User().GetUserPollPointsByUserRole(ctx, user.Role)) // TODO: 稍后如果更换点数的话，务必换成数据库 Count
+		count = user.Poll.Points / int(service.User().GetUserPollPointsByUserRole(user.Role)) // TODO: 稍后如果更换点数的话，务必换成数据库 Count
 	}
 
 	res := &v1.GetUserRes{

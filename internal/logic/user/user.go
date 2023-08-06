@@ -59,12 +59,3 @@ func (s *sUser) GetUserByID(ctx context.Context, id uint) (user *entity.Users, e
 	}).Where(do.Users{Id: id}).Scan(&user)
 	return
 }
-
-func (s *sUser) GetPollUserByUserID(ctx context.Context, uid uint) (user *entity.PollUsers, err error) {
-	err = dao.PollUsers.Ctx(ctx).Cache(gdb.CacheOption{
-		Duration: time.Hour, // 缓存一小时
-		Name:     "user:poll:uid:" + gconv.String(uid),
-		Force:    false,
-	}).Where(do.PollUsers{UserId: uid}).Scan(&user)
-	return
-}
