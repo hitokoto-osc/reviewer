@@ -9,8 +9,6 @@ import (
 
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 
-	"github.com/hitokoto-osc/reviewer/internal/model/entity"
-
 	"github.com/gogf/gf/v2/frame/g"
 
 	"github.com/hitokoto-osc/reviewer/internal/service"
@@ -21,8 +19,7 @@ import (
 	v1 "github.com/hitokoto-osc/reviewer/api/user/v1"
 )
 
-func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (*v1.GetUserRes, error) {
-	var err error
+func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (res *v1.GetUserRes, err error) {
 	// 从 BizCtx 中获取用户信息
 	bizctx := service.BizCtx().Get(ctx)
 	if bizctx == nil || bizctx.User == nil { // 正常情况下不会出现
@@ -36,8 +33,8 @@ func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (*v1.Get
 	var count int
 	// 是否需要附带投票记录
 	if req.WithPollLogs {
-		var pollLogsList []entity.PollLog
-		pollLogsList, err = service.User().GetUserPollLogByUserID(ctx, user.Id)
+		var pollLogsList []model.PollLogWithSentence
+		pollLogsList, err = service.User().GetUserPollLogsWithSentences(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -47,7 +44,8 @@ func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (*v1.Get
 			pollLogs[i] = model.UserPollLog{
 				Point:        v.Point,
 				SentenceUUID: v.SentenceUuid,
-				Type:         consts.PollStatus(v.Type),
+				Sentence:     v.Sentence,
+				Method:       consts.PollMethod(v.Type),
 				Comment:      v.Comment,
 				CreatedAt:    (*time.Time)(v.CreatedAt),
 				UpdatedAt:    (*time.Time)(v.UpdatedAt),
@@ -57,7 +55,7 @@ func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (*v1.Get
 		count = user.Poll.Points / int(service.User().GetUserPollPointsByUserRole(user.Role)) // TODO: 稍后如果更换点数的话，务必换成数据库 Count
 	}
 
-	res := &v1.GetUserRes{
+	res = &v1.GetUserRes{
 		ID:    user.Id,
 		Name:  user.Name,
 		Email: user.Email,

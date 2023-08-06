@@ -62,7 +62,7 @@ func (s *sHitokoto) convertToSchemaV1(ctx context.Context, data any) (*model.Hit
 		ID:         uint(o.FieldByName("Id").Int()),
 		UUID:       o.FieldByName("Uuid").String(),
 		Hitokoto:   o.FieldByName("Hitokoto").String(),
-		Type:       consts.HitokotoType(o.FieldByName("Type").String()),
+		Type:       consts.HitokotoType(o.FieldByName("Method").String()),
 		From:       o.FieldByName("From").String(),
 		FromWho:    o.FieldByName("FromWho").Interface().(*string),
 		Creator:    o.FieldByName("Creator").String(),

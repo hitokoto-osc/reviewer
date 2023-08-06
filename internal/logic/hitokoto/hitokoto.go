@@ -2,9 +2,9 @@ package hitokoto
 
 import (
 	"context"
-	"time"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/hitokoto-osc/reviewer/internal/consts"
 
 	"github.com/hitokoto-osc/reviewer/internal/service"
 
@@ -43,7 +43,7 @@ func (s *sHitokoto) GetHitokotoV1SchemaByUUID(ctx context.Context, uuid string) 
 		if err != nil {
 			return nil, err
 		}
-		err = gcache.Set(ctx, "hitokoto:uuid:"+uuid, hitokoto, time.Minute)
+		err = gcache.Set(ctx, "hitokoto:uuid:"+uuid, hitokoto, consts.HitokotoV1SchemaCacheTime)
 		g.Log().Error(ctx, err)
 		return hitokoto, nil
 	}
@@ -57,7 +57,7 @@ func (s *sHitokoto) GetHitokotoV1SchemaByUUID(ctx context.Context, uuid string) 
 		if err != nil {
 			return nil, err
 		}
-		err = gcache.Set(ctx, "hitokoto:uuid:"+uuid, hitokoto, time.Minute)
+		err = gcache.Set(ctx, "hitokoto:uuid:"+uuid, hitokoto, consts.HitokotoV1SchemaCacheTime)
 		g.Log().Error(ctx, err)
 		return hitokoto, nil
 	}
@@ -72,7 +72,7 @@ func (s *sHitokoto) GetHitokotoV1SchemaByUUID(ctx context.Context, uuid string) 
 	if err != nil {
 		return nil, err
 	}
-	err = gcache.Set(ctx, "hitokoto:uuid:"+uuid, hitokoto, time.Minute)
+	err = gcache.Set(ctx, "hitokoto:uuid:"+uuid, hitokoto, consts.HitokotoV1SchemaCacheTime)
 	g.Log().Error(ctx, err)
 	return hitokoto, nil
 }

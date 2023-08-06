@@ -32,7 +32,8 @@ type UserPoll struct {
 type UserPollLog struct {
 	Point        int               `json:"point" dc:"投票点数"`
 	SentenceUUID string            `json:"sentence_uuid" dc:"句子 UUID"`
-	Type         consts.PollStatus `json:"type" dc:"投票类型"`
+	Sentence     *HitokotoV1Schema `json:"sentence" dc:"句子信息"`
+	Method       consts.PollMethod `json:"type" dc:"投票类型"`
 	Comment      string            `json:"comment" dc:"理由"`
 	CreatedAt    *time.Time        `json:"created_at" dc:"投票时间"`
 	UpdatedAt    *time.Time        `json:"updated_at" dc:"更新时间"`
