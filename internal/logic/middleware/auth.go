@@ -64,7 +64,7 @@ func (s *sMiddleware) AuthorizationV1(r *ghttp.Request) {
 		Role:   service.User().MustGetRoleByUser(r.GetCtx(), user),
 		Status: service.User().MustGetUserStatusByUser(r.GetCtx(), user),
 	}
-	service.BizCtx().SetUser(r.GetCtx(), userPattern)
+	service.BizCtx().SetUser(r.GetCtx(), (*model.ContextUser)(userPattern))
 	r.Middleware.Next()
 }
 

@@ -1,14 +1,17 @@
 package model
 
-import "github.com/hitokoto-osc/reviewer/internal/consts"
+import (
+	"github.com/hitokoto-osc/reviewer/internal/consts"
+	"github.com/hitokoto-osc/reviewer/utility/time"
+)
 
 type PollRecord struct {
 	UserID    uint              `json:"user_id" dc:"用户 ID"`
 	Point     int               `json:"point" dc:"投票点数"`
 	Type      consts.PollMethod `json:"type" dc:"投票类型"`
 	Comment   string            `json:"comment" dc:"理由"`
-	CreatedAt string            `json:"created_at" dc:"投票时间"`
-	UpdatedAt string            `json:"updated_at" dc:"更新时间"`
+	CreatedAt *time.Time        `json:"created_at" dc:"投票时间"`
+	UpdatedAt *time.Time        `json:"updated_at" dc:"更新时间"`
 }
 
 type PollMark struct {
@@ -16,8 +19,8 @@ type PollMark struct {
 	Text      string                  `json:"text" dc:"标记文本"`
 	Level     consts.PollMarkLevel    `json:"level" dc:"标记等级"`
 	Property  consts.PollMarkProperty `json:"property" dc:"标记属性"`
-	UpdatedAt string                  `json:"updated_at" dc:"更新时间"`
-	CreatedAt string                  `json:"created_at" dc:"创建时间"`
+	UpdatedAt *time.Time              `json:"updated_at" dc:"更新时间"`
+	CreatedAt *time.Time              `json:"created_at" dc:"创建时间"`
 }
 
 type PollData struct {
@@ -32,6 +35,6 @@ type PollSchema struct {
 	Reject             int               `json:"reject" dc:"反对票数"`
 	NeedModify         int               `json:"need_edited" dc:"需要修改票数"`
 	NeedCommonUserPoll int               `json:"need_common_user_poll" dc:"需要普通用户投票"`
-	CreatedAt          string            `json:"created_at" dc:"创建时间"`
-	UpdatedAt          string            `json:"updated_at" dc:"更新时间"`
+	CreatedAt          *time.Time        `json:"created_at" dc:"创建时间"`
+	UpdatedAt          *time.Time        `json:"updated_at" dc:"更新时间"`
 }

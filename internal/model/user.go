@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
 	"github.com/hitokoto-osc/reviewer/utility/time"
@@ -35,6 +34,6 @@ type UserPollLog struct {
 	SentenceUUID string            `json:"sentence_uuid" dc:"句子 UUID"`
 	Type         consts.PollStatus `json:"type" dc:"投票类型"`
 	Comment      string            `json:"comment" dc:"理由"`
-	CreatedAt    *gtime.Time       `json:"created_at" dc:"投票时间"`
-	UpdatedAt    *gtime.Time       `json:"updated_at" dc:"更新时间"`
+	CreatedAt    *time.Time        `json:"created_at" dc:"投票时间"`
+	UpdatedAt    *time.Time        `json:"updated_at" dc:"更新时间"`
 }

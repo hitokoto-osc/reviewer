@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
+	"github.com/hitokoto-osc/reviewer/utility/time"
 )
 
 type GrantUserAuthorityReq struct {
@@ -18,6 +19,6 @@ type GrantUserAuthorityRes struct {
 	Token     string            `json:"token" dc:"Token"`
 	Status    consts.UserStatus `json:"status" dc:"用户状态"`
 	Role      consts.UserRole   `json:"role" dc:"角色"`
-	CreatedAt string            `json:"created_at" dc:"创建时间"`
-	UpdatedAt string            `json:"updated_at" dc:"更新时间"`
+	CreatedAt *time.Time        `json:"created_at" dc:"创建时间"`
+	UpdatedAt *time.Time        `json:"updated_at" dc:"更新时间"`
 }
