@@ -3,6 +3,8 @@ package cmd
 import (
 	"context"
 
+	"github.com/hitokoto-osc/reviewer/internal/controller/hitokoto"
+
 	"github.com/hitokoto-osc/reviewer/internal/controller/poll"
 	"github.com/hitokoto-osc/reviewer/internal/controller/user"
 
@@ -38,7 +40,7 @@ var (
 						service.Middleware().Ctx,
 						service.Middleware().AuthorizationV1,
 					)
-					group.Bind(user.NewV1())
+					group.Bind(user.NewV1(), hitokoto.NewV1())
 					group.Group("/", func(group *ghttp.RouterGroup) {
 						group.Middleware(service.Middleware().GuardV1(consts.UserRoleReviewer))
 						group.Bind(poll.NewV1())

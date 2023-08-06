@@ -14,6 +14,7 @@ const (
 type PollStatus int
 
 const (
+	PollStatusNotOpen           PollStatus = 0   // 未开放投票
 	PollStatusOpen              PollStatus = 1   // 投票正常开放
 	PollStatusProcessing        PollStatus = 2   // 处理中，停止投票
 	PollStatusSuspended         PollStatus = 100 // 暂停投票

@@ -37,3 +37,14 @@ type UserPollLog struct {
 	CreatedAt    *time.Time        `json:"created_at" dc:"投票时间"`
 	UpdatedAt    *time.Time        `json:"updated_at" dc:"更新时间"`
 }
+
+type UserPollElement struct {
+	UserPollLog
+	PollInfo PollSchema `json:"poll_info" dc:"投票信息"`
+	Marks    []uint     `json:"marks" dc:"投票标记"`
+}
+
+type UserPollResult struct {
+	Total      uint              `json:"total" dc:"总数"`
+	Collection []UserPollElement `json:"collection" dc:"数据"`
+}

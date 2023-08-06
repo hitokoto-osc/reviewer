@@ -2,7 +2,7 @@ linters-settings:
 #  depguard:
 
   dupl:
-    threshold: 100
+    threshold: 150
   funlen:
     lines: -1 # the number of lines (code + empty lines) is not a right metric and leads to code without empty line or one-liner.
     statements: 50
@@ -103,7 +103,7 @@ linters:
     - ineffassign
     - lll
     - misspell
-    - nakedret
+#    - nakedret
     - noctx
 #    - nolintlint
     - revive

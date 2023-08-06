@@ -11,15 +11,4 @@ type GetUserPollResultReq struct {
 	Limit  int `json:"limit" dc:"数量" v:"required|integer#数量必须为整数"`
 }
 
-type UserPollElement struct {
-	model.UserPollLog
-	PollInfo model.PollSchema `json:"poll_info" dc:"投票信息"`
-	Marks    []uint           `json:"marks" dc:"投票标记"`
-}
-
-type UserPollResult struct {
-	Total      uint              `json:"total" dc:"总数"`
-	Collection []UserPollElement `json:"collection" dc:"数据"`
-}
-
-type GetUserPollResultRes []UserPollResult
+type GetUserPollResultRes []model.UserPollResult
