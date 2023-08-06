@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/hitokoto-osc/reviewer/internal/model"
 )
 
 type CancelPollReq struct {
@@ -10,6 +11,6 @@ type CancelPollReq struct {
 }
 
 type CancelPollRes struct {
-	PollSchema
-	PollData PollData `json:"poll_data" dc:"投票数据"`
+	model.PollSchema
+	PollData model.PollData `json:"poll_data" dc:"投票数据"`
 }

@@ -58,7 +58,7 @@ func (s *sMiddleware) AuthorizationV1(r *ghttp.Request) {
 		r.Response.Status = http.StatusInternalServerError
 		return
 	}
-	userPattern := &model.UserPattern{
+	userPattern := &model.UserCtxSchema{
 		Users:  *user,
 		Poll:   *userPoll,
 		Role:   service.User().MustGetRoleByUser(r.GetCtx(), user),

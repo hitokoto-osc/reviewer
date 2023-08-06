@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
-	v1 "github.com/hitokoto-osc/reviewer/api/poll/v1"
+	"github.com/hitokoto-osc/reviewer/internal/model"
 )
 
 type GetUserPollResultReq struct {
@@ -12,9 +12,9 @@ type GetUserPollResultReq struct {
 }
 
 type UserPollElement struct {
-	UserPollLog
-	PollInfo v1.PollSchema `json:"poll_info" dc:"投票信息"`
-	Marks    []uint        `json:"marks" dc:"投票标记"`
+	model.UserPollLog
+	PollInfo model.PollSchema `json:"poll_info" dc:"投票信息"`
+	Marks    []uint           `json:"marks" dc:"投票标记"`
 }
 
 type UserPollResult struct {
