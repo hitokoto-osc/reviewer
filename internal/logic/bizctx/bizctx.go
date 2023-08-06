@@ -42,3 +42,7 @@ func (s *sBizCtx) Get(ctx context.Context) *model.Context {
 func (s *sBizCtx) SetUser(ctx context.Context, ctxUser *model.ContextUser) {
 	s.Get(ctx).User = ctxUser
 }
+
+func (s *sBizCtx) GetUser(ctx context.Context) *model.ContextUser {
+	return s.Get(ctx).User
+}

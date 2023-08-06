@@ -2,12 +2,11 @@ package user
 
 import (
 	"context"
+	"github.com/hitokoto-osc/reviewer/internal/dao"
 
 	"github.com/hitokoto-osc/reviewer/utility/time"
 
 	"github.com/hitokoto-osc/reviewer/internal/model"
-
-	"github.com/hitokoto-osc/reviewer/internal/consts"
 
 	"github.com/gogf/gf/v2/frame/g"
 
@@ -21,39 +20,30 @@ import (
 
 func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (res *v1.GetUserRes, err error) {
 	// 从 BizCtx 中获取用户信息
-	bizctx := service.BizCtx().Get(ctx)
-	if bizctx == nil || bizctx.User == nil { // 正常情况下不会出现
+	user := service.BizCtx().GetUser(ctx)
+	if user == nil { // 正常情况下不会出现
 		g.Log().Error(ctx, service.BizCtx().Get(ctx))
-		err = gerror.NewCode(gcode.CodeUnknown, "bizctx or bizctx.User is nil")
+		err = gerror.NewCode(gcode.CodeUnknown, "bizctx.User is nil")
 		return nil, err
 	}
-	user := bizctx.User
 
-	var pollLogs []model.UserPollLog
-	var count int
+	var pollLogs []model.UserPollLogWithSentence
 	// 是否需要附带投票记录
 	if req.WithPollLogs {
-		var pollLogsList []model.PollLogWithSentence
-		pollLogsList, err = service.User().GetUserPollLogsWithSentences(ctx)
+		var out *model.UserPollLogsWithSentenceOutput
+		out, err = service.User().GetUserPollLogsWithSentence(ctx, model.UserPollLogsInput{
+			UserID:    user.Id,
+			Order:     dao.PollLog.Columns().CreatedAt + " desc",
+			Page:      1,
+			PageSize:  30,
+			WithCache: true,
+		})
 		if err != nil {
 			return nil, err
 		}
-		count = len(pollLogsList)
-		pollLogs = make([]model.UserPollLog, count)
-		for i, v := range pollLogsList {
-			pollLogs[i] = model.UserPollLog{
-				Point:        v.Point,
-				SentenceUUID: v.SentenceUuid,
-				Sentence:     v.Sentence,
-				Method:       consts.PollMethod(v.Type),
-				Comment:      v.Comment,
-				CreatedAt:    (*time.Time)(v.CreatedAt),
-				UpdatedAt:    (*time.Time)(v.UpdatedAt),
-			}
-		}
-	} else {
-		count = user.Poll.Points / int(service.User().GetUserPollPointsByUserRole(user.Role)) // TODO: 稍后如果更换点数的话，务必换成数据库 Count
+		pollLogs = out.Collection
 	}
+	count := user.Poll.Points / int(service.User().GetUserPollPointsByUserRole(user.Role)) // TODO: 稍后如果更换点数的话，务必换成数据库 Count
 
 	res = &v1.GetUserRes{
 		ID:    user.Id,

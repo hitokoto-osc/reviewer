@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hitokoto-osc/reviewer/internal/consts"
+	vtime "github.com/hitokoto-osc/reviewer/utility/time"
+
 	"github.com/hitokoto-osc/reviewer/internal/model"
 
-	"github.com/hitokoto-osc/reviewer/internal/model/do"
-
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/hitokoto-osc/reviewer/internal/dao"
 
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -18,84 +18,106 @@ import (
 	"github.com/hitokoto-osc/reviewer/internal/service"
 )
 
-func (s *sUser) GetUserPollLogsByUserID(ctx context.Context, userID uint) (res []entity.PollLog, err error) {
-	err = dao.PollLog.Ctx(ctx).Cache(gdb.CacheOption{
-		Duration: time.Second * 3, // 3s
-		Name:     "poll_log:uid:" + gconv.String(userID),
-		Force:    false,
-	}).Where(do.PollLog{UserId: userID}).Scan(&res)
-	return
-}
-
-func (s *sUser) GetUserPollLogs(ctx context.Context) (res []entity.PollLog, err error) {
-	bizctx := service.BizCtx().Get(ctx)
-	if bizctx == nil || bizctx.User == nil {
-		err = gerror.New("bizctx or bizctx.User is nil")
-		return
+func (s *sUser) GetUserPollLogs(ctx context.Context, in model.UserPollLogsInput) (*model.UserPollLogsOutput, error) {
+	if in.UserID == 0 {
+		user := service.BizCtx().GetUser(ctx)
+		if user == nil {
+			return nil, gerror.New("user not found")
+		}
+		in.UserID = user.Id
 	}
-	user := bizctx.User
-	return s.GetUserPollLogsByUserID(ctx, user.Id)
-}
+	query := dao.PollLog.Ctx(ctx)
+	out := &model.UserPollLogsOutput{}
+	if in.WithCache {
+		query = query.Cache(gdb.CacheOption{
+			Duration: time.Second * 3,
+			Name:     fmt.Sprintf("poll_logs:uid:%d:page:%d:pageSize:%d:order:%s", in.UserID, in.Page, in.PageSize, in.Order),
+			Force:    false,
+		})
+	}
+	query = query.Where(dao.PollLog.Columns().UserId, in.UserID)
+	if in.Page > 0 && in.PageSize > 0 {
+		query = query.Page(in.Page, in.PageSize)
+		out.Page, out.PageSize = in.Page, in.PageSize
+	}
 
-func (s *sUser) GetUserPollLogsWithSentences(ctx context.Context) ([]model.PollLogWithSentence, error) {
-	pollLogs, err := s.GetUserPollLogs(ctx)
+	if in.Order != "" {
+		query = query.Order(in.Order)
+	}
+	// fetch data from query
+	var pollLogs []entity.PollLog
+	err := query.Scan(&pollLogs)
 	if err != nil {
 		return nil, err
 	}
-	res := make([]model.PollLogWithSentence, len(pollLogs))
-	for i, pollLog := range pollLogs {
-		var sentence *model.HitokotoV1Schema
-		sentence, err = service.Hitokoto().GetHitokotoV1SchemaByUUID(ctx, pollLog.SentenceUuid)
-		if err != nil {
-			return nil, err
-		}
-		res[i] = model.PollLogWithSentence{
-			PollLog:  pollLog,
-			Sentence: sentence,
+	userPollLogs := make([]model.UserPollLog, len(pollLogs))
+	for i, v := range pollLogs {
+		userPollLogs[i] = model.UserPollLog{
+			Point:        v.Point,
+			SentenceUUID: v.SentenceUuid,
+			Method:       consts.PollMethod(v.Type),
+			Comment:      v.Comment,
+			CreatedAt:    (*vtime.Time)(v.CreatedAt),
+			UpdatedAt:    (*vtime.Time)(v.UpdatedAt),
 		}
 	}
-	return res, nil
+	out.Collection = userPollLogs
+	return out, nil
 }
 
-func (s *sUser) GetUserPollLogsByUserIDWithPages(ctx context.Context, userID uint, offset, limit int) (res []entity.PollLog, err error) {
-	err = dao.PollLog.Ctx(ctx).Cache(gdb.CacheOption{
-		Duration: time.Second * 3,
-		Name:     fmt.Sprintf("poll_log:uid:%d:offset:%d:limit:%d", userID, offset, limit),
-		Force:    false,
-	}).
-		Where(do.PollLog{UserId: userID}).
-		Offset(offset).
-		Limit(limit).
-		Scan(&res)
-	return
-}
-
-func (s *sUser) GetUserPollLogsWithPages(ctx context.Context, offset, limit int) ([]entity.PollLog, error) {
-	bizctx := service.BizCtx().Get(ctx)
-	if bizctx == nil || bizctx.User == nil {
-		err := gerror.New("bizctx or bizctx.User is nil")
-		return nil, err
+func (s *sUser) GetUserPollLogsWithSentence(
+	ctx context.Context,
+	in model.UserPollLogsInput,
+) (*model.UserPollLogsWithSentenceOutput, error) {
+	if in.UserID == 0 {
+		user := service.BizCtx().GetUser(ctx)
+		if user == nil {
+			return nil, gerror.New("user not found")
+		}
+		in.UserID = user.Id
 	}
-	user := bizctx.User
-	return s.GetUserPollLogsByUserIDWithPages(ctx, user.Id, offset, limit)
-}
+	query := dao.PollLog.Ctx(ctx)
+	out := &model.UserPollLogsWithSentenceOutput{}
+	if in.WithCache {
+		query = query.Cache(gdb.CacheOption{
+			Duration: time.Second * 3,
+			Name:     fmt.Sprintf("poll_logs:uid:%d:page:%d:pageSize:%d:order:%s", in.UserID, in.Page, in.PageSize, in.Order),
+			Force:    false,
+		})
+	}
+	query = query.Where(dao.PollLog.Columns().UserId, in.UserID)
+	if in.Page > 0 && in.PageSize > 0 {
+		query = query.Page(in.Page, in.PageSize)
+		out.Page, out.PageSize = in.Page, in.PageSize
+	}
 
-func (s *sUser) GetUserPollLogsWithSentencesAndPages(ctx context.Context, offset, limit int) ([]model.PollLogWithSentence, error) {
-	pollLogs, err := s.GetUserPollLogsWithPages(ctx, offset, limit)
+	if in.Order != "" {
+		query = query.Order(in.Order)
+	}
+	// fetch data from query
+	var pollLogs []entity.PollLog
+	err := query.Scan(&pollLogs)
 	if err != nil {
 		return nil, err
 	}
-	res := make([]model.PollLogWithSentence, len(pollLogs))
-	for i, pollLog := range pollLogs {
-		var sentence *model.HitokotoV1Schema
-		sentence, err = service.Hitokoto().GetHitokotoV1SchemaByUUID(ctx, pollLog.SentenceUuid)
+	userPollLogs := make([]model.UserPollLogWithSentence, len(pollLogs))
+	for i, v := range pollLogs {
+		sentence, err := service.Hitokoto().GetHitokotoV1SchemaByUUID(ctx, v.SentenceUuid)
 		if err != nil {
 			return nil, err
 		}
-		res[i] = model.PollLogWithSentence{
-			PollLog:  pollLog,
+		userPollLogs[i] = model.UserPollLogWithSentence{
+			UserPollLog: model.UserPollLog{
+				Point:        v.Point,
+				SentenceUUID: v.SentenceUuid,
+				Method:       consts.PollMethod(v.Type),
+				Comment:      v.Comment,
+				CreatedAt:    (*vtime.Time)(v.CreatedAt),
+				UpdatedAt:    (*vtime.Time)(v.UpdatedAt),
+			},
 			Sentence: sentence,
 		}
 	}
-	return res, nil
+	out.Collection = userPollLogs
+	return out, nil
 }

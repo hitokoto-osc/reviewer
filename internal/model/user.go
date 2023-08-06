@@ -32,11 +32,15 @@ type UserPoll struct {
 type UserPollLog struct {
 	Point        int               `json:"point" dc:"投票点数"`
 	SentenceUUID string            `json:"sentence_uuid" dc:"句子 UUID"`
-	Sentence     *HitokotoV1Schema `json:"sentence" dc:"句子信息"`
 	Method       consts.PollMethod `json:"type" dc:"投票类型"`
 	Comment      string            `json:"comment" dc:"理由"`
 	CreatedAt    *time.Time        `json:"created_at" dc:"投票时间"`
 	UpdatedAt    *time.Time        `json:"updated_at" dc:"更新时间"`
+}
+
+type UserPollLogWithSentence struct {
+	UserPollLog
+	Sentence *HitokotoV1Schema `json:"sentence" dc:"句子信息"`
 }
 
 type UserPollElement struct {
@@ -48,4 +52,24 @@ type UserPollElement struct {
 type UserPollResult struct {
 	Total      uint              `json:"total" dc:"总数"`
 	Collection []UserPollElement `json:"collection" dc:"数据"`
+}
+
+type UserPollLogsInput struct {
+	UserID    uint   // 用户 ID
+	Order     string // 排序方式 `dc:"排序方式"`
+	Page      int
+	PageSize  int
+	WithCache bool
+}
+
+type UserPollLogsOutput struct {
+	Collection []UserPollLog `json:"collection" dc:"数据"`
+	Page       int           `json:"page" dc:"当前页数"`
+	PageSize   int           `json:"page_size" dc:"每页数量"`
+}
+
+type UserPollLogsWithSentenceOutput struct {
+	Collection []UserPollLogWithSentence `json:"collection" dc:"数据"`
+	Page       int                       `json:"page" dc:"当前页数"`
+	PageSize   int                       `json:"page_size" dc:"每页数量"`
 }

@@ -13,12 +13,12 @@ type GetUserReq struct {
 }
 
 type GetUserRes struct {
-	ID        uint                `json:"id" dc:"用户 ID"`
-	Name      string              `json:"name" dc:"用户名"`
-	Email     string              `json:"email" dc:"邮箱"`
-	Role      consts.UserRole     `json:"role" dc:"角色"`
-	Poll      model.UserPoll      `json:"poll" dc:"投票信息"`
-	PollLog   []model.UserPollLog `json:"poll_log" dc:"投票记录"`
-	CreatedAt *time.Time          `json:"created_at" dc:"创建时间"`
-	UpdatedAt *time.Time          `json:"updated_at" dc:"更新时间"`
+	ID        uint                            `json:"id" dc:"用户 ID"`
+	Name      string                          `json:"name" dc:"用户名"`
+	Email     string                          `json:"email" dc:"邮箱"`
+	Role      consts.UserRole                 `json:"role" dc:"角色"`
+	Poll      model.UserPoll                  `json:"poll" dc:"投票信息"`
+	PollLog   []model.UserPollLogWithSentence `json:"poll_log" dc:"投票记录"`
+	CreatedAt *time.Time                      `json:"created_at" dc:"创建时间"`
+	UpdatedAt *time.Time                      `json:"updated_at" dc:"更新时间"`
 }

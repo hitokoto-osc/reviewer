@@ -21,6 +21,7 @@ type (
 		Get(ctx context.Context) *model.Context
 		// SetUser injects business user object into context.
 		SetUser(ctx context.Context, ctxUser *model.ContextUser)
+		GetUser(ctx context.Context) *model.ContextUser
 	}
 )
 
