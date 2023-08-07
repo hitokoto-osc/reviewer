@@ -31,6 +31,7 @@ type (
 		VerifyAPIV1Token(ctx context.Context, token string) (flag bool, err error)
 		GetUserByToken(ctx context.Context, token string) (user *entity.Users, err error)
 		GetUserByID(ctx context.Context, id uint) (user *entity.Users, err error)
+		SetUserRoleReviewer(ctx context.Context, userID uint) error
 		GetPollUserByUserID(ctx context.Context, uid uint) (user *entity.PollUsers, err error)
 		CreatePollUser(ctx context.Context, uid uint) (err error)
 	}

@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/gogf/gf/v2/errors/gerror"
+
 	"github.com/hitokoto-osc/reviewer/internal/model/do"
 
 	"github.com/gogf/gf/v2/util/gconv"
@@ -58,4 +60,29 @@ func (s *sUser) GetUserByID(ctx context.Context, id uint) (user *entity.Users, e
 		Force:    false,
 	}).Where(do.Users{Id: id}).Scan(&user)
 	return
+}
+
+func (s *sUser) SetUserRoleReviewer(ctx context.Context, userID uint) error {
+	if userID <= 0 {
+		user := service.BizCtx().GetUser(ctx)
+		if user == nil {
+			return gerror.New("user not found")
+		}
+		userID = user.Id
+	}
+	res, err := dao.Users.Ctx(ctx).
+		Data(dao.Users.Columns().IsReviewer, 1).
+		Where(dao.Users.Columns().Id, userID).
+		Update()
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return gerror.New("failed to update user")
+	}
+	return nil
 }
