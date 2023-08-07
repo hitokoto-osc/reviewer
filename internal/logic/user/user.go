@@ -4,10 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gcache"
-
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 
 	"github.com/hitokoto-osc/reviewer/internal/model/do"
 
@@ -96,11 +94,7 @@ func (s *sUser) SetUserRoleReviewer(ctx context.Context, userID uint) error {
 		return gerror.New("failed to update user")
 	}
 	// clear cache
-	if err = g.DB().GetCore().ClearCache(ctx, dao.Users.Table()); err != nil {
-		g.Log().Error(ctx, err)
-	}
-
-	if _, err = gcache.Remove(ctx, "user:token:"+userToken, "user:id:"+gconv.String(userID)); err != nil {
+	if _, err = g.DB().GetCache().Remove(ctx, "user:token:"+userToken, "user:id:"+gconv.String(userID)); err != nil {
 		g.Log().Error(ctx, err)
 	}
 	return nil
