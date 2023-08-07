@@ -4,12 +4,11 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/hitokoto-osc/reviewer/internal/service"
-
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 	"github.com/hitokoto-osc/reviewer/internal/model"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
+	"github.com/hitokoto-osc/reviewer/internal/service"
 )
 
 // convertToSchemaV1 将 Pending/Sentence/Refuse 数据转换为 Schema V1，此操作需要数据库操作查询投票状态

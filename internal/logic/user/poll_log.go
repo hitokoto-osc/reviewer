@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 	vtime "github.com/hitokoto-osc/reviewer/utility/time"
 
@@ -101,23 +103,34 @@ func (s *sUser) GetUserPollLogsWithSentence(
 		return nil, err
 	}
 	userPollLogs := make([]model.UserPollLogWithSentence, len(pollLogs))
+	// 并发获取句子
+	errGroup := new(errgroup.Group)
 	for i, v := range pollLogs {
-		sentence, err := service.Hitokoto().GetHitokotoV1SchemaByUUID(ctx, v.SentenceUuid)
-		if err != nil {
-			return nil, err
-		}
-		userPollLogs[i] = model.UserPollLogWithSentence{
-			UserPollLog: model.UserPollLog{
-				Point:        v.Point,
-				SentenceUUID: v.SentenceUuid,
-				Method:       consts.PollMethod(v.Type),
-				Comment:      v.Comment,
-				CreatedAt:    (*vtime.Time)(v.CreatedAt),
-				UpdatedAt:    (*vtime.Time)(v.UpdatedAt),
-			},
-			Sentence: sentence,
-		}
+		index, value := i, v // 解决并发问题
+		errGroup.Go(func() error {
+			sentence, e := service.Hitokoto().GetHitokotoV1SchemaByUUID(ctx, value.SentenceUuid)
+			if e != nil {
+				return e
+			}
+			userPollLogs[index] = model.UserPollLogWithSentence{
+				UserPollLog: model.UserPollLog{
+					Point:        value.Point,
+					SentenceUUID: value.SentenceUuid,
+					Method:       consts.PollMethod(value.Type),
+					Comment:      value.Comment,
+					CreatedAt:    (*vtime.Time)(value.CreatedAt),
+					UpdatedAt:    (*vtime.Time)(value.UpdatedAt),
+				},
+				Sentence: sentence,
+			}
+			return nil
+		})
 	}
+	err = errGroup.Wait()
+	if err != nil {
+		return nil, err
+	}
+
 	out.Collection = userPollLogs
 	return out, nil
 }
