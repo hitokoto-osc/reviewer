@@ -28,5 +28,7 @@ func (c *ControllerV1) ApplyReviewer(ctx context.Context, req *v1.ApplyReviewerR
 	if err = service.User().SetUserRoleReviewer(ctx, user.Id); err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to set user role")
 	}
+	// clear cache
+	_, _ = gcache.Remove(ctx, fmt.Sprintf("user:%d:apply_token", user.Id))
 	return &v1.ApplyReviewerRes{}, nil
 }

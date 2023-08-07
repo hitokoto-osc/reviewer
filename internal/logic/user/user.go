@@ -4,6 +4,9 @@ import (
 	"context"
 	"time"
 
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gcache"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 
 	"github.com/hitokoto-osc/reviewer/internal/model/do"
@@ -63,12 +66,20 @@ func (s *sUser) GetUserByID(ctx context.Context, id uint) (user *entity.Users, e
 }
 
 func (s *sUser) SetUserRoleReviewer(ctx context.Context, userID uint) error {
+	var userToken string
 	if userID <= 0 {
 		user := service.BizCtx().GetUser(ctx)
 		if user == nil {
 			return gerror.New("user not found")
 		}
 		userID = user.Id
+		userToken = user.Token
+	} else {
+		user, err := s.GetUserByID(ctx, userID)
+		if err != nil {
+			return err
+		}
+		userToken = user.Token
 	}
 	res, err := dao.Users.Ctx(ctx).
 		Data(dao.Users.Columns().IsReviewer, 1).
@@ -83,6 +94,14 @@ func (s *sUser) SetUserRoleReviewer(ctx context.Context, userID uint) error {
 	}
 	if rowsAffected == 0 {
 		return gerror.New("failed to update user")
+	}
+	// clear cache
+	if err = g.DB().GetCore().ClearCache(ctx, dao.Users.Table()); err != nil {
+		g.Log().Error(ctx, err)
+	}
+
+	if _, err = gcache.Remove(ctx, "user:token:"+userToken, "user:id:"+gconv.String(userID)); err != nil {
+		g.Log().Error(ctx, err)
 	}
 	return nil
 }
