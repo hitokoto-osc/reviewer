@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+
 	"github.com/hitokoto-osc/reviewer/internal/dao"
 
 	"github.com/hitokoto-osc/reviewer/utility/time"
@@ -30,8 +31,8 @@ func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (res *v1
 	var pollLogs []model.UserPollLogWithSentence
 	// 是否需要附带投票记录
 	if req.WithPollLogs {
-		var out *model.UserPollLogsWithSentenceOutput
-		out, err = service.User().GetUserPollLogsWithSentence(ctx, model.UserPollLogsInput{
+		var out *model.GetUserPollLogsWithSentenceOutput
+		out, err = service.User().GetUserPollLogsWithSentence(ctx, model.GetUserPollLogsInput{
 			UserID:    user.Id,
 			Order:     dao.PollLog.Columns().CreatedAt + " desc",
 			Page:      1,

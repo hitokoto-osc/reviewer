@@ -13,5 +13,5 @@ type GetUserPollLogReq struct {
 }
 
 type GetUserPollLogRes struct {
-	model.UserPollLogsWithSentenceOutput
+	model.GetUserPollLogsWithSentenceOutput
 }

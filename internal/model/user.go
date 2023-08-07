@@ -44,17 +44,17 @@ type UserPollLogWithSentence struct {
 }
 
 type UserPollElement struct {
-	UserPollLog
-	PollInfo PollSchema `json:"poll_info" dc:"投票信息"`
-	Marks    []uint     `json:"marks" dc:"投票标记"`
+	UserPollLogWithSentence
+	PollInfo *PollSchema `json:"poll_info" dc:"投票信息"`
+	Marks    []int       `json:"marks" dc:"投票标记"`
 }
 
 type UserPollResult struct {
-	Total      uint              `json:"total" dc:"总数"`
-	Collection []UserPollElement `json:"collection" dc:"数据"`
+	Total uint `json:"total" dc:"总数"`
+	GetUserPollLogsWithPollResultOutput
 }
 
-type UserPollLogsInput struct {
+type GetUserPollLogsInput struct {
 	UserID    uint   // 用户 ID
 	Order     string // 排序方式 `dc:"排序方式"`
 	Page      int
@@ -62,14 +62,24 @@ type UserPollLogsInput struct {
 	WithCache bool
 }
 
-type UserPollLogsOutput struct {
+type GetUserPollLogsOutput struct {
 	Collection []UserPollLog `json:"collection" dc:"数据"`
 	Page       int           `json:"page" dc:"当前页数"`
 	PageSize   int           `json:"page_size" dc:"每页数量"`
 }
 
-type UserPollLogsWithSentenceOutput struct {
+type GetUserPollLogsWithSentenceInput = GetUserPollLogsInput
+
+type GetUserPollLogsWithSentenceOutput struct {
 	Collection []UserPollLogWithSentence `json:"collection" dc:"数据"`
 	Page       int                       `json:"page" dc:"当前页数"`
 	PageSize   int                       `json:"page_size" dc:"每页数量"`
+}
+
+type GetUserPollLogsWithPollResultInput = GetUserPollLogsInput
+
+type GetUserPollLogsWithPollResultOutput struct {
+	Collection []UserPollElement `json:"collection" dc:"数据"`
+	Page       int               `json:"page" dc:"当前页数"`
+	PageSize   int               `json:"page_size" dc:"每页数量"`
 }

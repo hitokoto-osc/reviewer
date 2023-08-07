@@ -20,8 +20,8 @@ import (
 	"github.com/hitokoto-osc/reviewer/internal/service"
 )
 
-func (s *sUser) GetUserPollLogs(ctx context.Context, in model.UserPollLogsInput) (*model.UserPollLogsOutput, error) {
-	if in.UserID == 0 {
+func (s *sUser) GetUserPollLogs(ctx context.Context, in model.GetUserPollLogsInput) (*model.GetUserPollLogsOutput, error) {
+	if in.UserID <= 0 {
 		user := service.BizCtx().GetUser(ctx)
 		if user == nil {
 			return nil, gerror.New("user not found")
@@ -29,7 +29,7 @@ func (s *sUser) GetUserPollLogs(ctx context.Context, in model.UserPollLogsInput)
 		in.UserID = user.Id
 	}
 	query := dao.PollLog.Ctx(ctx)
-	out := &model.UserPollLogsOutput{}
+	out := &model.GetUserPollLogsOutput{}
 	if in.WithCache {
 		query = query.Cache(gdb.CacheOption{
 			Duration: time.Second * 3,
@@ -69,9 +69,9 @@ func (s *sUser) GetUserPollLogs(ctx context.Context, in model.UserPollLogsInput)
 
 func (s *sUser) GetUserPollLogsWithSentence(
 	ctx context.Context,
-	in model.UserPollLogsInput,
-) (*model.UserPollLogsWithSentenceOutput, error) {
-	if in.UserID == 0 {
+	in model.GetUserPollLogsInput,
+) (*model.GetUserPollLogsWithSentenceOutput, error) {
+	if in.UserID <= 0 {
 		user := service.BizCtx().GetUser(ctx)
 		if user == nil {
 			return nil, gerror.New("user not found")
@@ -79,7 +79,7 @@ func (s *sUser) GetUserPollLogsWithSentence(
 		in.UserID = user.Id
 	}
 	query := dao.PollLog.Ctx(ctx)
-	out := &model.UserPollLogsWithSentenceOutput{}
+	out := &model.GetUserPollLogsWithSentenceOutput{}
 	if in.WithCache {
 		query = query.Cache(gdb.CacheOption{
 			Duration: time.Second * 3,
@@ -104,10 +104,10 @@ func (s *sUser) GetUserPollLogsWithSentence(
 	}
 	userPollLogs := make([]model.UserPollLogWithSentence, len(pollLogs))
 	// 并发获取句子
-	errGroup := new(errgroup.Group)
+	eg, _ := errgroup.WithContext(ctx)
 	for i, v := range pollLogs {
 		index, value := i, v // 解决并发问题
-		errGroup.Go(func() error {
+		eg.Go(func() error {
 			sentence, e := service.Hitokoto().GetHitokotoV1SchemaByUUID(ctx, value.SentenceUuid)
 			if e != nil {
 				return e
@@ -126,11 +126,80 @@ func (s *sUser) GetUserPollLogsWithSentence(
 			return nil
 		})
 	}
-	err = errGroup.Wait()
+	err = eg.Wait()
 	if err != nil {
 		return nil, err
 	}
 
 	out.Collection = userPollLogs
+	return out, nil
+}
+
+// GetUserPollLogsCount 获取用户投票记录数量
+func (s *sUser) GetUserPollLogsCount(ctx context.Context, userID uint) (int, error) {
+	if userID <= 0 {
+		user := service.BizCtx().GetUser(ctx)
+		if user == nil {
+			return 0, gerror.New("user not found")
+		}
+		userID = user.Id
+	}
+	return dao.PollLog.Ctx(ctx).Where(dao.PollLog.Columns().UserId, userID).Count()
+}
+
+func (s *sUser) GetUserPollLogsWithPollResult(
+	ctx context.Context,
+	in model.GetUserPollLogsInput,
+) (*model.GetUserPollLogsWithPollResultOutput, error) {
+	pollLogs, err := s.GetUserPollLogsWithSentence(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+	collections := make([]model.UserPollElement, len(pollLogs.Collection))
+	// Copy Properties and fetch poll result
+	eg, egCtx := errgroup.WithContext(ctx)
+	for i, v := range pollLogs.Collection {
+		index, value := i, v
+		collections[index] = model.UserPollElement{
+			UserPollLogWithSentence: value,
+		}
+		// 并发获取投票结果
+		eg.Go(func() error {
+			poll, e := service.Poll().GetPollBySentenceUUID(egCtx, value.SentenceUUID)
+			if e != nil {
+				return e
+			}
+			collections[index].PollInfo = &model.PollSchema{
+				SentenceUUID:       poll.SentenceUuid,
+				Status:             consts.PollStatus(poll.Status),
+				Accept:             poll.Accept,
+				Reject:             poll.Reject,
+				NeedModify:         poll.NeedEdited,
+				NeedCommonUserPoll: poll.NeedUserPoll,
+				CreatedAt:          (*vtime.Time)(poll.CreatedAt),
+				UpdatedAt:          (*vtime.Time)(poll.UpdatedAt),
+			}
+			return nil
+		})
+		// 并发获取标记
+		eg.Go(func() error {
+			marks, e := service.Poll().GetPollMarksBySentenceUUID(egCtx, value.SentenceUUID)
+			if e != nil {
+				return e
+			}
+
+			collections[index].Marks = marks
+			return nil
+		})
+	}
+	err = eg.Wait()
+	if err != nil {
+		return nil, err
+	}
+	out := &model.GetUserPollLogsWithPollResultOutput{
+		Collection: collections,
+		Page:       in.Page,
+		PageSize:   in.PageSize,
+	}
 	return out, nil
 }

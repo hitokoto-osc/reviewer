@@ -21,8 +21,11 @@ type (
 		MustGetUserStatusByUser(ctx context.Context, user *entity.Users) (status consts.UserStatus)
 		GetUserPollPointsByUserRole(role consts.UserRole) (points consts.UserPollPoints)
 		GetUserRoleCodeByUserRole(role consts.UserRole) (code consts.UserRoleCode)
-		GetUserPollLogs(ctx context.Context, in model.UserPollLogsInput) (*model.UserPollLogsOutput, error)
-		GetUserPollLogsWithSentence(ctx context.Context, in model.UserPollLogsInput) (*model.UserPollLogsWithSentenceOutput, error)
+		GetUserPollLogs(ctx context.Context, in model.GetUserPollLogsInput) (*model.GetUserPollLogsOutput, error)
+		GetUserPollLogsWithSentence(ctx context.Context, in model.GetUserPollLogsInput) (*model.GetUserPollLogsWithSentenceOutput, error)
+		// GetUserPollLogsCount 获取用户投票记录数量
+		GetUserPollLogsCount(ctx context.Context, userID uint) (int, error)
+		GetUserPollLogsWithPollResult(ctx context.Context, in model.GetUserPollLogsInput) (*model.GetUserPollLogsWithPollResultOutput, error)
 		// VerifyAPIV1Token 用于 v1 接口校验用户是否登录
 		// TODO: v2 中会使用新的用户系统，并且将会使用带有 ACL、签名的授权机制。目前的 token 机制会被废弃。
 		VerifyAPIV1Token(ctx context.Context, token string) (flag bool, err error)
