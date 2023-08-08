@@ -22,6 +22,8 @@ type (
 		ConvertRefuseToSchemaV1(ctx context.Context, refuse *entity.Refuse) (*model.HitokotoV1Schema, error)
 		GetHitokotoV1SchemaByUUID(ctx context.Context, uuid string) (*model.HitokotoV1Schema, error)
 		GetPendingByUUID(ctx context.Context, uuid string) (hitokoto *entity.Pending, err error)
+		TopPendingPollNotOpen(ctx context.Context) (hitokoto *entity.Pending, err error)
+		CountPendingPollNotOpen(ctx context.Context) (count int, err error)
 		GetRefuseByUUID(ctx context.Context, uuid string) (hitokoto *entity.Refuse, err error)
 		GetSentenceByUUID(ctx context.Context, uuid string) (hitokoto *entity.Sentence, err error)
 	}

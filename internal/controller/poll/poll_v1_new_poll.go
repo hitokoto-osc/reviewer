@@ -3,6 +3,16 @@ package poll
 import (
 	"context"
 
+	"github.com/hitokoto-osc/reviewer/internal/model"
+	"github.com/hitokoto-osc/reviewer/utility/time"
+
+	"golang.org/x/sync/errgroup"
+
+	"github.com/hitokoto-osc/reviewer/internal/model/entity"
+
+	"github.com/hitokoto-osc/reviewer/internal/consts"
+	"github.com/hitokoto-osc/reviewer/internal/service"
+
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 
@@ -10,5 +20,59 @@ import (
 )
 
 func (c *ControllerV1) NewPoll(ctx context.Context, req *v1.NewPollReq) (res *v1.NewPollRes, err error) {
-	return nil, gerror.NewCode(gcode.CodeNotImplemented)
+	count, err := service.Poll().CountOpenedPoll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if count > consts.PollMaxOpenPolls {
+		return nil, gerror.NewCode(gcode.CodeOperationFailed, "待投票的句子过多，暂时无法创建新投票。")
+	}
+
+	var topPending *entity.Pending
+	eg, egCtx := errgroup.WithContext(ctx)
+	eg.Go(func() error {
+		topPending, err = service.Hitokoto().TopPendingPollNotOpen(egCtx)
+		return err
+	})
+	eg.Go(func() error {
+		count, err = service.Hitokoto().CountPendingPollNotOpen(egCtx)
+		return err
+	})
+	if err = eg.Wait(); err != nil {
+		return nil, gerror.Wrap(err, "get top pending failed")
+	} else if topPending == nil {
+		return nil, gerror.NewCode(gcode.CodeOperationFailed, "当前无待投票句子。")
+	}
+	poll, err := service.Poll().CreatePollByPending(ctx, topPending)
+	if err != nil {
+		return nil, gerror.WrapCode(gcode.CodeOperationFailed, err, "创建投票失败")
+	}
+	res = &v1.NewPollRes{
+		Poll: model.PollElement{
+			SentenceUUID: poll.SentenceUuid,
+			Sentence: model.HitokotoV1Schema{
+				ID:         uint(topPending.Id),
+				UUID:       topPending.Uuid,
+				Hitokoto:   topPending.Hitokoto,
+				Type:       consts.HitokotoType(topPending.Type),
+				From:       topPending.From,
+				FromWho:    topPending.FromWho,
+				Creator:    topPending.Creator,
+				CreatorUID: uint(topPending.CreatorUid),
+				Reviewer:   uint(topPending.Reviewer),
+				Status:     consts.HitokotoStatusPending,
+				PollStatus: consts.PollStatus(poll.Status),
+				CreatedAt:  topPending.CreatedAt,
+			},
+			Status:             consts.PollStatus(poll.Status),
+			Accept:             poll.Accept,
+			Reject:             poll.Reject,
+			NeedModify:         poll.NeedEdited,
+			NeedCommonUserPoll: poll.NeedUserPoll,
+			CreatedAt:          (*time.Time)(poll.CreatedAt),
+			UpdatedAt:          (*time.Time)(poll.UpdatedAt),
+		},
+		RemainPending: count - 1,
+	}
+	return res, nil
 }

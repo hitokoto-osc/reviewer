@@ -13,6 +13,6 @@ type GetPollsReq struct {
 }
 
 type GetPollsRes []struct {
-	model.PollSchema
+	model.PollElement
 	PollData model.PollData `json:"poll_data" dc:"投票数据"`
 }

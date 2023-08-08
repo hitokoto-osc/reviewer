@@ -11,6 +11,6 @@ type GetPollDetailReq struct {
 }
 
 type GetPollDetailRes struct {
-	model.PollSchema
+	model.PollElement
 	Records []model.PollRecord `json:"logs" dc:"投票记录"`
 }

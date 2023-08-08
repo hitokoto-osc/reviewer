@@ -28,8 +28,9 @@ type PollData struct {
 	Method consts.PollMethod `json:"method" dc:"投票方式"`
 }
 
-type PollSchema struct {
+type PollElement struct {
 	SentenceUUID       string            `json:"sentence_uuid" dc:"句子 UUID"`
+	Sentence           HitokotoV1Schema  `json:"sentence" dc:"句子"`
 	Status             consts.PollStatus `json:"status" dc:"投票状态"`
 	Accept             int               `json:"accept" dc:"赞同票数"`
 	Reject             int               `json:"reject" dc:"反对票数"`

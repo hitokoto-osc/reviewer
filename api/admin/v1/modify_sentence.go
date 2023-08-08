@@ -12,5 +12,5 @@ type ModifySentenceReq struct {
 }
 
 type ModifySentenceRes struct {
-	model.PollSchema
+	model.PollElement
 }

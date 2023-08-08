@@ -45,8 +45,8 @@ type UserPollLogWithSentence struct {
 
 type UserPollElement struct {
 	UserPollLogWithSentence
-	PollInfo *PollSchema `json:"poll_info" dc:"投票信息"`
-	Marks    []int       `json:"marks" dc:"投票标记"`
+	PollInfo *PollElement `json:"poll_info" dc:"投票信息"`
+	Marks    []int        `json:"marks" dc:"投票标记"`
 }
 
 type UserPollResult struct {

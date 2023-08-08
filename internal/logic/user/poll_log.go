@@ -169,7 +169,7 @@ func (s *sUser) GetUserPollLogsWithPollResult(
 			if e != nil {
 				return e
 			}
-			collections[index].PollInfo = &model.PollSchema{
+			collections[index].PollInfo = &model.PollElement{
 				SentenceUUID:       poll.SentenceUuid,
 				Status:             consts.PollStatus(poll.Status),
 				Accept:             poll.Accept,

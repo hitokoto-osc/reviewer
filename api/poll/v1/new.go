@@ -10,6 +10,6 @@ type NewPollReq struct {
 }
 
 type NewPollRes struct {
-	model.PollSchema
-	RemainPending int `json:"remain_pending" dc:"剩余待处理"`
+	Poll          model.PollElement `json:"poll" dc:"投票内容"`
+	RemainPending int               `json:"remain_pending" dc:"剩余待处理"`
 }

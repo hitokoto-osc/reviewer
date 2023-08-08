@@ -11,6 +11,6 @@ type CancelPollReq struct {
 }
 
 type CancelPollRes struct {
-	model.PollSchema
+	model.PollElement
 	PollData model.PollData `json:"poll_data" dc:"投票数据"`
 }
