@@ -30,9 +30,9 @@ type PollData struct {
 
 type PollElement struct {
 	SentenceUUID       string            `json:"sentence_uuid" dc:"句子 UUID"`
-	Sentence           HitokotoV1Schema  `json:"sentence" dc:"句子"`
+	Sentence           *HitokotoV1Schema `json:"sentence" dc:"句子"`
 	Status             consts.PollStatus `json:"status" dc:"投票状态"`
-	Accept             int               `json:"accept" dc:"赞同票数"`
+	Approve            int               `json:"approve" dc:"赞同票数"`
 	Reject             int               `json:"reject" dc:"反对票数"`
 	NeedModify         int               `json:"need_edited" dc:"需要修改票数"`
 	NeedCommonUserPoll int               `json:"need_common_user_poll" dc:"需要普通用户投票"`

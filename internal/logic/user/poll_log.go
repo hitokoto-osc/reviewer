@@ -172,7 +172,7 @@ func (s *sUser) GetUserPollLogsWithPollResult(
 			collections[index].PollInfo = &model.PollElement{
 				SentenceUUID:       poll.SentenceUuid,
 				Status:             consts.PollStatus(poll.Status),
-				Accept:             poll.Accept,
+				Approve:            poll.Accept,
 				Reject:             poll.Reject,
 				NeedModify:         poll.NeedEdited,
 				NeedCommonUserPoll: poll.NeedUserPoll,

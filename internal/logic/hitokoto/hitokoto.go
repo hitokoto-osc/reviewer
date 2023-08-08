@@ -44,7 +44,9 @@ func (s *sHitokoto) GetHitokotoV1SchemaByUUID(ctx context.Context, uuid string) 
 			return nil, err
 		}
 		err = gcache.Set(ctx, "hitokoto:uuid:"+uuid, hitokoto, consts.HitokotoV1SchemaCacheTime)
-		g.Log().Error(ctx, err)
+		if err != nil {
+			g.Log().Error(ctx, err)
+		}
 		return hitokoto, nil
 	}
 	// 从 Sentence 中获取

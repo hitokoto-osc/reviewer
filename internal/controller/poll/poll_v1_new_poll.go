@@ -50,7 +50,7 @@ func (c *ControllerV1) NewPoll(ctx context.Context, req *v1.NewPollReq) (res *v1
 	res = &v1.NewPollRes{
 		Poll: model.PollElement{
 			SentenceUUID: poll.SentenceUuid,
-			Sentence: model.HitokotoV1Schema{
+			Sentence: &model.HitokotoV1Schema{
 				ID:         uint(topPending.Id),
 				UUID:       topPending.Uuid,
 				Hitokoto:   topPending.Hitokoto,
@@ -65,7 +65,7 @@ func (c *ControllerV1) NewPoll(ctx context.Context, req *v1.NewPollReq) (res *v1
 				CreatedAt:  topPending.CreatedAt,
 			},
 			Status:             consts.PollStatus(poll.Status),
-			Accept:             poll.Accept,
+			Approve:            poll.Accept,
 			Reject:             poll.Reject,
 			NeedModify:         poll.NeedEdited,
 			NeedCommonUserPoll: poll.NeedUserPoll,
