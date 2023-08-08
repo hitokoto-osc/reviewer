@@ -17,5 +17,5 @@ type PollReq struct {
 // PollRes 成功返回句子的投票记录
 type PollRes struct {
 	model.PollElement
-	PollData model.PollData `json:"poll_data" dc:"投票数据"`
+	PollData model.PolledData `json:"poll_data" dc:"投票数据"`
 }

@@ -3,6 +3,11 @@ package poll
 import (
 	"context"
 
+	"github.com/hitokoto-osc/reviewer/internal/model"
+
+	"github.com/hitokoto-osc/reviewer/internal/consts"
+	"github.com/hitokoto-osc/reviewer/internal/service"
+
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 
@@ -10,5 +15,27 @@ import (
 )
 
 func (c *ControllerV1) GetPolls(ctx context.Context, req *v1.GetPollsReq) (res *v1.GetPollsRes, err error) {
-	return nil, gerror.NewCode(gcode.CodeNotImplemented)
+	user := service.BizCtx().GetUser(ctx) // User must not be nil
+	if req.StatusStart > req.StatusEnd {
+		req.StatusStart, req.StatusEnd = req.StatusEnd, req.StatusStart
+	}
+	if user.Role != consts.UserRoleAdmin && req.StatusEnd >= int(consts.PollStatusApproved) {
+		return nil, gerror.NewCode(gcode.CodeInvalidOperation, "权限不足")
+	}
+	out, err := service.Poll().GetPollList(ctx, model.GetPollListInput{
+		StatusStart:        req.StatusStart,
+		StatusEnd:          req.StatusEnd,
+		Order:              req.Order,
+		UserID:             user.Id,
+		WithUserPolledData: req.ReturnPolled,
+		WithMarks:          true,
+		WithCache:          true,
+		Page:               req.Page,
+		PageSize:           req.PageSize,
+	})
+	if err != nil {
+		return nil, gerror.WrapCode(gcode.CodeOperationFailed, err, "获取投票列表失败")
+	}
+	res = (*v1.GetPollsRes)(out)
+	return res, nil
 }

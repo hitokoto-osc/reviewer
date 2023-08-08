@@ -2,7 +2,13 @@ package poll
 
 import (
 	"context"
+	"fmt"
 	"time"
+
+	vtime "github.com/hitokoto-osc/reviewer/utility/time"
+	"golang.org/x/sync/errgroup"
+
+	"github.com/hitokoto-osc/reviewer/internal/model"
 
 	"github.com/gogf/gf/v2/os/gtime"
 
@@ -92,4 +98,90 @@ func (s *sPoll) CreatePollByPending(ctx context.Context, pending *entity.Pending
 		return nil, err
 	}
 	return poll, nil
+}
+
+func (s *sPoll) GetPollList(ctx context.Context, in model.GetPollListInput) (*model.GetPollListOutput, error) {
+	if in.Order == "" {
+		in.Order = "asc"
+	}
+	query := dao.Poll.Ctx(ctx)
+	var (
+		result []entity.Poll
+		count  int
+	)
+	// fetch poll list
+	query = query.WhereBetween(dao.Poll.Columns().Status, in.StatusStart, in.StatusEnd).
+		Order(dao.Poll.Columns().CreatedAt, in.Order).
+		Page(in.Page, in.PageSize)
+	eg, egCtx := errgroup.WithContext(ctx)
+	eg.Go(func() error {
+		q := query.Clone()
+		if in.WithCache {
+			q = q.Cache(gdb.CacheOption{
+				Duration: time.Minute * 10,
+				Name:     fmt.Sprintf("poll:list:status:%d:%d:page:%d:limit:%d:%s", in.Page, in.PageSize, in.StatusStart, in.StatusEnd, in.Order),
+				Force:    false,
+			})
+		}
+		e := q.Scan(&result)
+		return e
+	})
+	eg.Go(func() error {
+		var e error
+		q := query.Clone()
+		count, e = q.Count(&count)
+		return e
+	})
+	if err := eg.Wait(); err != nil {
+		return nil, err
+	}
+	// fetch user poll data, marks and sentence info
+	eg, egCtx = errgroup.WithContext(ctx)
+	collection := make([]model.PollListElement, len(result))
+	for i, v := range result {
+		index, value := i, v
+		collection[index] = model.PollListElement{
+			PollElement: model.PollElement{
+				SentenceUUID:       value.SentenceUuid,
+				Status:             consts.PollStatus(value.Status),
+				Approve:            value.Accept,
+				Reject:             value.Reject,
+				NeedModify:         value.NeedEdited,
+				NeedCommonUserPoll: value.NeedUserPoll,
+				CreatedAt:          (*vtime.Time)(v.CreatedAt),
+				UpdatedAt:          (*vtime.Time)(v.UpdatedAt),
+			},
+		}
+		// 获取句子
+		eg.Go(func() error {
+			var e error
+			collection[index].Sentence, e = service.Hitokoto().GetHitokotoV1SchemaByUUID(egCtx, value.SentenceUuid)
+			return e
+		})
+		if in.WithMarks {
+			eg.Go(func() error {
+				var e error
+				collection[index].Marks, e = s.GetPollMarksBySentenceUUID(egCtx, value.SentenceUuid)
+				return e
+			})
+		}
+		if in.WithUserPolledData {
+			eg.Go(func() error {
+				var e error
+				collection[index].PolledData, e = service.User().GetUserPolledDataWithSentenceUUID(egCtx, in.UserID, value.SentenceUuid)
+				return e
+			})
+		}
+	}
+	err := eg.Wait()
+	if err != nil {
+		return nil, err
+	}
+	out := &model.GetPollListOutput{
+		Collection: collection,
+		Total:      count,
+		Page:       in.Page,
+		PageSize:   in.PageSize,
+	}
+	return out, nil
 }

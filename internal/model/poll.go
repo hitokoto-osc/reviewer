@@ -23,9 +23,11 @@ type PollMark struct {
 	CreatedAt *time.Time              `json:"created_at" dc:"创建时间"`
 }
 
-type PollData struct {
-	Point  int               `json:"point" dc:"投票点数"`
-	Method consts.PollMethod `json:"method" dc:"投票方式"`
+type PolledData struct {
+	Point     int               `json:"point" dc:"投票点数"`
+	Method    consts.PollMethod `json:"method" dc:"投票方式"`
+	CreatedAt *time.Time        `json:"created_at" dc:"投票时间"`
+	UpdatedAt *time.Time        `json:"updated_at" dc:"更新时间"`
 }
 
 type PollElement struct {
@@ -38,4 +40,29 @@ type PollElement struct {
 	NeedCommonUserPoll int               `json:"need_common_user_poll" dc:"需要普通用户投票"`
 	CreatedAt          *time.Time        `json:"created_at" dc:"创建时间"`
 	UpdatedAt          *time.Time        `json:"updated_at" dc:"更新时间"`
+}
+
+type GetPollListInput struct {
+	StatusStart        int
+	StatusEnd          int
+	Order              string
+	UserID             uint // 仅当 WithUserPolledData 为 true 时有效
+	WithUserPolledData bool
+	WithMarks          bool
+	WithCache          bool
+	Page               int
+	PageSize           int
+}
+
+type PollListElement struct {
+	PollElement
+	Marks      []int       `json:"marks" dc:"标记"`
+	PolledData *PolledData `json:"polled_data" dc:"投票数据"`
+}
+
+type GetPollListOutput struct {
+	Collection []PollListElement `json:"collection" dc:"投票列表"`
+	Total      int               `json:"total" dc:"总数"` // poll 总数
+	Page       int               `json:"page" dc:"页码"`
+	PageSize   int               `json:"page_size" dc:"每页数量"`
 }

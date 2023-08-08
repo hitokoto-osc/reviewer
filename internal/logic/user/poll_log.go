@@ -203,3 +203,30 @@ func (s *sUser) GetUserPollLogsWithPollResult(
 	}
 	return out, nil
 }
+
+func (s *sUser) GetUserPolledDataWithSentenceUUID(ctx context.Context, userID uint, sentenceUUID string) (*model.PolledData, error) {
+	if userID <= 0 {
+		user := service.BizCtx().GetUser(ctx)
+		if user == nil {
+			return nil, gerror.New("user not found")
+		}
+		userID = user.Id
+	}
+	var pollLog *entity.PollLog
+	err := dao.PollLog.Ctx(ctx).
+		Where(dao.PollLog.Columns().SentenceUuid, sentenceUUID).
+		Where(dao.PollLog.Columns().UserId, userID).
+		Scan(&pollLog)
+	if err != nil {
+		return nil, err
+	} else if pollLog == nil {
+		return nil, nil
+	}
+	res := &model.PolledData{
+		Point:     pollLog.Point,
+		Method:    consts.PollMethod(pollLog.Type),
+		CreatedAt: (*vtime.Time)(pollLog.CreatedAt),
+		UpdatedAt: (*vtime.Time)(pollLog.UpdatedAt),
+	}
+	return res, nil
+}

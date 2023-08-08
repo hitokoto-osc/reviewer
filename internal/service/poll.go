@@ -8,6 +8,7 @@ package service
 import (
 	"context"
 
+	"github.com/hitokoto-osc/reviewer/internal/model"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
 )
 
@@ -16,6 +17,7 @@ type (
 		GetPollBySentenceUUID(ctx context.Context, uuidStr string) (poll *entity.Poll, err error)
 		CountOpenedPoll(ctx context.Context) (int, error)
 		CreatePollByPending(ctx context.Context, pending *entity.Pending) (*entity.Poll, error)
+		GetPollList(ctx context.Context, in model.GetPollListInput) (*model.GetPollListOutput, error)
 		GetPollLogsBySentenceUUID(ctx context.Context, uuid string) ([]entity.PollLog, error)
 		GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error)
 		// GetPollMarksBySentenceUUID 获取指定投票的标签列表（不带用户信息）

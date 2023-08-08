@@ -30,6 +30,7 @@ func (s *sPoll) GetPollMarksBySentenceUUID(ctx context.Context, uuid string) ([]
 	}).
 		Where(dao.PollMarkRelation.Columns().SentenceUuid, uuid).
 		Fields(dao.PollMarkRelation.Columns().MarkId).
+		Distinct().
 		Array()
 	if err != nil {
 		return nil, err
