@@ -22,7 +22,7 @@ func (c *ControllerV1) GetPolls(ctx context.Context, req *v1.GetPollsReq) (res *
 	if user.Role != consts.UserRoleAdmin && req.StatusEnd >= int(consts.PollStatusApproved) {
 		return nil, gerror.NewCode(gcode.CodeInvalidOperation, "权限不足")
 	}
-	out, err := service.Poll().GetPollList(ctx, model.GetPollListInput{
+	out, err := service.Poll().GetPollList(ctx, &model.GetPollListInput{
 		StatusStart:        req.StatusStart,
 		StatusEnd:          req.StatusEnd,
 		Order:              req.Order,

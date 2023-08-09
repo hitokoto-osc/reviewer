@@ -13,6 +13,7 @@ import (
 type PollLog struct {
 	g.Meta       `orm:"table:hitokoto_poll_log, do:true"`
 	Id           interface{} //
+	PollId       interface{} // 投票 ID
 	UserId       interface{} //
 	Point        interface{} // 票数
 	SentenceUuid interface{} // 句子 UUID

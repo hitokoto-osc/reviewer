@@ -11,6 +11,7 @@ import (
 // PollScorePipeline is the golang structure for table poll_score_pipeline.
 type PollScorePipeline struct {
 	Id           int         `json:"id"           ` //
+	PollId       int         `json:"pollId"       ` // 触发奖惩的投票
 	UserId       int         `json:"userId"       ` // 操作的用户
 	SentenceUuid string      `json:"sentenceUuid" ` // 触发奖惩的句子
 	Type         int         `json:"type"         ` // 奖励还是惩罚

@@ -14,14 +14,17 @@ import (
 
 type (
 	IPoll interface {
-		GetPollBySentenceUUID(ctx context.Context, uuidStr string) (poll *entity.Poll, err error)
+		GetPollByID(ctx context.Context, pid int) (poll *entity.Poll, err error)
+		// GetPollBySentenceUUID 根据 Sentence UUID 获取最新发起的投票
+		GetPollBySentenceUUID(ctx context.Context, sentenceUUID string) (poll *entity.Poll, err error)
 		CountOpenedPoll(ctx context.Context) (int, error)
 		CreatePollByPending(ctx context.Context, pending *entity.Pending) (*entity.Poll, error)
-		GetPollList(ctx context.Context, in model.GetPollListInput) (*model.GetPollListOutput, error)
+		GetPollList(ctx context.Context, in *model.GetPollListInput) (*model.GetPollListOutput, error)
 		GetPollLogsBySentenceUUID(ctx context.Context, uuid string) ([]entity.PollLog, error)
+		GetPollLogsByPollID(ctx context.Context, pid int) ([]entity.PollLog, error)
 		GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error)
-		// GetPollMarksBySentenceUUID 获取指定投票的标签列表（不带用户信息）
-		GetPollMarksBySentenceUUID(ctx context.Context, uuid string) ([]int, error)
+		// GetPollMarksByPollID 获取指定投票的标签列表（不带用户信息）
+		GetPollMarksByPollID(ctx context.Context, pid uint) ([]int, error)
 	}
 )
 

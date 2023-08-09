@@ -11,6 +11,7 @@ import (
 // PollLog is the golang structure for table poll_log.
 type PollLog struct {
 	Id           int         `json:"id"           ` //
+	PollId       int         `json:"pollId"       ` // 投票 ID
 	UserId       int         `json:"userId"       ` //
 	Point        int         `json:"point"        ` // 票数
 	SentenceUuid string      `json:"sentenceUuid" ` // 句子 UUID

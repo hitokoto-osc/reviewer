@@ -21,6 +21,7 @@ type PollLogDao struct {
 // PollLogColumns defines and stores column names for table hitokoto_poll_log.
 type PollLogColumns struct {
 	Id           string //
+	PollId       string // 投票 ID
 	UserId       string //
 	Point        string // 票数
 	SentenceUuid string // 句子 UUID
@@ -34,6 +35,7 @@ type PollLogColumns struct {
 // pollLogColumns holds the columns for table hitokoto_poll_log.
 var pollLogColumns = PollLogColumns{
 	Id:           "id",
+	PollId:       "poll_id",
 	UserId:       "user_id",
 	Point:        "point",
 	SentenceUuid: "sentence_uuid",

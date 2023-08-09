@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gogf/gf/v2/util/gconv"
+
 	vtime "github.com/hitokoto-osc/reviewer/utility/time"
 	"golang.org/x/sync/errgroup"
 
@@ -38,12 +40,22 @@ func New() service.IPoll {
 	return &sPoll{}
 }
 
-func (s *sPoll) GetPollBySentenceUUID(ctx context.Context, uuidStr string) (poll *entity.Poll, err error) {
+func (s *sPoll) GetPollByID(ctx context.Context, pid int) (poll *entity.Poll, err error) {
 	err = dao.Poll.Ctx(ctx).Cache(gdb.CacheOption{
 		Duration: time.Minute * 10,
-		Name:     "poll:uuid:" + uuidStr,
+		Name:     "poll:id:" + gconv.String(pid),
 		Force:    false,
-	}).Where(do.Poll{SentenceUuid: uuidStr}).Scan(&poll)
+	}).Where(do.Poll{Id: pid}).Scan(&poll)
+	return
+}
+
+// GetPollBySentenceUUID 根据 Sentence UUID 获取最新发起的投票
+func (s *sPoll) GetPollBySentenceUUID(ctx context.Context, sentenceUUID string) (poll *entity.Poll, err error) {
+	err = dao.Poll.Ctx(ctx).Cache(gdb.CacheOption{
+		Duration: time.Minute * 10,
+		Name:     "poll:sentence_uuid:" + sentenceUUID,
+		Force:    false,
+	}).Where(do.Poll{SentenceUuid: sentenceUUID}).OrderDesc(dao.Poll.Columns().CreatedAt).Scan(&poll)
 	return
 }
 
@@ -100,7 +112,10 @@ func (s *sPoll) CreatePollByPending(ctx context.Context, pending *entity.Pending
 	return poll, nil
 }
 
-func (s *sPoll) GetPollList(ctx context.Context, in model.GetPollListInput) (*model.GetPollListOutput, error) {
+func (s *sPoll) GetPollList(ctx context.Context, in *model.GetPollListInput) (*model.GetPollListOutput, error) {
+	if in == nil {
+		return nil, gerror.New("input is nil")
+	}
 	if in.Order == "" {
 		in.Order = "asc"
 	}
@@ -142,6 +157,7 @@ func (s *sPoll) GetPollList(ctx context.Context, in model.GetPollListInput) (*mo
 		index, value := i, v
 		collection[index] = model.PollListElement{
 			PollElement: model.PollElement{
+				ID:                 uint(value.Id),
 				SentenceUUID:       value.SentenceUuid,
 				Status:             consts.PollStatus(value.Status),
 				Approve:            value.Accept,
@@ -161,14 +177,14 @@ func (s *sPoll) GetPollList(ctx context.Context, in model.GetPollListInput) (*mo
 		if in.WithMarks {
 			eg.Go(func() error {
 				var e error
-				collection[index].Marks, e = s.GetPollMarksBySentenceUUID(egCtx, value.SentenceUuid)
+				collection[index].Marks, e = s.GetPollMarksByPollID(egCtx, uint(value.Id))
 				return e
 			})
 		}
 		if in.WithUserPolledData {
 			eg.Go(func() error {
 				var e error
-				collection[index].PolledData, e = service.User().GetUserPolledDataWithSentenceUUID(egCtx, in.UserID, value.SentenceUuid)
+				collection[index].PolledData, e = service.User().GetUserPolledDataWithPollID(egCtx, in.UserID, uint(value.Id))
 				return e
 			})
 		}
@@ -184,4 +200,104 @@ func (s *sPoll) GetPollList(ctx context.Context, in model.GetPollListInput) (*mo
 		PageSize:   in.PageSize,
 	}
 	return out, nil
+}
+
+// Poll 投票
+func Poll(ctx context.Context, in *model.PollInput) error {
+	if in == nil {
+		return gerror.New("input is empty")
+	}
+	if in.PollID == 0 {
+		return gerror.New("poll id is empty")
+	}
+	if in.UserID == 0 {
+		user := service.BizCtx().GetUser(ctx)
+		if user == nil {
+			return gerror.New("user is empty")
+		}
+		in.UserID = user.Id
+		in.IsAdmin = user.Role == consts.UserRoleAdmin
+	}
+	updatedAt := gtime.Now()
+	createdAt := updatedAt
+	err := g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
+		eg, egCtx := errgroup.WithContext(ctx)
+		// 提交投票标记
+		if len(in.Marks) > 0 {
+			list := make([]do.PollMarkRelation, len(in.Marks))
+			for _, v := range in.Marks {
+				list = append(list, do.PollMarkRelation{
+					UserId:       int(in.UserID),
+					PollId:       int(in.PollID),
+					SentenceUuid: in.SentenceUUID,
+					MarkId:       v,
+					UpdatedAt:    updatedAt,
+					CreatedAt:    createdAt,
+				})
+			}
+			eg.Go(func() error {
+				_, e := dao.PollMarkRelation.Ctx(egCtx).TX(tx).Data(list).Insert()
+				return e
+			})
+		}
+		// 更新投票数据
+		eg.Go(func() error {
+			affectedRows, err := dao.Poll.Ctx(egCtx).TX(tx).Where(dao.Poll.Columns().Id, in.PollID).
+				Data(g.Map{
+					translatePollMethodToField(in.Method): gdb.Raw(fmt.Sprintf("%s+%d", translatePollMethodToField(in.Method), in.Point)),
+					dao.Poll.Columns().UpdatedAt:          updatedAt,
+				}).
+				UpdateAndGetAffected()
+			if err != nil {
+				return err
+			} else if affectedRows == 0 {
+				return gerror.New("failed to update poll because poll not found")
+			}
+			return nil
+		})
+		// 更新用户投票数据
+		if in.Method != consts.PollMethodNeedCommonUserPoll {
+			eg.Go(func() error {
+				affectedRows, err := dao.PollUsers.Ctx(egCtx).TX(tx).Where(dao.PollUsers.Columns().Id, in.UserID).
+					Data(g.Map{
+						dao.PollUsers.Columns().Points:        gdb.Raw(fmt.Sprintf("%s+%d", dao.PollUsers.Columns().Points, in.Point)),
+						translatePollMethodToField(in.Method): gdb.Raw(fmt.Sprintf("%s+%d", translatePollMethodToField(in.Method), in.Point)),
+						dao.PollUsers.Columns().UpdatedAt:     updatedAt,
+					}).
+					UpdateAndGetAffected()
+				if err != nil {
+					return err
+				} else if affectedRows == 0 {
+					return gerror.New("failed to update user because user not found")
+				}
+				return nil
+			})
+		}
+
+		// 记录用户日记
+		eg.Go(func() error {
+			isAdmin := 0
+			if in.IsAdmin {
+				isAdmin = 1
+			}
+			_, err := dao.PollLog.Ctx(ctx).TX(tx).Data(do.PollLog{
+				PollId:       int(in.PollID),
+				UserId:       int(in.UserID),
+				Point:        in.Point,
+				SentenceUuid: in.SentenceUUID,
+				Type:         int(in.Method),
+				Comment:      in.Comment,
+				IsAdmin:      isAdmin,
+				CreatedAt:    createdAt,
+				UpdatedAt:    updatedAt,
+			}).Insert()
+			return err
+		})
+		err := eg.Wait()
+		return err
+	})
+	if err != nil {
+		return gerror.Wrap(err, "poll failed")
+	}
+	return nil
 }

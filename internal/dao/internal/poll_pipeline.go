@@ -21,6 +21,7 @@ type PollPipelineDao struct {
 // PollPipelineColumns defines and stores column names for table hitokoto_poll_pipeline.
 type PollPipelineColumns struct {
 	Id           string //
+	PollId       string //
 	SentenceUuid string //
 	Operate      string //
 	Mark         string //
@@ -31,6 +32,7 @@ type PollPipelineColumns struct {
 // pollPipelineColumns holds the columns for table hitokoto_poll_pipeline.
 var pollPipelineColumns = PollPipelineColumns{
 	Id:           "id",
+	PollId:       "poll_id",
 	SentenceUuid: "sentence_uuid",
 	Operate:      "operate",
 	Mark:         "mark",

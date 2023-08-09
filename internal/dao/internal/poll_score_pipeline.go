@@ -21,6 +21,7 @@ type PollScorePipelineDao struct {
 // PollScorePipelineColumns defines and stores column names for table hitokoto_poll_score_pipeline.
 type PollScorePipelineColumns struct {
 	Id           string //
+	PollId       string // 触发奖惩的投票
 	UserId       string // 操作的用户
 	SentenceUuid string // 触发奖惩的句子
 	Type         string // 奖励还是惩罚
@@ -32,6 +33,7 @@ type PollScorePipelineColumns struct {
 // pollScorePipelineColumns holds the columns for table hitokoto_poll_score_pipeline.
 var pollScorePipelineColumns = PollScorePipelineColumns{
 	Id:           "id",
+	PollId:       "poll_id",
 	UserId:       "user_id",
 	SentenceUuid: "sentence_uuid",
 	Type:         "type",

@@ -22,6 +22,7 @@ type PollMarkRelationDao struct {
 type PollMarkRelationColumns struct {
 	Id           string //
 	UserId       string //
+	PollId       string //
 	SentenceUuid string //
 	IsRefuse     string //
 	MarkId       string //
@@ -33,6 +34,7 @@ type PollMarkRelationColumns struct {
 var pollMarkRelationColumns = PollMarkRelationColumns{
 	Id:           "id",
 	UserId:       "user_id",
+	PollId:       "poll_id",
 	SentenceUuid: "sentence_uuid",
 	IsRefuse:     "is_refuse",
 	MarkId:       "mark_id",

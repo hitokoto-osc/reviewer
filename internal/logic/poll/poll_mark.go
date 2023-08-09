@@ -2,6 +2,7 @@ package poll
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/gogf/gf/v2/util/gconv"
@@ -21,14 +22,14 @@ func (s *sPoll) GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error
 	return marks, err
 }
 
-// GetPollMarksBySentenceUUID 获取指定投票的标签列表（不带用户信息）
-func (s *sPoll) GetPollMarksBySentenceUUID(ctx context.Context, uuid string) ([]int, error) {
+// GetPollMarksByPollID 获取指定投票的标签列表（不带用户信息）
+func (s *sPoll) GetPollMarksByPollID(ctx context.Context, pid uint) ([]int, error) {
 	marks, err := dao.PollMarkRelation.Ctx(ctx).Cache(gdb.CacheOption{
 		Duration: time.Minute * 10, // 10 分钟
-		Name:     "poll_marks:uuid:" + uuid,
+		Name:     "poll_marks:pid:" + strconv.Itoa(int(pid)),
 		Force:    false,
 	}).
-		Where(dao.PollMarkRelation.Columns().SentenceUuid, uuid).
+		Where(dao.PollMarkRelation.Columns().PollId, pid).
 		Fields(dao.PollMarkRelation.Columns().MarkId).
 		Distinct().
 		Array()

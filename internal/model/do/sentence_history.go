@@ -9,14 +9,15 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// PollPipeline is the golang structure of table hitokoto_poll_pipeline for DAO operations like Where/Data.
-type PollPipeline struct {
-	g.Meta       `orm:"table:hitokoto_poll_pipeline, do:true"`
+// SentenceHistory is the golang structure of table hitokoto_sentence_history for DAO operations like Where/Data.
+type SentenceHistory struct {
+	g.Meta       `orm:"table:hitokoto_sentence_history, do:true"`
 	Id           interface{} //
-	PollId       interface{} //
 	SentenceUuid interface{} //
-	Operate      interface{} //
-	Mark         interface{} //
+	Before       interface{} //
+	After        interface{} //
+	ModifiedBy   interface{} //
+	Reason       interface{} //
 	CreatedAt    *gtime.Time //
 	UpdatedAt    *gtime.Time //
 }

@@ -55,6 +55,7 @@ func (s *sUser) GetUserPollLogs(ctx context.Context, in model.GetUserPollLogsInp
 	userPollLogs := make([]model.UserPollLog, len(pollLogs))
 	for i, v := range pollLogs {
 		userPollLogs[i] = model.UserPollLog{
+			PollID:       uint(v.PollId),
 			Point:        v.Point,
 			SentenceUUID: v.SentenceUuid,
 			Method:       consts.PollMethod(v.Type),
@@ -114,6 +115,7 @@ func (s *sUser) GetUserPollLogsWithSentence(
 			}
 			userPollLogs[index] = model.UserPollLogWithSentence{
 				UserPollLog: model.UserPollLog{
+					PollID:       uint(value.PollId),
 					Point:        value.Point,
 					SentenceUUID: value.SentenceUuid,
 					Method:       consts.PollMethod(value.Type),
@@ -165,7 +167,7 @@ func (s *sUser) GetUserPollLogsWithPollResult(
 		}
 		// 并发获取投票结果
 		eg.Go(func() error {
-			poll, e := service.Poll().GetPollBySentenceUUID(egCtx, value.SentenceUUID)
+			poll, e := service.Poll().GetPollByID(egCtx, int(value.PollID))
 			if e != nil {
 				return e
 			}
@@ -183,7 +185,7 @@ func (s *sUser) GetUserPollLogsWithPollResult(
 		})
 		// 并发获取标记
 		eg.Go(func() error {
-			marks, e := service.Poll().GetPollMarksBySentenceUUID(egCtx, value.SentenceUUID)
+			marks, e := service.Poll().GetPollMarksByPollID(egCtx, value.PollID)
 			if e != nil {
 				return e
 			}
@@ -204,7 +206,7 @@ func (s *sUser) GetUserPollLogsWithPollResult(
 	return out, nil
 }
 
-func (s *sUser) GetUserPolledDataWithSentenceUUID(ctx context.Context, userID uint, sentenceUUID string) (*model.PolledData, error) {
+func (s *sUser) GetUserPolledDataWithPollID(ctx context.Context, userID, pid uint) (*model.PolledData, error) {
 	if userID <= 0 {
 		user := service.BizCtx().GetUser(ctx)
 		if user == nil {
@@ -214,7 +216,7 @@ func (s *sUser) GetUserPolledDataWithSentenceUUID(ctx context.Context, userID ui
 	}
 	var pollLog *entity.PollLog
 	err := dao.PollLog.Ctx(ctx).
-		Where(dao.PollLog.Columns().SentenceUuid, sentenceUUID).
+		Where(dao.PollLog.Columns().PollId, pid).
 		Where(dao.PollLog.Columns().UserId, userID).
 		Scan(&pollLog)
 	if err != nil {

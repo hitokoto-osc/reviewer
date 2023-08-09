@@ -6,8 +6,8 @@ import (
 )
 
 type GetPollDetailReq struct {
-	g.Meta       `path:"/poll/detail" tags:"Poll" method:"get" summary:"获取投票详情"`
-	SentenceUUID string `json:"sentence_uuid" dc:"句子 UUID" v:"required|size:36#句子 UUID 必须填写|UUID 长度有误" in:"query"`
+	g.Meta `path:"/poll/:id" tags:"Poll" method:"get" summary:"获取投票详情"`
+	ID     int `json:"id" dc:"投票ID" v:"required|min:1" in:"path"`
 }
 
 type GetPollDetailRes struct {

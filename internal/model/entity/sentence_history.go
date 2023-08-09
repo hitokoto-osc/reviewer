@@ -8,14 +8,14 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// PollMarkRelation is the golang structure for table poll_mark_relation.
-type PollMarkRelation struct {
+// SentenceHistory is the golang structure for table sentence_history.
+type SentenceHistory struct {
 	Id           int         `json:"id"           ` //
-	UserId       int         `json:"userId"       ` //
-	PollId       int         `json:"pollId"       ` //
 	SentenceUuid string      `json:"sentenceUuid" ` //
-	IsRefuse     uint        `json:"isRefuse"     ` //
-	MarkId       int         `json:"markId"       ` //
-	UpdatedAt    *gtime.Time `json:"updatedAt"    ` //
+	Before       string      `json:"before"       ` //
+	After        string      `json:"after"        ` //
+	ModifiedBy   int         `json:"modifiedBy"   ` //
+	Reason       string      `json:"reason"       ` //
 	CreatedAt    *gtime.Time `json:"createdAt"    ` //
+	UpdatedAt    *gtime.Time `json:"updatedAt"    ` //
 }

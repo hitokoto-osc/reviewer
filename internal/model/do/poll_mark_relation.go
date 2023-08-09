@@ -14,6 +14,7 @@ type PollMarkRelation struct {
 	g.Meta       `orm:"table:hitokoto_poll_mark_relation, do:true"`
 	Id           interface{} //
 	UserId       interface{} //
+	PollId       interface{} //
 	SentenceUuid interface{} //
 	IsRefuse     interface{} //
 	MarkId       interface{} //

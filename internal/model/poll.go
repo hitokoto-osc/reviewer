@@ -31,6 +31,7 @@ type PolledData struct {
 }
 
 type PollElement struct {
+	ID                 uint              `json:"id" dc:"投票 ID"`
 	SentenceUUID       string            `json:"sentence_uuid" dc:"句子 UUID"`
 	Sentence           *HitokotoV1Schema `json:"sentence" dc:"句子"`
 	Status             consts.PollStatus `json:"status" dc:"投票状态"`
@@ -65,4 +66,15 @@ type GetPollListOutput struct {
 	Total      int               `json:"total" dc:"总数"` // poll 总数
 	Page       int               `json:"page" dc:"页码"`
 	PageSize   int               `json:"page_size" dc:"每页数量"`
+}
+
+type PollInput struct {
+	Method       consts.PollMethod `json:"method" dc:"投票方式"`
+	Point        int               `json:"point" dc:"投票点数"`
+	PollID       uint              `json:"poll_id" dc:"投票 ID"`
+	SentenceUUID string            `json:"sentence_uuid" dc:"句子 UUID"`
+	Comment      string            `json:"comment" dc:"理由"`
+	UserID       uint              `json:"user_id" dc:"用户 ID"`
+	IsAdmin      bool              `json:"is_admin" dc:"是否为管理员"`
+	Marks        []int             `json:"marks" dc:"标记"`
 }

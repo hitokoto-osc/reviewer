@@ -30,6 +30,7 @@ type UserPoll struct {
 }
 
 type UserPollLog struct {
+	PollID       uint              `json:"poll_id" dc:"投票 ID"`
 	Point        int               `json:"point" dc:"投票点数"`
 	SentenceUUID string            `json:"sentence_uuid" dc:"句子 UUID"`
 	Method       consts.PollMethod `json:"type" dc:"投票类型"`

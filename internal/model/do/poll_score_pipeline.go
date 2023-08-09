@@ -13,6 +13,7 @@ import (
 type PollScorePipeline struct {
 	g.Meta       `orm:"table:hitokoto_poll_score_pipeline, do:true"`
 	Id           interface{} //
+	PollId       interface{} // 触发奖惩的投票
 	UserId       interface{} // 操作的用户
 	SentenceUuid interface{} // 触发奖惩的句子
 	Type         interface{} // 奖励还是惩罚

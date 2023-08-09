@@ -19,7 +19,7 @@ import (
 )
 
 func (c *ControllerV1) GetPollDetail(ctx context.Context, req *v1.GetPollDetailReq) (res *v1.GetPollDetailRes, err error) {
-	poll, err := service.Poll().GetPollBySentenceUUID(ctx, req.SentenceUUID)
+	poll, err := service.Poll().GetPollByID(ctx, req.ID)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeOperationFailed, err, "获取投票失败")
 	} else if poll == nil {

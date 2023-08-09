@@ -11,6 +11,7 @@ import (
 // PollPipeline is the golang structure for table poll_pipeline.
 type PollPipeline struct {
 	Id           int         `json:"id"           ` //
+	PollId       int         `json:"pollId"       ` //
 	SentenceUuid string      `json:"sentenceUuid" ` //
 	Operate      int         `json:"operate"      ` //
 	Mark         string      `json:"mark"         ` //
