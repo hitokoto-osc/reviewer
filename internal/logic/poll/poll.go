@@ -321,5 +321,7 @@ func (s *sPoll) Poll(ctx context.Context, in *model.PollInput) error {
 	if err != nil {
 		return gerror.Wrap(err, "poll failed")
 	}
+	// Remove caches
+	go service.Cache().RemoveCacheAfterPollUpdated(ctx, in.UserID, in.PollID, in.SentenceUUID)
 	return nil
 }

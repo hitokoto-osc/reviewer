@@ -12,6 +12,8 @@ import (
 type (
 	ICache interface {
 		RemovePrefix(ctx context.Context, prefix string) error
+		RemovePrefixes(ctx context.Context, prefixes []string) error
+		RemoveCacheAfterPollUpdated(ctx context.Context, userID, pollID uint, sentenceUUID string)
 	}
 )
 
