@@ -8,6 +8,7 @@ const (
 type PollMethod int
 
 const (
+	PollMethodUnknown            PollMethod = 0 // 未知
 	PollMethodApprove            PollMethod = 1 // 赞同
 	PollMethodReject             PollMethod = 2 // 驳回
 	PollMethodNeedModify         PollMethod = 3 // 需要修改

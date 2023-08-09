@@ -23,15 +23,15 @@ func (c *ControllerV1) GetPolls(ctx context.Context, req *v1.GetPollsReq) (res *
 		return nil, gerror.NewCode(gcode.CodeInvalidOperation, "权限不足")
 	}
 	out, err := service.Poll().GetPollList(ctx, &model.GetPollListInput{
-		StatusStart:        req.StatusStart,
-		StatusEnd:          req.StatusEnd,
-		Order:              req.Order,
-		UserID:             user.Id,
-		WithUserPolledData: req.ReturnPolled,
-		WithMarks:          true,
-		WithCache:          true,
-		Page:               req.Page,
-		PageSize:           req.PageSize,
+		StatusStart:     req.StatusStart,
+		StatusEnd:       req.StatusEnd,
+		Order:           req.Order,
+		UserID:          user.Id,
+		WithPollRecords: req.WithRecords,
+		WithMarks:       true,
+		WithCache:       true,
+		Page:            req.Page,
+		PageSize:        req.PageSize,
 	})
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeOperationFailed, err, "获取投票列表失败")

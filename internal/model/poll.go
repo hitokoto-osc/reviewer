@@ -8,7 +8,7 @@ import (
 type PollRecord struct {
 	UserID    uint              `json:"user_id" dc:"用户 ID"`
 	Point     int               `json:"point" dc:"投票点数"`
-	Type      consts.PollMethod `json:"type" dc:"投票类型"`
+	Method    consts.PollMethod `json:"method" dc:"投票类型"`
 	Comment   string            `json:"comment" dc:"理由"`
 	CreatedAt *time.Time        `json:"created_at" dc:"投票时间"`
 	UpdatedAt *time.Time        `json:"updated_at" dc:"更新时间"`
@@ -44,21 +44,29 @@ type PollElement struct {
 }
 
 type GetPollListInput struct {
-	StatusStart        int
-	StatusEnd          int
-	Order              string
-	UserID             uint // 仅当 WithUserPolledData 为 true 时有效
-	WithUserPolledData bool
-	WithMarks          bool
-	WithCache          bool
-	Page               int
-	PageSize           int
+	StatusStart     int
+	StatusEnd       int
+	Order           string
+	UserID          uint // 仅当 WithPollRecords 为 true 时有效
+	WithPollRecords bool
+	WithMarks       bool
+	WithCache       bool
+	Page            int
+	PageSize        int
+}
+
+type PollListCommentElement struct {
+	UserID    uint       `json:"user_id" dc:"用户 ID"`
+	Comment   string     `json:"comment" dc:"评论"`
+	CreatedAt *time.Time `json:"created_at" dc:"评论时间"`
+	UpdatedAt *time.Time `json:"updated_at" dc:"更新时间"`
 }
 
 type PollListElement struct {
 	PollElement
-	Marks      []int       `json:"marks" dc:"标记"`
-	PolledData *PolledData `json:"polled_data" dc:"投票数据"`
+	Marks      []int        `json:"marks" dc:"标记"`
+	PolledData *PolledData  `json:"polled_data" dc:"投票数据"`
+	Records    []PollRecord `json:"records" dc:"评论列表"`
 }
 
 type GetPollListOutput struct {

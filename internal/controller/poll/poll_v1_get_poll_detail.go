@@ -56,7 +56,7 @@ func (c *ControllerV1) GetPollDetail(ctx context.Context, req *v1.GetPollDetailR
 			records[i] = model.PollRecord{
 				UserID:    uint(log.UserId),
 				Point:     log.Point,
-				Type:      consts.PollMethod(log.Type),
+				Method:    consts.PollMethod(log.Type),
 				Comment:   log.Comment,
 				CreatedAt: (*time.Time)(log.CreatedAt),
 				UpdatedAt: (*time.Time)(log.UpdatedAt),

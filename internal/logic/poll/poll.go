@@ -112,6 +112,7 @@ func (s *sPoll) CreatePollByPending(ctx context.Context, pending *entity.Pending
 	return poll, nil
 }
 
+//nolint:gocyclo
 func (s *sPoll) GetPollList(ctx context.Context, in *model.GetPollListInput) (*model.GetPollListOutput, error) {
 	if in == nil {
 		return nil, gerror.New("input is nil")
@@ -181,11 +182,32 @@ func (s *sPoll) GetPollList(ctx context.Context, in *model.GetPollListInput) (*m
 				return e
 			})
 		}
-		if in.WithUserPolledData {
+		if in.WithPollRecords {
 			eg.Go(func() error {
-				var e error
-				collection[index].PolledData, e = service.User().GetUserPolledDataWithPollID(egCtx, in.UserID, uint(value.Id))
-				return e
+				records, e := service.Poll().GetPollLogsByPollID(egCtx, value.Id)
+				if e != nil {
+					return e
+				} else if len(records) == 0 {
+					collection[index].Records = make([]model.PollRecord, 0)
+					return nil
+				}
+				users := service.BizCtx().GetUser(ctx)
+				isAdmin := users != nil && users.Role == consts.UserRoleAdmin
+				collection[index].Records = make([]model.PollRecord, 0, len(records))
+				for recordIndex, record := range records {
+					if uint(record.UserId) == in.UserID {
+						collection[index].PolledData = &model.PolledData{
+							Point:     record.Point,
+							Method:    consts.PollMethod(record.Type),
+							CreatedAt: (*vtime.Time)(record.CreatedAt),
+							UpdatedAt: (*vtime.Time)(record.UpdatedAt),
+						}
+					}
+					if isAdmin || record.Comment != "" {
+						collection[index].Records[recordIndex] = *s.MustConvertPollLogToPollRecord(&records[recordIndex], isAdmin)
+					}
+				}
+				return nil
 			})
 		}
 	}
