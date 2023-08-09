@@ -6,8 +6,8 @@ import (
 )
 
 type CancelPollReq struct {
-	g.Meta       `path:"/poll/cancel" tags:"Poll" method:"delete" summary:"取消投票"`
-	SentenceUUID string `json:"sentence_uuid" dc:"句子 UUID" v:"required|size:36"`
+	g.Meta `path:"/poll/:id/cancel" tags:"Poll" method:"delete" summary:"取消投票"`
+	ID     int `json:"id" dc:"投票 ID" v:"required|min:1#请输入投票 ID"`
 }
 
 type CancelPollRes struct {

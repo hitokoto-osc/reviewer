@@ -8,18 +8,22 @@ package service
 import (
 	"context"
 
+	"github.com/hitokoto-osc/reviewer/internal/consts"
 	"github.com/hitokoto-osc/reviewer/internal/model"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
 )
 
 type (
 	IPoll interface {
+		GetPointsByRole(role consts.UserRole) consts.UserPollPoints
 		GetPollByID(ctx context.Context, pid int) (poll *entity.Poll, err error)
 		// GetPollBySentenceUUID 根据 Sentence UUID 获取最新发起的投票
 		GetPollBySentenceUUID(ctx context.Context, sentenceUUID string) (poll *entity.Poll, err error)
 		CountOpenedPoll(ctx context.Context) (int, error)
 		CreatePollByPending(ctx context.Context, pending *entity.Pending) (*entity.Poll, error)
 		GetPollList(ctx context.Context, in *model.GetPollListInput) (*model.GetPollListOutput, error)
+		// Poll 投票
+		Poll(ctx context.Context, in *model.PollInput) error
 		GetPollLogsBySentenceUUID(ctx context.Context, uuid string) ([]entity.PollLog, error)
 		GetPollLogsByPollID(ctx context.Context, pid int) ([]entity.PollLog, error)
 		GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error)

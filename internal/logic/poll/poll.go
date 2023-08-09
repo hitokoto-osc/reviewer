@@ -203,7 +203,7 @@ func (s *sPoll) GetPollList(ctx context.Context, in *model.GetPollListInput) (*m
 }
 
 // Poll 投票
-func Poll(ctx context.Context, in *model.PollInput) error {
+func (s *sPoll) Poll(ctx context.Context, in *model.PollInput) error {
 	if in == nil {
 		return gerror.New("input is empty")
 	}

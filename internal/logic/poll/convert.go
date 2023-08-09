@@ -15,3 +15,13 @@ var pollMethodsMap = map[consts.PollMethod]string{
 func translatePollMethodToField(in consts.PollMethod) string {
 	return pollMethodsMap[in]
 }
+
+var pointsMap = map[consts.UserRole]consts.UserPollPoints{
+	consts.UserRoleUser:     consts.UserPollPointsNormal,
+	consts.UserRoleReviewer: consts.UserPollPointsReviewer,
+	consts.UserRoleAdmin:    consts.UserPollPointsAdmin,
+}
+
+func (s *sPoll) GetPointsByRole(role consts.UserRole) consts.UserPollPoints {
+	return pointsMap[role]
+}
