@@ -86,3 +86,10 @@ type PollInput struct {
 	IsAdmin      bool              `json:"is_admin" dc:"是否为管理员"`
 	Marks        []int             `json:"marks" dc:"标记"`
 }
+
+type CancelPollInput struct {
+	PollID       uint        `json:"poll_id" dc:"投票 ID"`
+	UserID       uint        `json:"user_id" dc:"用户 ID"`
+	SentenceUUID string      `json:"sentence_uuid" dc:"句子 UUID"`
+	PolledData   *PolledData `json:"polled_data" dc:"投票数据"`
+}

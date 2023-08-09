@@ -218,6 +218,7 @@ func (s *sUser) GetUserPolledDataWithPollID(ctx context.Context, userID, pid uin
 	err := dao.PollLog.Ctx(ctx).
 		Where(dao.PollLog.Columns().PollId, pid).
 		Where(dao.PollLog.Columns().UserId, userID).
+		WhereNot(dao.PollLog.Columns().Type, consts.PollMethodNeedCommonUserPoll). // 排除需要普通用户投票的记录
 		Scan(&pollLog)
 	if err != nil {
 		return nil, err

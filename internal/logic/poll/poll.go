@@ -322,6 +322,82 @@ func (s *sPoll) Poll(ctx context.Context, in *model.PollInput) error {
 		return gerror.Wrap(err, "poll failed")
 	}
 	// Remove caches
-	go service.Cache().RemoveCacheAfterPollUpdated(ctx, in.UserID, in.PollID, in.SentenceUUID)
+	go service.Cache().ClearCacheAfterPollUpdated(ctx, in.UserID, in.PollID, in.SentenceUUID)
+	return nil
+}
+
+func (s *sPoll) CancelPollByID(ctx context.Context, in *model.CancelPollInput) error {
+	if in == nil {
+		return gerror.New("input is empty")
+	}
+	err := g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
+		eg, egCtx := errgroup.WithContext(ctx)
+		// 更新投票信息
+		eg.Go(func() error {
+			affectedRows, e := dao.Poll.Ctx(egCtx).TX(tx).Where(dao.Poll.Columns().Id, in.PollID).
+				Data(g.Map{
+					translatePollMethodToField(in.PolledData.Method): gdb.Raw(
+						fmt.Sprintf("%s-%d",
+							translatePollMethodToField(in.PolledData.Method),
+							in.PolledData.Point,
+						),
+					),
+				}).
+				UpdateAndGetAffected()
+			if e != nil {
+				return e
+			} else if affectedRows == 0 {
+				return gerror.New("failed to update poll because poll not found")
+			}
+			return nil
+		})
+		// 更新用户投票信息
+		if in.PolledData.Method != consts.PollMethodNeedCommonUserPoll {
+			eg.Go(func() error {
+				affectedRows, e := dao.PollUsers.Ctx(egCtx).TX(tx).Where(dao.PollUsers.Columns().Id, in.UserID).
+					Data(g.Map{
+						dao.PollUsers.Columns().Points: gdb.Raw(
+							fmt.Sprintf("%s-%d",
+								dao.PollUsers.Columns().Points,
+								in.PolledData.Point,
+							),
+						),
+						translatePollMethodToField(in.PolledData.Method): gdb.Raw(
+							fmt.Sprintf("%s-%d",
+								translatePollMethodToField(in.PolledData.Method),
+								in.PolledData.Point,
+							),
+						),
+					}).
+					UpdateAndGetAffected()
+				if e != nil {
+					return e
+				} else if affectedRows == 0 {
+					return gerror.New("failed to update poll because poll not found")
+				}
+				return nil
+			})
+		}
+		// 删除投票标记
+		eg.Go(func() error {
+			_, e := dao.PollMarkRelation.Ctx(egCtx).TX(tx).Where(dao.PollMarkRelation.Columns().UserId, in.UserID).
+				Where(dao.PollMarkRelation.Columns().PollId, in.PollID).
+				Delete()
+			return e
+		})
+		// 删除投票日记
+		eg.Go(func() error {
+			_, e := dao.PollLog.Ctx(egCtx).TX(tx).Where(dao.PollLog.Columns().UserId, in.UserID).
+				Where(dao.PollLog.Columns().PollId, in.PollID).
+				Where(dao.PollLog.Columns().Type, in.PolledData.Method).
+				Delete()
+			return e
+		})
+		return eg.Wait()
+	})
+	if err != nil {
+		return gerror.Wrap(err, "cancel poll failed")
+	}
+	go service.Cache().ClearCacheAfterPollUpdated(ctx, in.UserID, in.PollID, in.SentenceUUID)
 	return nil
 }

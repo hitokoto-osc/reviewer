@@ -13,5 +13,5 @@ type PollReq struct {
 	Comment string            `json:"comment" dc:"理由" v:"length:1,255"`
 }
 
-// PollRes 成功返回句子的投票记录
-type PollRes = GetPollDetailRes
+// PollRes 成功返回空结构
+type PollRes struct{}

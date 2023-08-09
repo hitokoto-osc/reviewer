@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/hitokoto-osc/reviewer/internal/model"
 )
 
 type CancelPollReq struct {
@@ -10,7 +9,4 @@ type CancelPollReq struct {
 	ID     int `json:"id" dc:"投票 ID" v:"required|min:1#请输入投票 ID"`
 }
 
-type CancelPollRes struct {
-	model.PollElement
-	PollData model.PolledData `json:"poll_data" dc:"投票数据"`
-}
+type CancelPollRes struct{}

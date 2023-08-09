@@ -27,6 +27,7 @@ type (
 		GetPollList(ctx context.Context, in *model.GetPollListInput) (*model.GetPollListOutput, error)
 		// Poll 投票
 		Poll(ctx context.Context, in *model.PollInput) error
+		CancelPollByID(ctx context.Context, in *model.CancelPollInput) error
 		GetPollLogsBySentenceUUID(ctx context.Context, uuid string) ([]entity.PollLog, error)
 		GetPollLogsByPollID(ctx context.Context, pid int) ([]entity.PollLog, error)
 		GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error)

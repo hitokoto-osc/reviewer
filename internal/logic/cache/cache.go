@@ -59,7 +59,7 @@ func (s *sCache) RemovePrefixes(ctx context.Context, prefixes []string) error {
 	return err
 }
 
-func (s *sCache) RemoveCacheAfterPollUpdated(ctx context.Context, userID, pollID uint, sentenceUUID string) {
+func (s *sCache) ClearCacheAfterPollUpdated(ctx context.Context, userID, pollID uint, sentenceUUID string) {
 	if e := service.Cache().RemovePrefixes(ctx, []string{
 		"poll:list",
 		"poll_logs:uid:" + gconv.String(userID),
