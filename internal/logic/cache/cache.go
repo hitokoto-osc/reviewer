@@ -17,6 +17,10 @@ type sCache struct {
 	instance *gcache.Cache
 }
 
+func init() {
+	service.RegisterCache(New())
+}
+
 func New() service.ICache {
 	return &sCache{
 		instance: g.DB().GetCache(),
