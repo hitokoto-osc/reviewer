@@ -46,7 +46,7 @@ func DefaultPoolConfig() *PoolConfig {
 
 func NewPool(config *PoolConfig, connectionConfig *ConnectionConfig) (Pool, error) {
 	if config == nil || connectionConfig == nil {
-		return nil, gerror.New("config or connection config is nil")
+		return nil, gerror.New("Config or connection Config is nil")
 	}
 	p := &pool{
 		config:           config,

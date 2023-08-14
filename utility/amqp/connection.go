@@ -30,7 +30,7 @@ func NewConnectionController(conn *amqp091.Connection, pool Pool) ConnectionCont
 		isUsed:   false,
 		mu:       sync.Mutex{},
 	}
-	controller.registerCloseHandler()
+	go controller.registerCloseHandler()
 	return controller
 }
 
@@ -84,9 +84,9 @@ func (c *connectionController) registerCloseHandler() {
 }
 
 func dial(config *ConnectionConfig) (*amqp091.Connection, error) {
-	if config.config != nil {
-		return amqp091.DialConfig(config.url, *config.config)
+	if config.Config != nil {
+		return amqp091.DialConfig(config.URL, *config.Config)
 	} else {
-		return amqp091.Dial(config.url)
+		return amqp091.Dial(config.URL)
 	}
 }

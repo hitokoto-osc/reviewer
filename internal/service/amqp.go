@@ -5,9 +5,13 @@
 
 package service
 
+import (
+	"github.com/hitokoto-osc/reviewer/utility/amqp"
+)
+
 type (
 	IAMQP interface {
-		GetConnection()
+		GetConnectionController() (amqp.ConnectionController, error)
 	}
 )
 

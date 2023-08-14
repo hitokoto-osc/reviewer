@@ -27,6 +27,9 @@ type (
 		GetUserPollLogsCount(ctx context.Context, userID uint) (int, error)
 		GetUserPollLogsWithPollResult(ctx context.Context, in model.GetUserPollLogsInput) (*model.GetUserPollLogsWithPollResultOutput, error)
 		GetUserPolledDataWithPollID(ctx context.Context, userID, pid uint) (*model.PolledData, error)
+		// GetReviewersAndAdmins 获取所有需要发送通知的用户
+		// 目前只是一次性获取管理员和审核员
+		GetReviewersAndAdmins(ctx context.Context) (users []entity.Users, err error)
 		// VerifyAPIV1Token 用于 v1 接口校验用户是否登录
 		// TODO: v2 中会使用新的用户系统，并且将会使用带有 ACL、签名的授权机制。目前的 token 机制会被废弃。
 		VerifyAPIV1Token(ctx context.Context, token string) (flag bool, err error)

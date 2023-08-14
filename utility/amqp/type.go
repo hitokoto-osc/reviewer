@@ -53,6 +53,6 @@ type ConnectionController interface {
 }
 
 type ConnectionConfig struct {
-	config *amqp091.Config
-	url    string
+	Config *amqp091.Config
+	URL    string
 }
