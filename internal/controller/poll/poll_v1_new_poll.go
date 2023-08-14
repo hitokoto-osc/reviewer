@@ -3,6 +3,8 @@ package poll
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/frame/g"
+
 	"github.com/hitokoto-osc/reviewer/internal/model"
 	"github.com/hitokoto-osc/reviewer/utility/time"
 
@@ -74,5 +76,11 @@ func (c *ControllerV1) NewPoll(ctx context.Context, req *v1.NewPollReq) (res *v1
 		},
 		RemainPending: count - 1,
 	}
+	go func() {
+		e := service.Notification().PollCreatedNotification(ctx, &res.Poll)
+		if e != nil {
+			g.Log().Errorf(ctx, "send poll created notification failed: %s", e.Error())
+		}
+	}()
 	return res, nil
 }
