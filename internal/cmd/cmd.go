@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"github.com/gogf/gf/v2/errors/gerror"
 
 	"github.com/gogf/gf/v2/os/gcfg"
 
@@ -74,6 +75,12 @@ var (
 			// GDB SQL 缓存使用 Redis
 			// adapter := gcache.NewAdapterRedis(g.Redis())
 			// g.DB().GetCache().SetAdapter(adapter)
+
+			// 注册计划任务
+			err = service.Job().Register(ctx)
+			if err != nil {
+				return gerror.Wrap(err, "注册计划任务失败")
+			}
 
 			s := g.Server()
 			s.SetServerAgent(consts.AppName + " " + consts.Version) // 设置服务名称

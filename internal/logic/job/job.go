@@ -20,8 +20,5 @@ func (s *sJob) Register(ctx context.Context) error {
 	if e := RegisterPollTask(ctx); e != nil {
 		return e
 	}
-	if e := RegisterPollDailyReport(ctx); e != nil {
-		return e
-	}
 	return nil
 }

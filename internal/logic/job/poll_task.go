@@ -10,25 +10,26 @@ import (
 	"github.com/gogf/gf/v2/os/gcron"
 )
 
-const PollTaskCron = "@every 1m30s" // 每 90 秒执行一次
+const PollTickTaskCron = "@every 1m30s"    // 每 90 秒执行一次
+const PollDailyTaskCron = "0 30 8 */1 * *" // 每天八点半执行
 
-func DoPollTask(ctx context.Context) {
+func DoPollTickTask(ctx context.Context) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	e := make(chan error, 2)
 	go func() {
+		defer wg.Done()
 		err := poll.RemoveInvalidPolls(ctx)
 		if err != nil {
 			e <- err
 		}
-		wg.Done()
 	}()
 	go func() {
+		defer wg.Done()
 		err := poll.MoveOverduePolls(ctx)
 		if err != nil {
 			e <- err
 		}
-		wg.Done()
 	}()
 	wg.Wait()
 	if len(e) > 0 {
@@ -42,8 +43,23 @@ func DoPollTask(ctx context.Context) {
 	}
 }
 
+func DoPollDailyTask(ctx context.Context) {
+	err := poll.ClearInactiveReviewer(ctx)
+	if err != nil {
+		g.Log().Error(ctx, err)
+	}
+	err = poll.DailyReport(ctx)
+	if err != nil {
+		g.Log().Error(ctx, err)
+	}
+}
+
 func RegisterPollTask(ctx context.Context) error {
 	g.Log().Debug(ctx, "Registering Poll Task...")
-	_, err := gcron.AddSingleton(ctx, PollTaskCron, DoPollTask)
+	_, err := gcron.AddSingleton(ctx, PollTickTaskCron, DoPollTickTask)
+	if err != nil {
+		return err
+	}
+	_, err = gcron.AddSingleton(ctx, PollDailyTaskCron, DoPollDailyTask)
 	return err
 }
