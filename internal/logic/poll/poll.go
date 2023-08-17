@@ -126,8 +126,12 @@ func (s *sPoll) GetPollList(ctx context.Context, in *model.GetPollListInput) (*m
 		count  int
 	)
 	// fetch poll list
-	query = query.WhereBetween(dao.Poll.Columns().Status, in.StatusStart, in.StatusEnd).
-		Order(dao.Poll.Columns().CreatedAt, in.Order).
+	if in.StatusStart == in.StatusEnd || in.StatusEnd == 0 {
+		query = query.Where(dao.Poll.Columns().Status, in.StatusStart)
+	} else {
+		query = query.WhereBetween(dao.Poll.Columns().Status, in.StatusStart, in.StatusEnd)
+	}
+	query = query.Order(dao.Poll.Columns().CreatedAt, in.Order).
 		Page(in.Page, in.PageSize)
 	eg, egCtx := errgroup.WithContext(ctx)
 	eg.Go(func() error {

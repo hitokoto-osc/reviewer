@@ -30,6 +30,16 @@ func (s *sPoll) GetPointsByRole(role consts.UserRole) consts.UserPollPoints {
 	return pointsMap[role]
 }
 
+var pollStatusToMethodMap = map[consts.PollStatus]consts.PollMethod{
+	consts.PollStatusApproved:   consts.PollMethodApprove,
+	consts.PollStatusRejected:   consts.PollMethodReject,
+	consts.PollStatusNeedModify: consts.PollMethodNeedModify,
+}
+
+func (s *sPoll) translatePollStatusToMethod(in consts.PollStatus) consts.PollMethod {
+	return pollStatusToMethodMap[in]
+}
+
 func (s *sPoll) ConvertPollLogToPollRecord(in *entity.PollLog, isAdmin bool) (out *model.PollRecord, err error) {
 	if in == nil {
 		err = gerror.New("nil poll log")

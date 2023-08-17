@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
 	"github.com/hitokoto-osc/reviewer/utility/time"
@@ -83,4 +84,13 @@ type GetUserPollLogsWithPollResultOutput struct {
 	Collection []UserPollElement `json:"collection" dc:"数据"`
 	Page       int               `json:"page" dc:"当前页数"`
 	PageSize   int               `json:"page_size" dc:"每页数量"`
+}
+
+type UserPollScoreInput struct {
+	UserID       uint
+	PollID       uint
+	Score        int
+	SentenceUUID string
+	Reason       string
+	Tx           gdb.TX
 }

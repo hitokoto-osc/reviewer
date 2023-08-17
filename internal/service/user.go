@@ -38,6 +38,8 @@ type (
 		SetUserRoleReviewer(ctx context.Context, userID uint) error
 		GetPollUserByUserID(ctx context.Context, uid uint) (user *entity.PollUsers, err error)
 		CreatePollUser(ctx context.Context, uid uint) (err error)
+		IncreaseUserPollScore(ctx context.Context, in *model.UserPollScoreInput) error
+		DecreaseUserPollScore(ctx context.Context, in *model.UserPollScoreInput) error
 	}
 )
 

@@ -26,6 +26,7 @@ type PollScorePipelineColumns struct {
 	SentenceUuid string // 触发奖惩的句子
 	Type         string // 奖励还是惩罚
 	Score        string // 分数
+	Reason       string // 理由
 	CreatedAt    string //
 	UpdatedAt    string //
 }
@@ -38,6 +39,7 @@ var pollScorePipelineColumns = PollScorePipelineColumns{
 	SentenceUuid: "sentence_uuid",
 	Type:         "type",
 	Score:        "score",
+	Reason:       "reason",
 	CreatedAt:    "created_at",
 	UpdatedAt:    "updated_at",
 }

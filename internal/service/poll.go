@@ -33,6 +33,8 @@ type (
 		GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error)
 		// GetPollMarksByPollID 获取指定投票的标签列表（不带用户信息）
 		GetPollMarksByPollID(ctx context.Context, pid uint) ([]int, error)
+		GetRulingThreshold(isExpandedPoll bool, totalTickets int) int
+		DoRuling(ctx context.Context, poll *entity.Poll, target consts.PollStatus) error
 	}
 )
 

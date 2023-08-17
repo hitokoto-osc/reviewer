@@ -18,6 +18,7 @@ type PollScorePipeline struct {
 	SentenceUuid interface{} // 触发奖惩的句子
 	Type         interface{} // 奖励还是惩罚
 	Score        interface{} // 分数
+	Reason       interface{} // 理由
 	CreatedAt    *gtime.Time //
 	UpdatedAt    *gtime.Time //
 }
