@@ -26,6 +26,7 @@ func DailyReport(ctx context.Context) error {
 		pipelines   []entity.PollPipeline
 		pollsActive []entity.Poll
 		users       []entity.Users
+		now         = gtime.Now()
 	)
 	eg, egCtx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
@@ -35,7 +36,7 @@ func DailyReport(ctx context.Context) error {
 	})
 	eg.Go(func() error {
 		var e error
-		pipelines, e = getPollPipelinesPastDay(egCtx)
+		pipelines, e = getPollPipelinesPastDay(egCtx, now)
 		return gerror.Wrap(e, "获取投票处理记录失败")
 	})
 	eg.Go(func() error {
@@ -70,7 +71,7 @@ func DailyReport(ctx context.Context) error {
 		go func() {
 			defer wg.Done()
 			g.Log().Debugf(ctx, "开始为用户 %d（%s） 生成报告...", user.Id, user.Name)
-			msg, e := generateDailyReportForUser(egCtx, &user, systemInformation, pipelines, pollsActive)
+			msg, e := generateDailyReportForUser(egCtx, &user, systemInformation, pipelines, pollsActive, now)
 			if e != nil {
 				e = gerror.Wrapf(e, "生成用户 %d（%s）的报告失败", user.Id, user.Name)
 				g.Log().Error(ctx, e)
@@ -102,8 +103,9 @@ func generateDailyReportForUser(ctx context.Context,
 	sysInfo *model.DailyReportSystemInformation,
 	pipelines []entity.PollPipeline,
 	pollInWaiting []entity.Poll,
+	now *gtime.Time,
 ) (*model.DailyReportNotificationMessage, error) {
-	pollLogs, err := getUserPollLogsPastDay(ctx, user.Id)
+	pollLogs, err := getUserPollLogsPastDay(ctx, user.Id, now)
 	if err != nil {
 		return nil, gerror.Wrap(err, "获取用户投票记录失败")
 	}
@@ -187,23 +189,23 @@ func getReviewsAndAdminsThatShouldDoNotification(ctx context.Context) ([]entity.
 	return users, err
 }
 
-func getPollPipelinesPastDay(ctx context.Context) ([]entity.PollPipeline, error) {
+func getPollPipelinesPastDay(ctx context.Context, now *gtime.Time) ([]entity.PollPipeline, error) {
 	var pipelines []entity.PollPipeline
 	err := dao.PollPipeline.Ctx(ctx).
 		WhereBetween(dao.PollPipeline.Columns().CreatedAt,
-			gtime.Now().Add(-time.Hour*24), // nolint:gomnd // 24 小时
-			gtime.Now(),
+			now.Add(-time.Hour*24), // nolint:gomnd // 24 小时
+			now,
 		).Scan(&pipelines)
 	return pipelines, err
 }
 
-func getUserPollLogsPastDay(ctx context.Context, userID uint) ([]entity.PollLog, error) {
+func getUserPollLogsPastDay(ctx context.Context, userID uint, now *gtime.Time) ([]entity.PollLog, error) {
 	var logs []entity.PollLog
 	err := dao.PollLog.Ctx(ctx).
 		Where(dao.PollLog.Columns().UserId, userID).
 		WhereBetween(dao.PollLog.Columns().CreatedAt,
-			gtime.Now().Add(-time.Hour*24), // nolint:gomnd // 24 小时
-			gtime.Now(),
+			now.Add(-time.Hour*24), // nolint:gomnd // 24 小时
+			now,
 		).Scan(&logs)
 	return logs, err
 }
