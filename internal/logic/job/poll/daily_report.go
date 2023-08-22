@@ -71,7 +71,7 @@ func DailyReport(ctx context.Context) error {
 		go func() {
 			defer wg.Done()
 			g.Log().Debugf(ctx, "开始为用户 %d（%s） 生成报告...", user.Id, user.Name)
-			msg, e := generateDailyReportForUser(egCtx, &user, systemInformation, pipelines, pollsActive, now)
+			msg, e := generateDailyReportForUser(ctx, &user, systemInformation, pipelines, pollsActive, now)
 			if e != nil {
 				e = gerror.Wrapf(e, "生成用户 %d（%s）的报告失败", user.Id, user.Name)
 				g.Log().Error(ctx, e)

@@ -12,6 +12,7 @@ import (
 
 const PollTickTaskCron = "@every 1m30s"    // 每 90 秒执行一次
 const PollDailyTaskCron = "0 30 8 */1 * *" // 每天八点半执行
+// const PollDailyTaskCron = "@every 30s"
 
 func DoPollTickTask(ctx context.Context) {
 	wg := sync.WaitGroup{}

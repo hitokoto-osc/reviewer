@@ -58,7 +58,7 @@ func (s *sHitokoto) convertToSchemaV1(ctx context.Context, data any) (*model.Hit
 	}
 	o := reflect.ValueOf(data).Elem()
 	hitokoto := &model.HitokotoV1Schema{
-		ID:         uint(o.FieldByName("ID").Int()),
+		ID:         uint(o.FieldByName("Id").Int()),
 		UUID:       o.FieldByName("Uuid").String(),
 		Hitokoto:   o.FieldByName("Hitokoto").String(),
 		Type:       consts.HitokotoType(o.FieldByName("Type").String()),
