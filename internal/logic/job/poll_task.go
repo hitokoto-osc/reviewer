@@ -53,6 +53,10 @@ func DoPollDailyTask(ctx context.Context) {
 	if err != nil {
 		g.Log().Error(ctx, err)
 	}
+	err = poll.CalcReviewerAdoptionRate(ctx)
+	if err != nil {
+		g.Log().Error(ctx, err)
+	}
 }
 
 func RegisterPollTask(ctx context.Context) error {

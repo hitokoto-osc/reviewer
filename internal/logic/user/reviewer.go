@@ -15,7 +15,7 @@ import (
 func (s *sUser) GetReviewersAndAdmins(ctx context.Context) (users []entity.Users, err error) {
 	err = dao.Users.Ctx(ctx).Cache(gdb.CacheOption{
 		Duration: time.Minute * 10, // 缓存十分钟
-		Name:     "users:should_do_notifications",
+		Name:     "users:reviewersAndAdmins",
 		Force:    false,
 	}).
 		WhereOr(dao.Users.Columns().IsReviewer, 1). // 审核员

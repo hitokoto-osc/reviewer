@@ -27,7 +27,7 @@ type PollUsersColumns struct {
 	Reject       string // 拒绝票
 	NeedEdited   string // 需要修改
 	Score        string // 分数
-	adoptionRate string // 采纳率
+	AdoptionRate string // 采纳率
 	CreatedAt    string //
 	UpdatedAt    string //
 }
@@ -41,7 +41,7 @@ var pollUsersColumns = PollUsersColumns{
 	Reject:       "reject",
 	NeedEdited:   "need_edited",
 	Score:        "score",
-	adoptionRate: "adoption_rate",
+	AdoptionRate: "adoption_rate",
 	CreatedAt:    "created_at",
 	UpdatedAt:    "updated_at",
 }
