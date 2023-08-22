@@ -23,11 +23,12 @@ type UserPollPoints struct {
 }
 
 type UserPoll struct {
-	Points    UserPollPoints `json:"points" dc:"投票点数"`
-	Count     int            `json:"count" dc:"投票次数"`
-	Score     int            `json:"score" dc:"投票得分"`
-	CreatedAt *time.Time     `json:"created_at" dc:"创建时间"`
-	UpdatedAt *time.Time     `json:"updated_at" dc:"更新时间"`
+	Points       UserPollPoints `json:"points" dc:"投票点数"`
+	Count        int            `json:"count" dc:"投票次数"`
+	Score        int            `json:"score" dc:"积分"`
+	AdoptionRate float64        `json:"adoption_rate" dc:"采纳率"`
+	CreatedAt    *time.Time     `json:"created_at" dc:"创建时间"`
+	UpdatedAt    *time.Time     `json:"updated_at" dc:"更新时间"`
 }
 
 type UserPollLog struct {

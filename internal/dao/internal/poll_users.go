@@ -20,28 +20,30 @@ type PollUsersDao struct {
 
 // PollUsersColumns defines and stores column names for table hitokoto_poll_users.
 type PollUsersColumns struct {
-	Id         string //
-	UserId     string //
-	Points     string // 总票数
-	Accept     string // 赞同票
-	Reject     string // 拒绝票
-	NeedEdited string // 需要修改
-	Score      string // 分数
-	CreatedAt  string //
-	UpdatedAt  string //
+	Id           string //
+	UserId       string //
+	Points       string // 总票数
+	Accept       string // 赞同票
+	Reject       string // 拒绝票
+	NeedEdited   string // 需要修改
+	Score        string // 分数
+	adoptionRate string // 采纳率
+	CreatedAt    string //
+	UpdatedAt    string //
 }
 
 // pollUsersColumns holds the columns for table hitokoto_poll_users.
 var pollUsersColumns = PollUsersColumns{
-	Id:         "id",
-	UserId:     "user_id",
-	Points:     "points",
-	Accept:     "accept",
-	Reject:     "reject",
-	NeedEdited: "need_edited",
-	Score:      "score",
-	CreatedAt:  "created_at",
-	UpdatedAt:  "updated_at",
+	Id:           "id",
+	UserId:       "user_id",
+	Points:       "points",
+	Accept:       "accept",
+	Reject:       "reject",
+	NeedEdited:   "need_edited",
+	Score:        "score",
+	adoptionRate: "adoption_rate",
+	CreatedAt:    "created_at",
+	UpdatedAt:    "updated_at",
 }
 
 // NewPollUsersDao creates and returns a new DAO object for table data access.
