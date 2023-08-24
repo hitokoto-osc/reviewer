@@ -27,24 +27,46 @@ func (c *ControllerV1) GetPollDetail(ctx context.Context, req *v1.GetPollDetailR
 	}
 	// fetch logs and sentence
 	var (
-		logs     []entity.PollLog
-		sentence *model.HitokotoV1Schema
+		logs       []entity.PollLog
+		sentence   *model.HitokotoV1Schema
+		marks      []int
+		polledData *model.PolledData
 	)
 	eg, egCtx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
-		logs, err = service.Poll().GetPollLogsBySentenceUUID(egCtx, poll.SentenceUuid)
-		if err != nil {
-			return gerror.WrapCode(gcode.CodeOperationFailed, err, "获取投票日志失败")
+		var e error
+		logs, e = service.Poll().GetPollLogsBySentenceUUID(egCtx, poll.SentenceUuid)
+		if e != nil {
+			return gerror.WrapCode(gcode.CodeOperationFailed, e, "获取投票日志失败")
 		}
 		return nil
 	})
 	eg.Go(func() error {
-		sentence, err = service.Hitokoto().GetHitokotoV1SchemaByUUID(egCtx, poll.SentenceUuid)
-		if err != nil {
-			return gerror.WrapCode(gcode.CodeOperationFailed, err, "获取句子失败")
+		var e error
+		sentence, e = service.Hitokoto().GetHitokotoV1SchemaByUUID(egCtx, poll.SentenceUuid)
+		if e != nil {
+			return gerror.WrapCode(gcode.CodeOperationFailed, e, "获取句子失败")
 		}
 		return nil
 	})
+	eg.Go(func() error {
+		var e error
+		marks, e = service.Poll().GetPollMarksByPollID(egCtx, uint(poll.Id))
+		if e != nil {
+			return gerror.WrapCode(gcode.CodeOperationFailed, e, "获取投票标签失败")
+		}
+		return nil
+	})
+	if req.WithPolledData {
+		eg.Go(func() error {
+			var e error
+			polledData, e = service.User().GetUserPolledDataWithPollID(egCtx, service.BizCtx().GetUser(egCtx).Id, uint(poll.Id))
+			if e != nil {
+				return gerror.WrapCode(gcode.CodeOperationFailed, e, "获取投票信息失败")
+			}
+			return nil
+		})
+	}
 	err = eg.Wait()
 	if err != nil {
 		return nil, err
@@ -66,18 +88,23 @@ func (c *ControllerV1) GetPollDetail(ctx context.Context, req *v1.GetPollDetailR
 		records = []model.PollRecord{}
 	}
 	res = &v1.GetPollDetailRes{
-		PollElement: model.PollElement{
-			SentenceUUID:       poll.SentenceUuid,
-			Sentence:           sentence,
-			Status:             consts.PollStatus(poll.Status),
-			Approve:            poll.Accept,
-			Reject:             poll.Reject,
-			NeedModify:         poll.NeedEdited,
-			NeedCommonUserPoll: poll.NeedUserPoll,
-			CreatedAt:          (*time.Time)(poll.CreatedAt),
-			UpdatedAt:          (*time.Time)(poll.UpdatedAt),
+		PollListElement: model.PollListElement{
+			PollElement: model.PollElement{
+				ID:                 uint(poll.Id),
+				SentenceUUID:       poll.SentenceUuid,
+				Sentence:           sentence,
+				Status:             consts.PollStatus(poll.Status),
+				Approve:            poll.Accept,
+				Reject:             poll.Reject,
+				NeedModify:         poll.NeedEdited,
+				NeedCommonUserPoll: poll.NeedUserPoll,
+				CreatedAt:          (*time.Time)(poll.CreatedAt),
+				UpdatedAt:          (*time.Time)(poll.UpdatedAt),
+			},
+			Marks:      marks,
+			PolledData: polledData,
+			Records:    records,
 		},
-		Records: records,
 	}
 	return res, nil
 }

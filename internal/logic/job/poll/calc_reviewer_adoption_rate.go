@@ -49,6 +49,13 @@ func CalcReviewerAdoptionRate(ctx context.Context) error {
 			e = gerror.Wrapf(e, "更新用户 %d 采纳率失败：", userID)
 			g.Log().Error(ctx, e)
 		}
+
+		go func(userID int) {
+			_, e = g.DB().GetCache().Remove(ctx, "user:poll:uid:"+gconv.String(userID))
+			if e != nil {
+				g.Log().Errorf(ctx, "清除用户 %d 缓存失败：%s", userID, e.Error())
+			}
+		}(userID)
 	}
 	g.Log().Debug(ctx, "计算审核员采纳率完成！")
 	return nil

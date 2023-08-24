@@ -19,6 +19,7 @@ type (
 		Ctx(r *ghttp.Request)
 		// GuardV1 是 v1 用于检查用户权限的中间件
 		GuardV1(role consts.UserRole) func(r *ghttp.Request)
+		CORS(r *ghttp.Request)
 		// HandlerResponse 重写了默认的 JSON 响应格式，提供统一的响应格式
 		HandlerResponse(r *ghttp.Request)
 	}

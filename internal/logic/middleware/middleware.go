@@ -30,6 +30,12 @@ type HandlerResponse struct {
 	TS      int64  `json:"ts"      dc:"当前请求的时间戳"`
 }
 
+func (s *sMiddleware) CORS(r *ghttp.Request) {
+	options := r.Response.DefaultCORSOptions()
+	r.Response.CORS(options)
+	r.Middleware.Next()
+}
+
 // HandlerResponse 重写了默认的 JSON 响应格式，提供统一的响应格式
 func (s *sMiddleware) HandlerResponse(r *ghttp.Request) {
 	r.Middleware.Next()

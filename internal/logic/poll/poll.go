@@ -208,7 +208,7 @@ func (s *sPoll) GetPollList(ctx context.Context, in *model.GetPollListInput) (*m
 						}
 					}
 					if isAdmin || record.Comment != "" {
-						collection[index].Records[recordIndex] = *s.MustConvertPollLogToPollRecord(&records[recordIndex], isAdmin)
+						collection[index].Records = append(collection[index].Records, *s.MustConvertPollLogToPollRecord(&records[recordIndex], isAdmin))
 					}
 				}
 				return nil

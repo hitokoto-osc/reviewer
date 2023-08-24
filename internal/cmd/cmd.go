@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 
 	"github.com/gogf/gf/v2/os/gcfg"
@@ -85,6 +86,7 @@ var (
 			s := g.Server()
 			s.SetServerAgent(consts.AppName + " " + consts.Version) // 设置服务名称
 			s.AddSearchPath("resource/public")                      // 静态文件
+			s.Use(service.Middleware().CORS)                        // CORS 处理
 			s.Use(service.Middleware().HandlerResponse)             // 统一返回格式
 			s.BindHandler("/", index.NewCommon().Index)             // 首页
 			s.Group("/api/v1", func(group *ghttp.RouterGroup) {

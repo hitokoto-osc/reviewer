@@ -32,11 +32,12 @@ func DoPollTickTask(ctx context.Context) {
 			e <- err
 		}
 	}()
-	wg.Wait()
-	if len(e) > 0 {
-		for i := 0; i < len(e); i++ {
-			g.Log().Error(ctx, <-e)
-		}
+	go func() {
+		wg.Wait()
+		close(e)
+	}()
+	for err := range e {
+		g.Log().Error(ctx, err)
 	}
 	err := poll.DoPollRuling(ctx)
 	if err != nil {

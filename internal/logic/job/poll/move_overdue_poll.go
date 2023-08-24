@@ -32,7 +32,7 @@ func MoveOverduePolls(ctx context.Context) error {
 	)
 	query := dao.Poll.Ctx(ctx).
 		Where(dao.Poll.Columns().Status, consts.PollStatusOpen).
-		WhereLT(dao.Poll.Columns().CreatedAt, gdb.Raw("INTERVAL 15 DAY")) // 15 天
+		WhereLT(dao.Poll.Columns().CreatedAt, gdb.Raw("DATE_SUB(now(), INTERVAL 15 DAY)")) // 15 天
 	total, err := query.Clone().Fields("1").Count()
 	if err != nil {
 		return gerror.Wrap(err, "获取过期投票数量失败")
@@ -71,7 +71,9 @@ func MoveOverduePolls(ctx context.Context) error {
 		// 事务更新结果
 		e := g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
 			// 更新投票状态
-			_, e := dao.Poll.Ctx(ctx).TX(tx).Where(dao.Poll.Columns().Id, poll.Id).Update(dao.Poll.Columns().Status, consts.PollStatusNeedModify)
+			_, e := dao.Poll.Ctx(ctx).TX(tx).Where(dao.Poll.Columns().Id, poll.Id).Update(do.Poll{
+				Status: int(consts.PollStatusNeedModify),
+			})
 			if e != nil {
 				return gerror.Wrap(e, "更新投票状态失败")
 			}
