@@ -18,6 +18,7 @@ import (
 // 基本目的是清理后台干预了的投票
 func RemoveInvalidPolls(ctx context.Context) error {
 	g.Log().Debug(ctx, "开始清理无效投票...")
+	defer g.Log().Debug(ctx, "清理无效投票完成！")
 	params := &model.GetPollListInput{
 		StatusStart:     0,
 		StatusEnd:       2, // 包含 2 是因为：处理系统错误中断导致的状态异常
@@ -58,7 +59,7 @@ func RemoveInvalidPolls(ctx context.Context) error {
 				}
 				go service.Cache().ClearCacheAfterPollUpdated(ctx, 0, poll.ID, poll.SentenceUUID) // 清除缓存
 			} else {
-				g.Log().Debugf(ctx, "投票 %d: 句子 %s 状态为 %s，属于有效投票，跳过……", poll.ID, poll.Sentence.Status)
+				g.Log().Debugf(ctx, "投票 %d: 句子 %s 状态为 %s，属于有效投票，跳过……", poll.ID, poll.Sentence.UUID, poll.Sentence.Status)
 			}
 		}
 		params.Page++

@@ -14,6 +14,7 @@ import (
 
 func CalcReviewerAdoptionRate(ctx context.Context) error {
 	g.Log().Debug(ctx, "开始计算审核员采纳率……")
+	defer g.Log().Debug(ctx, "计算审核员采纳率完成！")
 	// 暴力获取存在记录的审核员和管理员（且当前存在权限的）
 	records, err := g.DB().Ctx(ctx).Raw(
 		fmt.Sprintf("SELECT `%s` FROM `%s` WHERE `%s` in ("+

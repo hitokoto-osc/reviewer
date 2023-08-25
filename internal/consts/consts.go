@@ -21,4 +21,6 @@ const (
 	PollRulingNeedForCommonUserPollThreshold = 20 // 20 票
 	PollRulingNeedForCommonUserPollRate      = 0.5
 	PollOverdueThreshold                     = 7 // 7 天
+
+	ReviewerInactiveDays = 30 // 30 天
 )

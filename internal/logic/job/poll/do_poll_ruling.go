@@ -27,7 +27,8 @@ var FieldNeedEdited = "NeedEdited"
 
 // DoPollRuling 处理投票
 func DoPollRuling(ctx context.Context) error {
-	g.Log().Debug(ctx, "开始处理投票...")
+	g.Log().Debug(ctx, "开始裁决投票...")
+	defer g.Log().Debug(ctx, "裁决投票任务执行完成")
 	var (
 		page      = 1
 		pageSize  = 100

@@ -109,6 +109,7 @@ func (s *sPoll) CreatePollByPending(ctx context.Context, pending *entity.Pending
 	if err != nil {
 		return nil, err
 	}
+	go service.Cache().ClearCacheAfterPollUpdated(ctx, 0, uint(poll.Id), poll.SentenceUuid)
 	return poll, nil
 }
 

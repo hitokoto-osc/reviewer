@@ -23,6 +23,7 @@ import (
 // 将过期投票直接修改为亟待审核
 func MoveOverduePolls(ctx context.Context) error {
 	g.Log().Debug(ctx, "开始移动过期投票...")
+	defer g.Log().Debug(ctx, "移动过期投票任务执行完成")
 	var (
 		polls     []entity.Poll
 		page      = 1
@@ -37,6 +38,7 @@ func MoveOverduePolls(ctx context.Context) error {
 	if err != nil {
 		return gerror.Wrap(err, "获取过期投票数量失败")
 	}
+	g.Log().Debugf(ctx, "共有 %d 个过期投票", total)
 	if total == 0 {
 		return nil
 	}
@@ -48,6 +50,8 @@ func MoveOverduePolls(ctx context.Context) error {
 		if err != nil {
 			return gerror.Wrapf(err, "获取第 %d 页记录失败", page)
 		}
+		// g.Log().Debug(ctx, "%+v", polls)
+		// return nil
 		// 获取 pollLogs
 		var (
 			poll    *entity.Poll

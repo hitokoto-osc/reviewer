@@ -76,11 +76,9 @@ func (c *ControllerV1) NewPoll(ctx context.Context, req *v1.NewPollReq) (res *v1
 		},
 		RemainPending: count - 1,
 	}
-	go func() {
-		e := service.Notification().PollCreatedNotification(ctx, &res.Poll)
-		if e != nil {
-			g.Log().Errorf(ctx, "send poll created notification failed: %s", e.Error())
-		}
-	}()
+	e := service.Notification().PollCreatedNotification(ctx, &res.Poll)
+	if e != nil {
+		g.Log().Errorf(ctx, "send poll created notification failed: %s", e.Error())
+	}
 	return res, nil
 }

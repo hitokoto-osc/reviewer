@@ -65,19 +65,19 @@ func (s *sCache) RemovePrefixes(ctx context.Context, prefixes []string) error {
 
 func (s *sCache) ClearCacheAfterPollUpdated(ctx context.Context, userID, pollID uint, sentenceUUID string) {
 	if e := service.Cache().RemovePrefixes(ctx, []string{
-		"poll:list",
-		"poll_logs:uid:" + gconv.String(userID),
+		"SelectCache:poll:list",
+		"SelectCache:poll_logs:uid:" + gconv.String(userID),
 	}); e != nil {
 		e = gerror.Wrap(e, "failed to remove cache: ")
 		g.Log().Error(ctx, e)
 	}
 	if e := g.DB().GetCache().Removes(ctx, g.Slice{
-		"poll:id:" + gconv.String(pollID),
-		"poll:sentence_uuid:" + sentenceUUID,
-		"poll_log:id:" + gconv.String(pollID),
-		"poll_log:sentence_uuid:" + sentenceUUID,
-		"poll_marks:pid:" + gconv.String(pollID),
-		"user:poll:uid:" + gconv.String(userID),
+		"SelectCache:poll:id:" + gconv.String(pollID),
+		"SelectCache:poll:sentence_uuid:" + sentenceUUID,
+		"SelectCache:poll_log:id:" + gconv.String(pollID),
+		"SelectCache:poll_log:sentence_uuid:" + sentenceUUID,
+		"SelectCache:poll_marks:pid:" + gconv.String(pollID),
+		"SelectCache:user:poll:uid:" + gconv.String(userID),
 	}); e != nil {
 		e = gerror.Wrap(e, "failed to remove cache: ")
 		g.Log().Error(ctx, e)

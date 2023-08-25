@@ -22,6 +22,7 @@ import (
 
 func DailyReport(ctx context.Context) error {
 	g.Log().Debug(ctx, "开始执行每日投票报告任务...")
+	defer g.Log().Debug(ctx, "每日投票报告任务执行完成")
 	var (
 		pipelines   []entity.PollPipeline
 		pollsActive []entity.Poll
@@ -94,7 +95,6 @@ func DailyReport(ctx context.Context) error {
 	if err != nil {
 		return gerror.Wrap(err, "发送通知失败")
 	}
-	g.Log().Debug(ctx, "每日投票报告任务执行完成")
 	return nil
 }
 
