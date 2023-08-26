@@ -143,8 +143,6 @@ func (p *pool) shouldDoRemove(cc ConnectionController) bool {
 
 func (p *pool) releaseConnectionController(controller ConnectionController) error {
 	cc := controller.(*connectionController)
-	cc.mu.Lock()
-	defer cc.mu.Unlock()
 	if !cc.IsClosed() {
 		if p.shouldDoRemove(cc) {
 			err := cc.Close()

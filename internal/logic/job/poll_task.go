@@ -16,7 +16,7 @@ const PollDailyTaskCron = "0 30 8 */1 * *" // 每天八点半执行
 
 func DoPollTickTask(ctx context.Context) {
 	wg := sync.WaitGroup{}
-	wg.Add(2)
+	wg.Add(1)
 	e := make(chan error, 2)
 	go func() {
 		defer wg.Done()
@@ -25,13 +25,13 @@ func DoPollTickTask(ctx context.Context) {
 			e <- err
 		}
 	}()
-	go func() {
-		defer wg.Done()
-		err := poll.MoveOverduePolls(ctx)
-		if err != nil {
-			e <- err
-		}
-	}()
+	//  go func() {
+	//	  defer wg.Done()
+	//	  err := poll.MoveOverduePolls(ctx)
+	//	  if err != nil {
+	//	      e <- err
+	//	  }
+	//  }()
 	go func() {
 		wg.Wait()
 		close(e)
@@ -46,11 +46,11 @@ func DoPollTickTask(ctx context.Context) {
 }
 
 func DoPollDailyTask(ctx context.Context) {
-	err := poll.ClearInactiveReviewer(ctx)
-	if err != nil {
-		g.Log().Error(ctx, err)
-	}
-	err = poll.DailyReport(ctx)
+	//  err := poll.ClearInactiveReviewer(ctx)
+	//  if err != nil {
+	//	  g.Log().Error(ctx, err)
+	//  }
+	err := poll.DailyReport(ctx)
 	if err != nil {
 		g.Log().Error(ctx, err)
 	}

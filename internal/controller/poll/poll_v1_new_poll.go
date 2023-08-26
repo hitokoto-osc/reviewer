@@ -6,7 +6,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 
 	"github.com/hitokoto-osc/reviewer/internal/model"
-	"github.com/hitokoto-osc/reviewer/utility/time"
+	vtime "github.com/hitokoto-osc/reviewer/utility/time"
 
 	"golang.org/x/sync/errgroup"
 
@@ -71,8 +71,8 @@ func (c *ControllerV1) NewPoll(ctx context.Context, req *v1.NewPollReq) (res *v1
 			Reject:             poll.Reject,
 			NeedModify:         poll.NeedEdited,
 			NeedCommonUserPoll: poll.NeedUserPoll,
-			CreatedAt:          (*time.Time)(poll.CreatedAt),
-			UpdatedAt:          (*time.Time)(poll.UpdatedAt),
+			CreatedAt:          (*vtime.Time)(poll.CreatedAt),
+			UpdatedAt:          (*vtime.Time)(poll.UpdatedAt),
 		},
 		RemainPending: count - 1,
 	}

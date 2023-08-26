@@ -150,7 +150,7 @@ func (s *sPoll) GetPollList(ctx context.Context, in *model.GetPollListInput) (*m
 	eg.Go(func() error {
 		var e error
 		q := query.Clone()
-		count, e = q.Count(&count)
+		count, e = q.Count()
 		return e
 	})
 	if err := eg.Wait(); err != nil {
@@ -251,7 +251,7 @@ func (s *sPoll) Poll(ctx context.Context, in *model.PollInput) error {
 		eg, egCtx := errgroup.WithContext(ctx)
 		// 提交投票标记
 		if len(in.Marks) > 0 {
-			list := make([]do.PollMarkRelation, len(in.Marks))
+			list := make([]do.PollMarkRelation, 0, len(in.Marks))
 			for _, v := range in.Marks {
 				list = append(list, do.PollMarkRelation{
 					UserId:       int(in.UserID),
@@ -262,6 +262,7 @@ func (s *sPoll) Poll(ctx context.Context, in *model.PollInput) error {
 					CreatedAt:    createdAt,
 				})
 			}
+			fmt.Printf("%+v\n", list)
 			eg.Go(func() error {
 				_, e := dao.PollMarkRelation.Ctx(egCtx).TX(tx).Data(list).Insert()
 				return e
@@ -285,7 +286,7 @@ func (s *sPoll) Poll(ctx context.Context, in *model.PollInput) error {
 		// 更新用户投票数据
 		if in.Method != consts.PollMethodNeedCommonUserPoll {
 			eg.Go(func() error {
-				affectedRows, err := dao.PollUsers.Ctx(egCtx).TX(tx).Where(dao.PollUsers.Columns().Id, in.UserID).
+				affectedRows, err := dao.PollUsers.Ctx(egCtx).TX(tx).Where(dao.PollUsers.Columns().UserId, in.UserID).
 					Data(g.Map{
 						dao.PollUsers.Columns().Points:        gdb.Raw(fmt.Sprintf("%s+%d", dao.PollUsers.Columns().Points, in.Point)),
 						translatePollMethodToField(in.Method): gdb.Raw(fmt.Sprintf("%s+%d", translatePollMethodToField(in.Method), in.Point)),
@@ -359,7 +360,7 @@ func (s *sPoll) CancelPollByID(ctx context.Context, in *model.CancelPollInput) e
 		// 更新用户投票信息
 		if in.PolledData.Method != consts.PollMethodNeedCommonUserPoll {
 			eg.Go(func() error {
-				affectedRows, e := dao.PollUsers.Ctx(egCtx).TX(tx).Where(dao.PollUsers.Columns().Id, in.UserID).
+				affectedRows, e := dao.PollUsers.Ctx(egCtx).TX(tx).Where(dao.PollUsers.Columns().UserId, in.UserID).
 					Data(g.Map{
 						dao.PollUsers.Columns().Points: gdb.Raw(
 							fmt.Sprintf("%s-%d",

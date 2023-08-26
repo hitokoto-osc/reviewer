@@ -41,7 +41,7 @@ func (c *ControllerV1) GetPolls(ctx context.Context, req *v1.GetPollsReq) (res *
 		return nil, gerror.WrapCode(gcode.CodeOperationFailed, err, "获取投票列表失败")
 	}
 	res = (*v1.GetPollsRes)(out)
-	keys, e = g.DB().GetCache().KeyStrings(ctx)
-	g.Log().Debugf(ctx, "%+v %+v", keys, e)
+	// keys, e = g.DB().GetCache().KeyStrings(ctx)
+	// g.Log().Debugf(ctx, "%+v %+v", keys, e)
 	return res, nil
 }

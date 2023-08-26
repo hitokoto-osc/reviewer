@@ -75,7 +75,10 @@ func DoPollRuling(ctx context.Context) error {
 				g.Log().Debugf(ctx, "投票 %d: 未达到阈值，跳过。", poll.Id)
 				continue
 			}
-			return service.Poll().DoRuling(ctx, poll, fieldToStatus[maxField])
+			e := service.Poll().DoRuling(ctx, poll, fieldToStatus[maxField])
+			if e != nil {
+				return gerror.Wrapf(e, "处理投票 %d 失败", poll.Id)
+			}
 		}
 		page++
 		if page > totalPage {
