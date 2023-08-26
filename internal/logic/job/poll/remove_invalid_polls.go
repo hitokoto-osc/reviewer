@@ -42,7 +42,7 @@ func RemoveInvalidPolls(ctx context.Context) error {
 			poll := &out.Collection[i]
 			g.Log().Debugf(ctx, "正在处理投票 %d...", poll.ID)
 			if poll.Sentence.Status == consts.HitokotoStatusApproved || poll.Sentence.Status == consts.HitokotoStatusRejected {
-				g.Log().Debugf(ctx, "投票 %d: 句子 %s 状态为 %s，属于无效投票（已通过或已驳回），开始清除……", poll.ID, poll.Sentence.Status)
+				g.Log().Debugf(ctx, "投票 %d: 句子 %s 状态为 %s，属于无效投票（已通过或已驳回），开始清除……", poll.ID, poll.Sentence.UUID, poll.Sentence.Status)
 				var status int
 				if poll.Sentence.Status == consts.HitokotoStatusApproved {
 					status = int(consts.PollStatusApproved)

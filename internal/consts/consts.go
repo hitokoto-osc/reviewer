@@ -23,4 +23,5 @@ const (
 	PollOverdueThreshold                     = 7 // 7 天
 
 	ReviewerInactiveDays = 30 // 30 天
+	PollOverdueDays      = 15 // 15 天
 )
