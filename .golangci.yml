@@ -124,3 +124,4 @@ run:
   timeout: 5m
   skip-files:
     - internal/packed/data.go
+    - internal/packed/build_pack_data.go
