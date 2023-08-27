@@ -13,4 +13,4 @@ RUN chmod +x $WORKDIR/hitokoto_reviewer
 #                                   START
 ###############################################################################
 WORKDIR $WORKDIR
-CMD $WORKDIR/hitokoto_reviewer
+ENTRYPOINT ["sh"]
