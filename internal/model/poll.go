@@ -51,6 +51,7 @@ type GetPollListInput struct {
 	WithPollRecords bool
 	WithMarks       bool
 	WithCache       bool
+	PolledFilter    consts.PollListPolledFilter
 	Page            int
 	PageSize        int
 }

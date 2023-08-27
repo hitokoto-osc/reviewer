@@ -48,7 +48,7 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 	}
 	return g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
 		// 首先先锁定投票
-		_, e := dao.Poll.Ctx(ctx).TX(tx).Where(dao.Poll.Columns().Id, poll.Id).LockUpdate().Update(do.Poll{
+		_, e := dao.Poll.Ctx(ctx).TX(tx).Where(dao.Poll.Columns().Id, poll.Id).Update(do.Poll{
 			Status: int(consts.PollStatusProcessing),
 		})
 		if e != nil {

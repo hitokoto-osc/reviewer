@@ -28,12 +28,15 @@ type (
 		// Poll 投票
 		Poll(ctx context.Context, in *model.PollInput) error
 		CancelPollByID(ctx context.Context, in *model.CancelPollInput) error
+		CountUserUnreviewedPoll(ctx context.Context, uid uint) (int, error)
 		GetPollLogsBySentenceUUID(ctx context.Context, uuid string) ([]entity.PollLog, error)
 		GetPollLogsByPollID(ctx context.Context, pid int) ([]entity.PollLog, error)
 		GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error)
 		// GetPollMarksByPollID 获取指定投票的标签列表（不带用户信息）
 		GetPollMarksByPollID(ctx context.Context, pid uint) ([]int, error)
 		GetRulingThreshold(isExpandedPoll bool, totalTickets int) int
+		// DoRuling 处理投票
+		// nolint:gocyclo
 		DoRuling(ctx context.Context, poll *entity.Poll, target consts.PollStatus) error
 	}
 )

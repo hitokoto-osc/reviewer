@@ -34,6 +34,7 @@ func (c *ControllerV1) GetPolls(ctx context.Context, req *v1.GetPollsReq) (res *
 		WithPollRecords: req.WithRecords,
 		WithMarks:       true,
 		WithCache:       true,
+		PolledFilter:    req.PolledFilter,
 		Page:            req.Page,
 		PageSize:        req.PageSize,
 	})

@@ -4,6 +4,15 @@ const (
 	PollMaxOpenPolls = 100 // 最大开放投票数
 )
 
+type PollListPolledFilter int
+
+const (
+	PollListPolledFilterAll        PollListPolledFilter = iota // 全部
+	PollListPolledFilterReviewed                               // 已投票
+	PollListPolledFilterUnreviewed                             // 未投票
+
+)
+
 // PollMethod 审核员投票的类型
 type PollMethod int
 

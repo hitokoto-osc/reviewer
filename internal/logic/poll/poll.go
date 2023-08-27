@@ -127,7 +127,33 @@ func (s *sPoll) GetPollList(ctx context.Context, in *model.GetPollListInput) (*m
 		count  int
 	)
 	// fetch poll list
-	if in.StatusStart == in.StatusEnd || in.StatusEnd == 0 {
+	if in.PolledFilter != consts.PollListPolledFilterAll {
+		filter := ""
+		if in.PolledFilter == consts.PollListPolledFilterReviewed {
+			filter = "NOT"
+		}
+		sql := fmt.Sprintf(`
+SELECT
+	poll.*
+FROM
+	%s poll
+	LEFT JOIN %s log ON poll.%s = log.%s  AND log.%s = %d
+WHERE
+	log.%s IS %s NULL AND
+	poll.%s = 1
+`,
+			dao.Poll.Table(),
+			dao.PollLog.Table(),
+			dao.Poll.Columns().Id,
+			dao.PollLog.Columns().PollId,
+			dao.PollLog.Columns().UserId,
+			in.UserID,
+			dao.PollLog.Columns().Id,
+			filter,
+			dao.Poll.Columns().Status,
+		)
+		query = query.Raw(sql)
+	} else if in.StatusStart == in.StatusEnd || in.StatusEnd == 0 { // 之后才判断状态
 		query = query.Where(dao.Poll.Columns().Status, in.StatusStart)
 	} else {
 		query = query.WhereBetween(dao.Poll.Columns().Status, in.StatusStart, in.StatusEnd)
@@ -138,9 +164,31 @@ func (s *sPoll) GetPollList(ctx context.Context, in *model.GetPollListInput) (*m
 	eg.Go(func() error {
 		q := query.Clone()
 		if in.WithCache {
+			name := ""
+			if in.PolledFilter == consts.PollListPolledFilterAll {
+				name = fmt.Sprintf(
+					"poll:list:status:%d:%d:page:%d:limit:%d:%s",
+					in.Page,
+					in.PageSize,
+					in.StatusStart,
+					in.StatusEnd,
+					in.Order,
+				)
+			} else {
+				name = fmt.Sprintf(
+					"poll:list:reviewed_filter:%d:user:%d:status:%d:%d:page:%d:limit:%d:%s",
+					in.PolledFilter,
+					in.UserID,
+					in.Page,
+					in.PageSize,
+					in.StatusStart,
+					in.StatusEnd,
+					in.Order,
+				)
+			}
 			q = q.Cache(gdb.CacheOption{
 				Duration: time.Minute * 10,
-				Name:     fmt.Sprintf("poll:list:status:%d:%d:page:%d:limit:%d:%s", in.Page, in.PageSize, in.StatusStart, in.StatusEnd, in.Order),
+				Name:     name,
 				Force:    false,
 			})
 		}
@@ -406,4 +454,36 @@ func (s *sPoll) CancelPollByID(ctx context.Context, in *model.CancelPollInput) e
 	}
 	go service.Cache().ClearCacheAfterPollUpdated(ctx, in.UserID, in.PollID, in.SentenceUUID)
 	return nil
+}
+
+func (s *sPoll) CountUserUnreviewedPoll(ctx context.Context, uid uint) (int, error) {
+	record, err := dao.Poll.Ctx(ctx).
+		Cache(gdb.CacheOption{
+			Duration: time.Minute * 10,
+			Name:     fmt.Sprintf("user:poll:unreviewed:uid:%d:count", uid),
+		}).
+		Raw(
+			fmt.Sprintf(`
+SELECT
+	COUNT(1)
+FROM
+	%s poll
+	LEFT JOIN %s log ON poll.%s = log.%s  AND log.%s = %d
+WHERE
+	log.%s IS NULL AND
+	poll.%s = 1`,
+				dao.Poll.Table(),
+				dao.PollLog.Table(),
+				dao.Poll.Columns().Id,
+				dao.PollLog.Columns().PollId,
+				dao.PollLog.Columns().UserId,
+				uid,
+				dao.PollLog.Columns().Id,
+				dao.Poll.Columns().Status,
+			),
+		).Value()
+	if err != nil {
+		return 0, err
+	}
+	return record.Int(), nil
 }

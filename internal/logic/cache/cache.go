@@ -78,6 +78,7 @@ func (s *sCache) ClearCacheAfterPollUpdated(ctx context.Context, userID, pollID 
 		"SelectCache:poll_log:sentence_uuid:" + sentenceUUID,
 		"SelectCache:poll_marks:pid:" + gconv.String(pollID),
 		"SelectCache:user:poll:uid:" + gconv.String(userID),
+		"SelectCache:user:poll:unreviewed:uid:" + gconv.String(userID) + ":count",
 	}); e != nil {
 		e = gerror.Wrap(e, "failed to remove cache: ")
 		g.Log().Error(ctx, e)
