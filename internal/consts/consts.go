@@ -15,7 +15,7 @@ const (
 
 	PollRulingUserID                         = 4756
 	PollRulingUsername                       = "众裁委员会"
-	PollRulingInitThreshold                  = 5
+	PollRulingInitThreshold                  = 4
 	PollRulingNormalThreshold                = 10 // 10 票
 	PollRulingNormalRate                     = 0.6
 	PollRulingNeedForCommonUserPollThreshold = 20 // 20 票

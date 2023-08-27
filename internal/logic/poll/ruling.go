@@ -34,7 +34,7 @@ func (s *sPoll) GetRulingThreshold(isExpandedPoll bool, totalTickets int) int {
 	return threshold
 }
 
-// DoPollRuling 处理投票
+// DoRuling 处理投票
 // nolint:gocyclo
 func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.PollStatus) error {
 	// 判断是否需要修改
