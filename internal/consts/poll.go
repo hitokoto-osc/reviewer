@@ -1,7 +1,7 @@
 package consts
 
 const (
-	PollMaxOpenPolls = 30 // 最大开放投票数
+	PollMaxOpenPolls = 100 // 最大开放投票数
 )
 
 // PollMethod 审核员投票的类型
