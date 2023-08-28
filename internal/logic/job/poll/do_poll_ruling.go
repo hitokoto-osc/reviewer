@@ -65,7 +65,7 @@ func DoPollRuling(ctx context.Context) error {
 			} else {
 				maxField = FieldReject
 			}
-			if poll.NeedEdited > poll.Accept || poll.NeedEdited > poll.Reject {
+			if poll.NeedEdited > poll.Accept && poll.NeedEdited > poll.Reject {
 				maxField = FieldNeedEdited
 			}
 			// 阈值策略
