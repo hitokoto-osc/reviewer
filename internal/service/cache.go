@@ -14,6 +14,8 @@ type (
 		RemovePrefix(ctx context.Context, prefix string) error
 		RemovePrefixes(ctx context.Context, prefixes []string) error
 		ClearCacheAfterPollUpdated(ctx context.Context, userID, pollID uint, sentenceUUID string)
+		ClearPollListCache(ctx context.Context)
+		ClearPollUserCache(ctx context.Context, userID uint)
 	}
 )
 

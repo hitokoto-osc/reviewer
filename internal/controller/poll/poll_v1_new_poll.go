@@ -26,7 +26,7 @@ func (c *ControllerV1) NewPoll(ctx context.Context, req *v1.NewPollReq) (res *v1
 	if err != nil {
 		return nil, err
 	}
-	if count > consts.PollMaxOpenPolls {
+	if count >= consts.PollMaxOpenPolls {
 		return nil, gerror.NewCode(gcode.CodeOperationFailed, "待投票的句子过多，暂时无法创建新投票。")
 	}
 

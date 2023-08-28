@@ -141,7 +141,9 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 			if e != nil {
 				return gerror.Wrap(e, "赋予用户积分失败")
 			}
+			service.Cache().ClearPollUserCache(ctx, uint(pollLog.UserId))
 		}
+		service.Cache().ClearPollListCache(ctx)
 		// 提交句子到搜索引擎
 		e = service.Search().AddSentenceToSearch(ctx, pending)
 		if e != nil {
