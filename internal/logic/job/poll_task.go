@@ -10,8 +10,11 @@ import (
 	"github.com/gogf/gf/v2/os/gcron"
 )
 
-const PollTickTaskCron = "@every 30m"      // 每 30 分钟执行一次
-const PollDailyTaskCron = "0 30 8 */1 * *" // 每天八点半执行
+const (
+	PollTickTaskCron  = "0 */15 * * * *" // 每 15 分钟执行一次
+	PollDailyTaskCron = "0 30 8 */1 * *" // 每天八点半执行
+)
+
 // const PollDailyTaskCron = "@every 30s"
 
 func DoPollTickTask(ctx context.Context) {
