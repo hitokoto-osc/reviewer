@@ -3,8 +3,6 @@ package poll
 import (
 	"context"
 
-	"github.com/gogf/gf/v2/frame/g"
-
 	"github.com/hitokoto-osc/reviewer/internal/model"
 
 	"github.com/hitokoto-osc/reviewer/internal/consts"
@@ -24,8 +22,8 @@ func (c *ControllerV1) GetPolls(ctx context.Context, req *v1.GetPollsReq) (res *
 	if user.Role != consts.UserRoleAdmin && req.StatusEnd >= int(consts.PollStatusApproved) {
 		return nil, gerror.NewCode(gcode.CodeInvalidOperation, "权限不足")
 	}
-	keys, e := g.DB().GetCache().KeyStrings(ctx)
-	g.Log().Debugf(ctx, "%+v %+v", keys, e)
+	// keys, e := g.DB().GetCache().KeyStrings(ctx)
+	// g.Log().Debugf(ctx, "%+v %+v", keys, e)
 	out, err := service.Poll().GetPollList(ctx, &model.GetPollListInput{
 		StatusStart:     req.StatusStart,
 		StatusEnd:       req.StatusEnd,

@@ -158,9 +158,15 @@ WHERE
 	} else {
 		query = query.WhereBetween(dao.Poll.Columns().Status, in.StatusStart, in.StatusEnd)
 	}
-	query = query.Order(dao.Poll.Columns().CreatedAt, in.Order).
-		Page(in.Page, in.PageSize)
 	eg, egCtx := errgroup.WithContext(ctx)
+	query.Ctx(egCtx)
+	eg.Go(func() error {
+		var e error
+		q := query.Clone()
+		count, e = q.Count()
+		g.Log().Debugf(ctx, "count: %d", count)
+		return e
+	})
 	eg.Go(func() error {
 		q := query.Clone()
 		if in.WithCache {
@@ -192,13 +198,7 @@ WHERE
 				Force:    false,
 			})
 		}
-		e := q.Scan(&result)
-		return e
-	})
-	eg.Go(func() error {
-		var e error
-		q := query.Clone()
-		count, e = q.Count()
+		e := q.Order(dao.Poll.Columns().CreatedAt, in.Order).Page(in.Page, in.PageSize).Scan(&result)
 		return e
 	})
 	if err := eg.Wait(); err != nil {
