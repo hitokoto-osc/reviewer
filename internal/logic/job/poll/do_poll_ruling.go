@@ -18,7 +18,7 @@ import (
 var fieldToStatus = map[string]consts.PollStatus{
 	"Approve":    consts.PollStatusApproved,
 	"Reject":     consts.PollStatusRejected,
-	"NeedModify": consts.PollStatusNeedModify,
+	"NeedEdited": consts.PollStatusNeedModify,
 }
 
 var FieldAccept = "Accept"
