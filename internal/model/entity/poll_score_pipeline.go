@@ -14,7 +14,7 @@ type PollScorePipeline struct {
 	PollId       int         `json:"pollId"       ` // 触发奖惩的投票
 	UserId       int         `json:"userId"       ` // 操作的用户
 	SentenceUuid string      `json:"sentenceUuid" ` // 触发奖惩的句子
-	Type         int         `json:"type"         ` // 奖励还是惩罚
+	Type         string      `json:"type"         ` // 奖励还是惩罚
 	Score        int         `json:"score"        ` // 分数
 	Reason       string      `json:"reason"       ` // 理由
 	CreatedAt    *gtime.Time `json:"createdAt"    ` //
