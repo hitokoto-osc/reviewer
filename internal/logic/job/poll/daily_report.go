@@ -236,11 +236,11 @@ func calcProcessedFieldCount(pipelines []entity.PollPipeline) (approve, reject, 
 func calcPolledFieldCount(logs []entity.PollLog) (approve, reject, needModify int) {
 	for _, log := range logs {
 		switch log.Type {
-		case int(consts.PollStatusApproved):
+		case int(consts.PollMethodApprove):
 			approve += log.Point
-		case int(consts.PollStatusRejected):
+		case int(consts.PollMethodReject):
 			reject += log.Point
-		case int(consts.PollStatusNeedModify):
+		case int(consts.PollMethodNeedModify):
 			needModify += log.Point
 		}
 	}
