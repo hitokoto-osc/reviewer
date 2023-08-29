@@ -35,7 +35,11 @@ type PollFinishedNotificationMessage struct {
 	// TODO: 加入审核员投票的意见标签？
 }
 
-func (s *sNotification) PollFinishedNotification(ctx context.Context, poll *model.PollElement, pollLogs []entity.PollLog) error {
+func (s *sNotification) PollFinishedNotification(
+	ctx context.Context,
+	poll *model.PollElement,
+	pollLogs []entity.PollLog,
+) error {
 	usersThatShouldDoNotification, err := s.GetUsersShouldDoNotification(ctx, PollFinishedNotificationSettingField)
 	if err != nil {
 		return err

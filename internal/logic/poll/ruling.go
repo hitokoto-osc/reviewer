@@ -4,6 +4,8 @@ import (
 	"context"
 	"math"
 
+	"github.com/gogf/gf/v2/os/gtime"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
@@ -12,6 +14,7 @@ import (
 	"github.com/hitokoto-osc/reviewer/internal/model/do"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
 	"github.com/hitokoto-osc/reviewer/internal/service"
+	"github.com/hitokoto-osc/reviewer/utility/time"
 
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 )
@@ -107,9 +110,9 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 			}
 		}
 		// 更新投票状态
-		_, e = dao.Poll.Ctx(ctx).TX(tx).Where(dao.Poll.Columns().Id, poll.Id).Update(do.Poll{
-			Status: int(target),
-		})
+		poll.UpdatedAt = gtime.Now()
+		poll.Status = int(target)
+		_, e = dao.Poll.Ctx(ctx).TX(tx).Where(dao.Poll.Columns().Id, poll.Id).Update(poll)
 		if e != nil {
 			return gerror.Wrapf(e, "更新投票 %d 状态失败", poll.Id)
 		}
@@ -122,6 +125,33 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 		if e != nil {
 			return gerror.Wrapf(e, "新增操作日记失败")
 		}
+
+		pollElement := &model.PollElement{
+			ID:           uint(poll.Id),
+			SentenceUUID: poll.SentenceUuid,
+			Sentence: &model.HitokotoV1Schema{
+				ID:         uint(pending.Id),
+				UUID:       pending.Uuid,
+				Hitokoto:   pending.Hitokoto,
+				Type:       consts.HitokotoType(pending.Type),
+				From:       pending.From,
+				FromWho:    pending.FromWho,
+				Creator:    pending.Creator,
+				CreatorUID: uint(pending.CreatorUid),
+				Reviewer:   0,
+				Status:     consts.HitokotoStatusPending,
+				PollStatus: consts.PollStatus(poll.Status),
+				CreatedAt:  pending.CreatedAt,
+			},
+			Status:             consts.PollStatus(poll.Status),
+			Approve:            poll.Accept,
+			Reject:             poll.Reject,
+			NeedModify:         poll.NeedEdited,
+			NeedCommonUserPoll: poll.NeedUserPoll,
+			CreatedAt:          (*time.Time)(poll.CreatedAt),
+			UpdatedAt:          (*time.Time)(poll.UpdatedAt),
+		}
+
 		// 赋予用户积分
 		for _, pollLog := range pollLogs {
 			var score int
@@ -143,6 +173,12 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 			}
 			service.Cache().ClearPollUserCache(ctx, uint(pollLog.UserId))
 		}
+
+		// DoReviewedNotification
+		if err = doNotificationAfterPollRuling(ctx, pollElement, pollLogs); err != nil {
+			return gerror.Wrap(err, "发送投票结果通知失败")
+		}
+
 		service.Cache().ClearPollListCache(ctx)
 		// 提交句子到搜索引擎
 		e = service.Search().AddSentenceToSearch(ctx, pending)
@@ -151,4 +187,29 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 		}
 		return nil
 	})
+}
+
+func doNotificationAfterPollRuling(ctx context.Context, pollElement *model.PollElement, pollLogs []entity.PollLog) error {
+	if err := service.Notification().PollFinishedNotification(
+		ctx,
+		pollElement,
+		pollLogs,
+	); err != nil {
+		return gerror.Wrap(err, "发送投票结果通知失败")
+	}
+	if pollElement.Status != consts.PollStatusNeedModify {
+		if err := doReviewedNotification(ctx, pollElement); err != nil {
+			return gerror.Wrap(err, "发送审核结果通知失败")
+		}
+	}
+	return nil
+}
+
+func doReviewedNotification(ctx context.Context, pollElement *model.PollElement) error {
+	return service.Notification().SentenceReviewedNotification(
+		ctx,
+		pollElement,
+		consts.PollRulingUserID,
+		consts.PollRulingUsername,
+	)
 }
