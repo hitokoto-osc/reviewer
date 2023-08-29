@@ -174,18 +174,19 @@ func generateUserInformation(
 
 func getReviewsAndAdminsThatShouldDoNotification(ctx context.Context) ([]entity.Users, error) {
 	var users []entity.Users
-	err := dao.Users.Ctx(ctx).Raw(fmt.Sprintf(
-		"SELECT * FROM `%s` WHERE `%s` = 1 OR `%s` = 1 IN ("+ // 筛选出管理员和审核员
-			"SELECT `%s` FROM `%s` WHERE `%s` = 1 AND `%s` = 1"+ // 筛选出开启通知的用户
-			")",
-		dao.Users.Table(),
-		dao.Users.Columns().IsReviewer,
-		dao.Users.Columns().IsAdmin,
-		dao.UserNotification.Columns().UserId,
-		dao.UserNotification.Table(),
-		dao.UserNotification.Columns().EmailNotificationGlobal,
-		dao.UserNotification.Columns().EmailNotificationPollDailyReport,
-	)).Scan(&users)
+	err := dao.Users.Ctx(ctx).Raw(
+		fmt.Sprintf(
+			"SELECT * FROM `%s` WHERE `%s` IN (SELECT `%s` FROM `%s` WHERE `%s` = 1 AND `%s` = 1) AND (`%s` = 1 OR `%s` = 1)",
+			dao.Users.Table(),
+			dao.Users.Columns().Id,
+			dao.UserNotification.Columns().UserId,
+			dao.UserNotification.Table(),
+			dao.UserNotification.Columns().EmailNotificationGlobal,
+			dao.UserNotification.Columns().EmailNotificationPollDailyReport,
+			dao.Users.Columns().IsReviewer,
+			dao.Users.Columns().IsAdmin,
+		),
+	).Scan(&users)
 	return users, err
 }
 

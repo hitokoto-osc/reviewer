@@ -10,7 +10,11 @@ import (
 	"github.com/hitokoto-osc/reviewer/internal/dao"
 )
 
-func (s *sNotification) GetUserIDsShouldDoNotification(ctx context.Context, userIDs []uint, settingField string) ([]uint, error) {
+func (s *sNotification) GetUserIDsShouldDoNotification(
+	ctx context.Context,
+	userIDs []uint,
+	settingField string,
+) ([]uint, error) {
 	records, err := dao.UserNotification.Ctx(ctx).
 		Fields(dao.UserNotification.Columns().UserId).                    // 只获取 UserId
 		Where(dao.UserNotification.Columns().UserId, userIDs).            // 给定 UserIds 列表
@@ -23,7 +27,10 @@ func (s *sNotification) GetUserIDsShouldDoNotification(ctx context.Context, user
 	return gconv.Uints(records), nil
 }
 
-func (s *sNotification) GetUsersShouldDoNotification(ctx context.Context, settingField string) ([]entity.Users, error) {
+func (s *sNotification) GetUsersShouldDoNotification(
+	ctx context.Context,
+	settingField string,
+) ([]entity.Users, error) {
 	users, err := service.User().GetReviewersAndAdmins(ctx)
 	if err != nil {
 		return nil, err
@@ -32,7 +39,11 @@ func (s *sNotification) GetUsersShouldDoNotification(ctx context.Context, settin
 	for i := 0; i < len(users); i++ {
 		usersIDs = append(usersIDs, users[i].Id)
 	}
-	userIdsThatShouldDoNotification, err := s.GetUserIDsShouldDoNotification(ctx, usersIDs, PollCreatedNotificationSettingField)
+	userIdsThatShouldDoNotification, err := s.GetUserIDsShouldDoNotification(
+		ctx,
+		usersIDs,
+		PollCreatedNotificationSettingField,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +63,11 @@ func (s *sNotification) GetUsersShouldDoNotification(ctx context.Context, settin
 	return users, nil
 }
 
-func (s *sNotification) IsUserShouldDoNotification(ctx context.Context, settingField string, userID uint) (bool, error) {
+func (s *sNotification) IsUserShouldDoNotification(
+	ctx context.Context,
+	settingField string,
+	userID uint,
+) (bool, error) {
 	record, err := dao.UserNotification.Ctx(ctx).
 		Where(dao.UserNotification.Columns().UserId, userID).             // 给定 UserIds 列表
 		Where(dao.UserNotification.Columns().EmailNotificationGlobal, 1). // 全局开启邮件通知
