@@ -40,6 +40,9 @@ func (s *sPoll) GetRulingThreshold(isExpandedPoll bool, totalTickets int) int {
 // DoRuling 处理投票
 // nolint:gocyclo
 func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.PollStatus) error {
+	if target != consts.PollStatusRejected && target != consts.PollStatusApproved && target != consts.PollStatusNeedModify {
+		return gerror.New("无效的投票状态")
+	}
 	// 判断是否需要修改
 	var (
 		pollLogs []entity.PollLog
