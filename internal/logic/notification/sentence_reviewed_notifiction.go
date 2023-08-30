@@ -25,6 +25,7 @@ type SentenceReviewedNotificationMessage struct {
 	Type       string  `json:"type"`        // Hitokoto Type
 	Creator    string  `json:"creator"`     // Creator
 	CreatorUID uint    `json:"creator_uid"` // CreatorUID
+	CreatedAt  string  `json:"created_at"`  // Sentence CreatedAt
 
 	OperatedAt   string `json:"operated_at"`   // 操作时间
 	ReviewerName string `json:"reviewer_name"` // 审核员名称
@@ -58,6 +59,7 @@ func (s *sNotification) SentenceReviewedNotification(
 		Type:         string(poll.Sentence.Type),
 		Creator:      poll.Sentence.Creator,
 		CreatorUID:   poll.Sentence.CreatorUID,
+		CreatedAt:    poll.Sentence.CreatedAt,
 		OperatedAt:   poll.UpdatedAt.Format("c"),
 		ReviewerName: reviewerName,
 		ReviewerUID:  int(reviewerUID),
