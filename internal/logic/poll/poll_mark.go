@@ -36,5 +36,28 @@ func (s *sPoll) GetPollMarksByPollID(ctx context.Context, pid uint) ([]int, erro
 	if err != nil {
 		return nil, err
 	}
+	if len(marks) == 0 {
+		return make([]int, 0), nil
+	}
+	return gconv.Ints(marks), nil
+}
+
+func (s *sPoll) GetPollMarksByPollIDAndUserID(ctx context.Context, pid, userID int) ([]int, error) {
+	marks, err := dao.PollMarkRelation.Ctx(ctx).Cache(gdb.CacheOption{
+		Duration: time.Minute * 10, // 10 分钟
+		Name:     "poll_marks:pid:" + strconv.Itoa(pid) + ":uid:" + strconv.Itoa(userID),
+		Force:    false,
+	}).
+		Where(dao.PollMarkRelation.Columns().PollId, pid).
+		Where(dao.PollMarkRelation.Columns().UserId, userID).
+		Fields(dao.PollMarkRelation.Columns().MarkId).
+		Distinct().
+		Array()
+	if err != nil {
+		return nil, err
+	}
+	if len(marks) == 0 {
+		return make([]int, 0), nil
+	}
 	return gconv.Ints(marks), nil
 }

@@ -28,7 +28,7 @@ func (c *ControllerV1) GetUser(ctx context.Context, req *v1.GetUserReq) (res *v1
 		return nil, err
 	}
 
-	var pollLogs []model.UserPollLogWithSentence
+	var pollLogs []model.UserPollLogWithSentenceAndUserMarks
 	// 是否需要附带投票记录
 	if req.WithPollLogs {
 		var out *model.GetUserPollLogsWithSentenceOutput

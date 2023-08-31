@@ -34,6 +34,7 @@ type (
 		GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error)
 		// GetPollMarksByPollID 获取指定投票的标签列表（不带用户信息）
 		GetPollMarksByPollID(ctx context.Context, pid uint) ([]int, error)
+		GetPollMarksByPollIDAndUserID(ctx context.Context, pid, userID int) ([]int, error)
 		GetRulingThreshold(isExpandedPoll bool, totalTickets int) int
 		// DoRuling 处理投票
 		// nolint:gocyclo

@@ -41,15 +41,16 @@ type UserPollLog struct {
 	UpdatedAt    *time.Time        `json:"updated_at" dc:"更新时间"`
 }
 
-type UserPollLogWithSentence struct {
+type UserPollLogWithSentenceAndUserMarks struct {
 	UserPollLog
-	Sentence *HitokotoV1Schema `json:"sentence" dc:"句子信息"`
+	Sentence  *HitokotoV1Schema `json:"sentence" dc:"句子信息"`
+	UserMarks []int             `json:"user_marks" dc:"用户投票标记"`
 }
 
 type UserPollElement struct {
-	UserPollLogWithSentence
-	PollInfo *PollElement `json:"poll_info" dc:"投票信息"`
-	Marks    []int        `json:"marks" dc:"投票标记"`
+	UserPollLogWithSentenceAndUserMarks
+	PollInfo  *PollElement `json:"poll_info" dc:"投票信息"`
+	PollMarks []int        `json:"poll_marks" dc:"投票标记"`
 }
 
 type UserPollResult struct {
@@ -67,6 +68,7 @@ type GetUserPollLogsInput struct {
 
 type GetUserPollLogsOutput struct {
 	Collection []UserPollLog `json:"collection" dc:"数据"`
+	Total      int           `json:"total" dc:"总数"`
 	Page       int           `json:"page" dc:"当前页数"`
 	PageSize   int           `json:"page_size" dc:"每页数量"`
 }
@@ -74,15 +76,17 @@ type GetUserPollLogsOutput struct {
 type GetUserPollLogsWithSentenceInput = GetUserPollLogsInput
 
 type GetUserPollLogsWithSentenceOutput struct {
-	Collection []UserPollLogWithSentence `json:"collection" dc:"数据"`
-	Page       int                       `json:"page" dc:"当前页数"`
-	PageSize   int                       `json:"page_size" dc:"每页数量"`
+	Collection []UserPollLogWithSentenceAndUserMarks `json:"collection" dc:"数据"`
+	Total      int                                   `json:"total" dc:"总数"`
+	Page       int                                   `json:"page" dc:"当前页数"`
+	PageSize   int                                   `json:"page_size" dc:"每页数量"`
 }
 
 type GetUserPollLogsWithPollResultInput = GetUserPollLogsInput
 
 type GetUserPollLogsWithPollResultOutput struct {
 	Collection []UserPollElement `json:"collection" dc:"数据"`
+	Total      int               `json:"total" dc:"总数"`
 	Page       int               `json:"page" dc:"当前页数"`
 	PageSize   int               `json:"page_size" dc:"每页数量"`
 }

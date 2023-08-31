@@ -48,8 +48,16 @@ func (s *sUser) GetUserPollLogs(ctx context.Context, in model.GetUserPollLogsInp
 	}
 	// fetch data from query
 	var pollLogs []entity.PollLog
-	err := query.Scan(&pollLogs)
-	if err != nil {
+	eg, egCtx := errgroup.WithContext(ctx)
+	eg.Go(func() error {
+		var e error
+		out.Total, e = s.GetUserPollLogsCount(egCtx, in.UserID)
+		return e
+	})
+	eg.Go(func() error {
+		return query.Scan(&pollLogs)
+	})
+	if err := eg.Wait(); err != nil {
 		return nil, err
 	}
 	userPollLogs := make([]model.UserPollLog, len(pollLogs))
@@ -79,51 +87,33 @@ func (s *sUser) GetUserPollLogsWithSentence(
 		}
 		in.UserID = user.Id
 	}
-	query := dao.PollLog.Ctx(ctx)
-	out := &model.GetUserPollLogsWithSentenceOutput{}
-	if in.WithCache {
-		query = query.Cache(gdb.CacheOption{
-			Duration: time.Second * 3,
-			Name:     fmt.Sprintf("poll_logs:uid:%d:page:%d:pageSize:%d:order:%s", in.UserID, in.Page, in.PageSize, in.Order),
-			Force:    false,
-		})
-	}
-	query = query.Where(dao.PollLog.Columns().UserId, in.UserID)
-	if in.Page > 0 && in.PageSize > 0 {
-		query = query.Page(in.Page, in.PageSize)
-		out.Page, out.PageSize = in.Page, in.PageSize
-	}
-
-	if in.Order != "" {
-		query = query.Order(in.Order)
-	}
-	// fetch data from query
-	var pollLogs []entity.PollLog
-	err := query.Scan(&pollLogs)
+	pollLogs, err := s.GetUserPollLogs(ctx, in)
 	if err != nil {
 		return nil, err
 	}
-	userPollLogs := make([]model.UserPollLogWithSentence, len(pollLogs))
+	out := &model.GetUserPollLogsWithSentenceOutput{
+		Page:     in.Page,
+		PageSize: in.PageSize,
+		Total:    pollLogs.Total,
+	}
+	userPollLogs := make([]model.UserPollLogWithSentenceAndUserMarks, len(pollLogs.Collection))
 	// 并发获取句子
-	eg, _ := errgroup.WithContext(ctx)
-	for i, v := range pollLogs {
+	eg, egCtx := errgroup.WithContext(ctx)
+	for i, v := range pollLogs.Collection {
 		index, value := i, v // 解决并发问题
 		eg.Go(func() error {
-			sentence, e := service.Hitokoto().GetHitokotoV1SchemaByUUID(ctx, value.SentenceUuid)
+			var e error
+			userPollLogs[index].UserMarks, e = service.Poll().GetPollMarksByPollIDAndUserID(egCtx, int(value.PollID), int(in.UserID))
+			return e
+		})
+		eg.Go(func() error {
+			sentence, e := service.Hitokoto().GetHitokotoV1SchemaByUUID(egCtx, value.SentenceUUID)
 			if e != nil {
 				return e
 			}
-			userPollLogs[index] = model.UserPollLogWithSentence{
-				UserPollLog: model.UserPollLog{
-					PollID:       uint(value.PollId),
-					Point:        value.Point,
-					SentenceUUID: value.SentenceUuid,
-					Method:       consts.PollMethod(value.Type),
-					Comment:      value.Comment,
-					CreatedAt:    (*vtime.Time)(value.CreatedAt),
-					UpdatedAt:    (*vtime.Time)(value.UpdatedAt),
-				},
-				Sentence: sentence,
+			userPollLogs[index] = model.UserPollLogWithSentenceAndUserMarks{
+				UserPollLog: value,
+				Sentence:    sentence,
 			}
 			return nil
 		})
@@ -163,7 +153,7 @@ func (s *sUser) GetUserPollLogsWithPollResult(
 	for i, v := range pollLogs.Collection {
 		index, value := i, v
 		collections[index] = model.UserPollElement{
-			UserPollLogWithSentence: value,
+			UserPollLogWithSentenceAndUserMarks: value,
 		}
 		// 并发获取投票结果
 		eg.Go(func() error {
@@ -190,7 +180,7 @@ func (s *sUser) GetUserPollLogsWithPollResult(
 				return e
 			}
 
-			collections[index].Marks = marks
+			collections[index].PollMarks = marks
 			return nil
 		})
 	}
@@ -202,6 +192,7 @@ func (s *sUser) GetUserPollLogsWithPollResult(
 		Collection: collections,
 		Page:       in.Page,
 		PageSize:   in.PageSize,
+		Total:      pollLogs.Total,
 	}
 	return out, nil
 }

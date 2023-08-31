@@ -11,10 +11,7 @@ import (
 	v1 "github.com/hitokoto-osc/reviewer/api/user/v1"
 )
 
-func (c *ControllerV1) GetUserPollUnreviewed(ctx context.Context, req *v1.GetUserPollUnreviewedReq) (
-	res *v1.GetUserPollUnreviewedRes,
-	err error,
-) {
+func (c *ControllerV1) GetUserPollUnreviewed(ctx context.Context, req *v1.GetUserPollUnreviewedReq) (res *v1.GetUserPollUnreviewedRes, err error) { //nolint: lll
 	user := service.BizCtx().GetUser(ctx)
 	count, err := service.Poll().CountUserUnreviewedPoll(ctx, user.Id)
 	if err != nil {

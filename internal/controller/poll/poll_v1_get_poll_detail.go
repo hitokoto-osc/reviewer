@@ -19,6 +19,7 @@ import (
 )
 
 func (c *ControllerV1) GetPollDetail(ctx context.Context, req *v1.GetPollDetailReq) (res *v1.GetPollDetailRes, err error) {
+	user := service.BizCtx().GetUser(ctx)
 	poll, err := service.Poll().GetPollByID(ctx, req.ID)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeOperationFailed, err, "获取投票失败")
@@ -72,7 +73,7 @@ func (c *ControllerV1) GetPollDetail(ctx context.Context, req *v1.GetPollDetailR
 		return nil, err
 	}
 	var records []model.PollRecord
-	if len(logs) > 0 {
+	if len(logs) > 0 && (user.Role == consts.UserRoleAdmin || poll.Status != int(consts.PollStatusOpen)) {
 		records = make([]model.PollRecord, len(logs))
 		for i, log := range logs {
 			records[i] = model.PollRecord{
