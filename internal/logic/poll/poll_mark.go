@@ -2,6 +2,8 @@ package poll
 
 import (
 	"context"
+	"github.com/gogf/gf/v2/frame/g"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -59,5 +61,6 @@ func (s *sPoll) GetPollMarksByPollIDAndUserID(ctx context.Context, pid, userID i
 	if len(marks) == 0 {
 		return make([]int, 0), nil
 	}
+	g.Log().Debugf(ctx, "marks: %+v\n type： %s", marks, reflect.ValueOf(marks).Type().String())
 	return gconv.Ints(marks), nil
 }
