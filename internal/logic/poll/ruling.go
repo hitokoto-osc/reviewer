@@ -181,18 +181,23 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 		if err = doNotificationAfterPollRuling(ctx, pollElement, pollLogs); err != nil {
 			return gerror.Wrap(err, "发送投票结果通知失败")
 		}
-
 		service.Cache().ClearPollListCache(ctx)
 		// 提交句子到搜索引擎
-		e = service.Search().AddSentenceToSearch(ctx, pending)
-		if e != nil {
-			return gerror.Wrap(e, "提交句子到搜索引擎失败")
+		if pollElement.Status != consts.PollStatusNeedModify {
+			e = service.Search().AddSentenceToSearch(ctx, pending)
+			if e != nil {
+				return gerror.Wrap(e, "提交句子到搜索引擎失败")
+			}
 		}
 		return nil
 	})
 }
 
-func doNotificationAfterPollRuling(ctx context.Context, pollElement *model.PollElement, pollLogs []entity.PollLog) error {
+func doNotificationAfterPollRuling(
+	ctx context.Context,
+	pollElement *model.PollElement,
+	pollLogs []entity.PollLog,
+) error {
 	if err := service.Notification().PollFinishedNotification(
 		ctx,
 		pollElement,
