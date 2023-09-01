@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hitokoto-osc/reviewer/internal/model/do"
+
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 
@@ -45,7 +47,9 @@ func CalcReviewerAdoptionRate(ctx context.Context) error {
 		// 更新用户采纳率
 		_, e = dao.PollUsers.Ctx(ctx).
 			Where(dao.PollUsers.Columns().UserId, userID).
-			Update(dao.PollUsers.Columns().AdoptionRate, adoptionsRate)
+			Update(do.PollUsers{
+				AdoptionRate: gconv.Float64(adoptionsRate),
+			})
 		if e != nil {
 			e = gerror.Wrapf(e, "更新用户 %d 采纳率失败：", userID)
 			g.Log().Error(ctx, e)
