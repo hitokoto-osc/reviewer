@@ -67,6 +67,7 @@ func (s *sCache) ClearCacheAfterPollUpdated(ctx context.Context, userID, pollID 
 	if e := service.Cache().RemovePrefixes(ctx, []string{
 		"SelectCache:poll:list",
 		"SelectCache:poll_logs:uid:" + gconv.String(userID),
+		// "SelectCache:user:score:records:uid:" + gconv.String(userID),
 	}); e != nil {
 		e = gerror.Wrap(e, "failed to remove cache: ")
 		g.Log().Error(ctx, e)
@@ -95,6 +96,7 @@ func (s *sCache) ClearPollListCache(ctx context.Context) {
 func (s *sCache) ClearPollUserCache(ctx context.Context, userID uint) {
 	if e := service.Cache().RemovePrefixes(ctx, []string{
 		"SelectCache:poll_logs:uid:" + gconv.String(userID),
+		"SelectCache:user:score:records:uid:" + gconv.String(userID),
 	}); e != nil {
 		e = gerror.Wrap(e, "failed to remove cache: ")
 		g.Log().Error(ctx, e)

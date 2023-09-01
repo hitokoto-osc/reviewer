@@ -17,4 +17,5 @@ type IUserV1 interface {
 	GetUserPollResult(ctx context.Context, req *v1.GetUserPollResultReq) (res *v1.GetUserPollResultRes, err error)
 	GetUserPollUnreviewed(ctx context.Context, req *v1.GetUserPollUnreviewedReq) (res *v1.GetUserPollUnreviewedRes, err error)
 	GetUser(ctx context.Context, req *v1.GetUserReq) (res *v1.GetUserRes, err error)
+	GetUserScoreRecords(ctx context.Context, req *v1.GetUserScoreRecordsReq) (res *v1.GetUserScoreRecordsRes, err error)
 }

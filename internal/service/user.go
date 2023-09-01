@@ -40,6 +40,8 @@ type (
 		CreatePollUser(ctx context.Context, uid uint) (err error)
 		IncreaseUserPollScore(ctx context.Context, in *model.UserPollScoreInput) error
 		DecreaseUserPollScore(ctx context.Context, in *model.UserPollScoreInput) error
+		CountUserScoreRecords(ctx context.Context, userID uint) (int, error)
+		GetUserScoreRecords(ctx context.Context, in *model.GetUserScoreRecordsInput) (*model.GetUserScoreRecordsOutput, error)
 	}
 )
 

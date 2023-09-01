@@ -49,3 +49,10 @@ const (
 	UserPollPointsNormal   UserPollPoints = 1 // 普通用户
 	UserPollPointsAdmin    UserPollPoints = 2 // 管理员
 )
+
+type UserScoreType string
+
+const (
+	UserScoreTypeIncrement UserScoreType = "increment" // 增加
+	UserScoreTypeDecrement UserScoreType = "decrement" // 减少
+)
