@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
+	"github.com/hitokoto-osc/reviewer/internal/model/do"
 
 	"github.com/gogf/gf/v2/util/gconv"
 
@@ -34,7 +35,7 @@ func ClearInactiveReviewer(ctx context.Context) error {
 		return nil
 	}
 	ids := gconv.Uints(records)
-	affectedRows, err := dao.Users.Ctx(ctx).Where(dao.Users.Columns().Id, ids).UpdateAndGetAffected(dao.Users.Columns().IsReviewer, 0)
+	affectedRows, err := dao.Users.Ctx(ctx).Where(dao.Users.Columns().Id, ids).UpdateAndGetAffected(do.Users{IsReviewer: 0})
 	if err != nil {
 		return gerror.Wrap(err, "清理失败")
 	}
