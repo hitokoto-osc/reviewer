@@ -36,7 +36,7 @@ func CalcReviewerAdoptionRate(ctx context.Context) error {
 	}
 	userIDs := gconv.Ints(records)
 	for _, userID := range userIDs {
-		g.Log().Debugf(ctx, "开始计算用户 %d 的采纳率……", userID)
+		g.Log().Debugf(ctx, "开始获取用户 %d 的采纳率……", userID)
 		adoptions, e := getUserAdoptions(ctx, gconv.Uint(userID))
 		if e != nil {
 			e = gerror.Wrapf(e, "获取用户 %d 采纳率失败：", userID)
@@ -44,6 +44,7 @@ func CalcReviewerAdoptionRate(ctx context.Context) error {
 			continue
 		}
 		adoptionsRate := float64(adoptions.Adoptions) / float64(adoptions.Total)
+		g.Log().Debugf(ctx, "用户 %d 采纳率为 %f", userID, adoptionsRate)
 		// 更新用户采纳率
 		_, e = dao.PollUsers.Ctx(ctx).
 			Where(dao.PollUsers.Columns().UserId, userID).
