@@ -84,6 +84,7 @@ var (
 
 			s := g.Server()
 			s.SetServerAgent(consts.AppName + " " + consts.Version) // 设置服务名称
+			s.SetRouteOverWrite(true)                               // 允许覆盖路由
 			s.AddSearchPath("resource/public")                      // 静态文件
 			s.Use(service.Middleware().CORS)                        // CORS 处理
 			s.Use(service.Middleware().HandlerResponse)             // 统一返回格式
@@ -100,6 +101,7 @@ var (
 						group.Middleware(service.Middleware().GuardV1(consts.UserRoleReviewer))
 						group.Bind(poll.NewV1())
 					})
+					group.GET("/poll/mark", poll.NewV1().GetPollMarks) // 此路由无需验证审核员权限
 					group.Group("/admin", func(group *ghttp.RouterGroup) {
 						group.Middleware(service.Middleware().GuardV1(consts.UserRoleAdmin))
 						group.Bind(admin.NewV1())
