@@ -237,11 +237,11 @@ func calcPolledFieldCount(logs []entity.PollLog) (approve, reject, needModify in
 	for _, log := range logs {
 		switch log.Type {
 		case int(consts.PollMethodApprove):
-			approve += log.Point
+			approve += 1
 		case int(consts.PollMethodReject):
-			reject += log.Point
+			reject += 1
 		case int(consts.PollMethodNeedModify):
-			needModify += log.Point
+			needModify += 1
 		}
 	}
 	return
