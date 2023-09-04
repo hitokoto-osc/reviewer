@@ -94,7 +94,7 @@ func (s *sUser) SetUserRoleReviewer(ctx context.Context, userID uint) error {
 		return gerror.New("failed to update user")
 	}
 	// clear cache
-	if _, err = g.DB().GetCache().Remove(ctx, "user:token:"+userToken, "user:id:"+gconv.String(userID)); err != nil {
+	if _, err = g.DB().GetCache().Remove(ctx, "SelectCache:user:token:"+userToken, "SelectCache:user:id:"+gconv.String(userID)); err != nil {
 		g.Log().Error(ctx, err)
 	}
 	return nil

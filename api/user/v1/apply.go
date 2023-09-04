@@ -18,7 +18,7 @@ type GetApplyTokenRes struct {
 // ApplyReviewerReq 申请成为审查员，目前说白了就是自动激活
 type ApplyReviewerReq struct {
 	g.Meta            `path:"/user/apply/reviewer" tags:"User" method:"post" summary:"申请成为审查员"`
-	VerificationToken string `json:"verification_token" dc:"验证令牌" v:"required|length:32#验证令牌必须为 32 位"`
+	VerificationToken string `json:"verification_token" dc:"验证令牌" v:"required|size:36#验证令牌必须为 36 位"`
 }
 
 type ApplyReviewerRes struct{}
