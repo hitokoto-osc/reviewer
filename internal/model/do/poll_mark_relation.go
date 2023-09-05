@@ -13,8 +13,8 @@ import (
 type PollMarkRelation struct {
 	g.Meta       `orm:"table:hitokoto_poll_mark_relation, do:true"`
 	Id           interface{} //
+	PollId       interface{} // 投票 ID
 	UserId       interface{} //
-	PollId       interface{} //
 	SentenceUuid interface{} //
 	IsRefuse     interface{} //
 	MarkId       interface{} //

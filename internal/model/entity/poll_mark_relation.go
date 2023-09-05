@@ -11,8 +11,8 @@ import (
 // PollMarkRelation is the golang structure for table poll_mark_relation.
 type PollMarkRelation struct {
 	Id           int         `json:"id"           ` //
+	PollId       int         `json:"pollId"       ` // 投票 ID
 	UserId       int         `json:"userId"       ` //
-	PollId       int         `json:"pollId"       ` //
 	SentenceUuid string      `json:"sentenceUuid" ` //
 	IsRefuse     uint        `json:"isRefuse"     ` //
 	MarkId       int         `json:"markId"       ` //

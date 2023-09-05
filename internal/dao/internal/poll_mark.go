@@ -20,22 +20,24 @@ type PollMarkDao struct {
 
 // PollMarkColumns defines and stores column names for table hitokoto_poll_mark.
 type PollMarkColumns struct {
-	Id        string //
-	Text      string // 标签名称
-	Level     string // 严重程度
-	Property  string // 分类属性
-	UpdatedAt string // 更新时间
-	CreatedAt string //
+	Id           string //
+	Text         string // 标签名称
+	Level        string // 严重程度
+	Property     string // 分类属性
+	DeprecatedAt string //
+	UpdatedAt    string // 更新时间
+	CreatedAt    string //
 }
 
 // pollMarkColumns holds the columns for table hitokoto_poll_mark.
 var pollMarkColumns = PollMarkColumns{
-	Id:        "id",
-	Text:      "text",
-	Level:     "level",
-	Property:  "property",
-	UpdatedAt: "updated_at",
-	CreatedAt: "created_at",
+	Id:           "id",
+	Text:         "text",
+	Level:        "level",
+	Property:     "property",
+	DeprecatedAt: "deprecated_at",
+	UpdatedAt:    "updated_at",
+	CreatedAt:    "created_at",
 }
 
 // NewPollMarkDao creates and returns a new DAO object for table data access.

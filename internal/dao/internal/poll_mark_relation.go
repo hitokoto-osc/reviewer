@@ -21,8 +21,8 @@ type PollMarkRelationDao struct {
 // PollMarkRelationColumns defines and stores column names for table hitokoto_poll_mark_relation.
 type PollMarkRelationColumns struct {
 	Id           string //
+	PollId       string // 投票 ID
 	UserId       string //
-	PollId       string //
 	SentenceUuid string //
 	IsRefuse     string //
 	MarkId       string //
@@ -33,8 +33,8 @@ type PollMarkRelationColumns struct {
 // pollMarkRelationColumns holds the columns for table hitokoto_poll_mark_relation.
 var pollMarkRelationColumns = PollMarkRelationColumns{
 	Id:           "id",
-	UserId:       "user_id",
 	PollId:       "poll_id",
+	UserId:       "user_id",
 	SentenceUuid: "sentence_uuid",
 	IsRefuse:     "is_refuse",
 	MarkId:       "mark_id",

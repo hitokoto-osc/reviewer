@@ -15,12 +15,13 @@ type PollRecord struct {
 }
 
 type PollMark struct {
-	ID        uint                    `json:"id" dc:"标记 ID"`
-	Text      string                  `json:"text" dc:"标记文本"`
-	Level     consts.PollMarkLevel    `json:"level" dc:"标记等级"`
-	Property  consts.PollMarkProperty `json:"property" dc:"标记属性"`
-	UpdatedAt *time.Time              `json:"updated_at" dc:"更新时间"`
-	CreatedAt *time.Time              `json:"created_at" dc:"创建时间"`
+	ID           uint                    `json:"id" dc:"标记 ID"`
+	Text         string                  `json:"text" dc:"标记文本"`
+	Level        consts.PollMarkLevel    `json:"level" dc:"标记等级"`
+	Property     consts.PollMarkProperty `json:"property" dc:"标记属性"`
+	DeprecatedAt *time.Time              `json:"deprecated_at" dc:"废弃时间"`
+	UpdatedAt    *time.Time              `json:"updated_at" dc:"更新时间"`
+	CreatedAt    *time.Time              `json:"created_at" dc:"创建时间"`
 }
 
 type PolledData struct {

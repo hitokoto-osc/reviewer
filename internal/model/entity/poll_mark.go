@@ -10,10 +10,11 @@ import (
 
 // PollMark is the golang structure for table poll_mark.
 type PollMark struct {
-	Id        uint        `json:"id"        ` //
-	Text      string      `json:"text"      ` // 标签名称
-	Level     string      `json:"level"     ` // 严重程度
-	Property  int         `json:"property"  ` // 分类属性
-	UpdatedAt *gtime.Time `json:"updatedAt" ` // 更新时间
-	CreatedAt *gtime.Time `json:"createdAt" ` //
+	Id           uint        `json:"id"           ` //
+	Text         string      `json:"text"         ` // 标签名称
+	Level        string      `json:"level"        ` // 严重程度
+	Property     int         `json:"property"     ` // 分类属性
+	DeprecatedAt *gtime.Time `json:"deprecatedAt" ` //
+	UpdatedAt    *gtime.Time `json:"updatedAt"    ` // 更新时间
+	CreatedAt    *gtime.Time `json:"createdAt"    ` //
 }
