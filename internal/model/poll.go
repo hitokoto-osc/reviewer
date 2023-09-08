@@ -6,7 +6,7 @@ import (
 )
 
 type PollRecord struct {
-	UserID    uint              `json:"user_id" dc:"用户 ID"`
+	User      *UserPublicInfo   `json:"user" dc:"用户"`
 	Point     int               `json:"point" dc:"投票点数"`
 	Method    consts.PollMethod `json:"method" dc:"投票类型"`
 	Comment   string            `json:"comment" dc:"理由"`

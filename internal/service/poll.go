@@ -16,8 +16,8 @@ import (
 type (
 	IPoll interface {
 		GetPointsByRole(role consts.UserRole) consts.UserPollPoints
-		ConvertPollLogToPollRecord(in *entity.PollLog, isAdmin bool) (out *model.PollRecord, err error)
-		MustConvertPollLogToPollRecord(in *entity.PollLog, isAdmin bool) (out *model.PollRecord)
+		ConvertPollLogToPollRecord(ctx context.Context, in *entity.PollLog, isAdmin bool) (out *model.PollRecord, err error)
+		MustConvertPollLogToPollRecord(ctx context.Context, in *entity.PollLog, isAdmin bool) (out *model.PollRecord)
 		GetPollByID(ctx context.Context, pid int) (poll *entity.Poll, err error)
 		// GetPollBySentenceUUID 根据 Sentence UUID 获取最新发起的投票
 		GetPollBySentenceUUID(ctx context.Context, sentenceUUID string) (poll *entity.Poll, err error)

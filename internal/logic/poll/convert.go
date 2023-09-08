@@ -1,11 +1,15 @@
 package poll
 
 import (
+	"context"
+
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 	"github.com/hitokoto-osc/reviewer/internal/dao"
 	"github.com/hitokoto-osc/reviewer/internal/model"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
+	"github.com/hitokoto-osc/reviewer/internal/service"
 	"github.com/hitokoto-osc/reviewer/utility/time"
 )
 
@@ -40,14 +44,19 @@ func (s *sPoll) translatePollStatusToMethod(in consts.PollStatus) consts.PollMet
 	return pollStatusToMethodMap[in]
 }
 
-func (s *sPoll) ConvertPollLogToPollRecord(in *entity.PollLog, isAdmin bool) (out *model.PollRecord, err error) {
+func (s *sPoll) ConvertPollLogToPollRecord(ctx context.Context, in *entity.PollLog, isAdmin bool) (out *model.PollRecord, err error) {
 	if in == nil {
 		err = gerror.New("nil poll log")
 		return
 	}
+	u, e := service.User().GetUserByID(ctx, uint(in.UserId))
+	if e != nil {
+		err = gerror.Wrap(e, "获取用户信息失败")
+		return
+	}
 	if isAdmin {
 		out = &model.PollRecord{
-			UserID:    uint(in.UserId),
+			User:      &model.UserPublicInfo{ID: u.Id, Name: u.Name, EmailHash: gmd5.MustEncryptString(u.Email)},
 			Point:     in.Point,
 			Method:    consts.PollMethod(in.Type),
 			Comment:   in.Comment,
@@ -56,7 +65,7 @@ func (s *sPoll) ConvertPollLogToPollRecord(in *entity.PollLog, isAdmin bool) (ou
 		}
 	} else {
 		out = &model.PollRecord{
-			UserID:    uint(in.UserId),
+			User:      &model.UserPublicInfo{ID: u.Id, Name: u.Name, EmailHash: gmd5.MustEncryptString(u.Email)},
 			Comment:   in.Comment,
 			CreatedAt: (*time.Time)(in.CreatedAt),
 			UpdatedAt: (*time.Time)(in.UpdatedAt),
@@ -65,9 +74,9 @@ func (s *sPoll) ConvertPollLogToPollRecord(in *entity.PollLog, isAdmin bool) (ou
 	return
 }
 
-func (s *sPoll) MustConvertPollLogToPollRecord(in *entity.PollLog, isAdmin bool) (out *model.PollRecord) {
+func (s *sPoll) MustConvertPollLogToPollRecord(ctx context.Context, in *entity.PollLog, isAdmin bool) (out *model.PollRecord) {
 	var err error
-	out, err = s.ConvertPollLogToPollRecord(in, isAdmin)
+	out, err = s.ConvertPollLogToPollRecord(ctx, in, isAdmin)
 	if err != nil {
 		panic(err)
 	}

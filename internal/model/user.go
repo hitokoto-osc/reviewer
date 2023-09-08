@@ -15,6 +15,13 @@ type UserCtxSchema struct {
 	Poll   entity.PollUsers  `json:"poll" dc:"用户投票信息"`
 }
 
+// UserPublicInfo 用户公开信息
+type UserPublicInfo struct {
+	ID        uint   `json:"id" dc:"用户 ID"`
+	Name      string `json:"name" dc:"用户名"`
+	EmailHash string `json:"email_hash" dc:"邮箱哈希"`
+}
+
 type UserPollPoints struct {
 	Total      int `json:"total" dc:"总投票点数"`
 	Approve    int `json:"approved" dc:"赞成票"`

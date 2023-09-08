@@ -257,7 +257,7 @@ WHERE
 						}
 					}
 					if isAdmin || record.Comment != "" {
-						collection[index].Records = append(collection[index].Records, *s.MustConvertPollLogToPollRecord(&records[recordIndex], isAdmin))
+						collection[index].Records = append(collection[index].Records, *s.MustConvertPollLogToPollRecord(ctx, &records[recordIndex], isAdmin))
 					}
 				}
 				return nil

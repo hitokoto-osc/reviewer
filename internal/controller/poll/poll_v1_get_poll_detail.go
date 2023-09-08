@@ -2,6 +2,7 @@ package poll
 
 import (
 	"context"
+	"github.com/gogf/gf/v2/crypto/gmd5"
 
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
 	"golang.org/x/sync/errgroup"
@@ -76,8 +77,16 @@ func (c *ControllerV1) GetPollDetail(ctx context.Context, req *v1.GetPollDetailR
 	if len(logs) > 0 && (user.Role == consts.UserRoleAdmin || poll.Status != int(consts.PollStatusOpen)) {
 		records = make([]model.PollRecord, len(logs))
 		for i, log := range logs {
+			u, e := service.User().GetUserByID(ctx, uint(log.UserId))
+			if e != nil {
+				return nil, gerror.WrapCode(gcode.CodeOperationFailed, e, "获取用户信息失败")
+			}
 			records[i] = model.PollRecord{
-				UserID:    uint(log.UserId),
+				User: &model.UserPublicInfo{
+					ID:        uint(log.UserId),
+					Name:      u.Name,
+					EmailHash: gmd5.MustEncryptString(u.Email),
+				},
 				Point:     log.Point,
 				Method:    consts.PollMethod(log.Type),
 				Comment:   log.Comment,
