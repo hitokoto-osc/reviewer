@@ -22,12 +22,13 @@ func (c *ControllerV1) GetPollMarks(ctx context.Context, req *v1.GetPollMarksReq
 	pollMarks := make([]model.PollMark, len(marks))
 	for i, mark := range marks {
 		pollMarks[i] = model.PollMark{
-			ID:        mark.Id,
-			Text:      mark.Text,
-			Level:     consts.PollMarkLevel(mark.Level),
-			Property:  consts.PollMarkProperty(mark.Property),
-			UpdatedAt: (*time.Time)(mark.UpdatedAt),
-			CreatedAt: (*time.Time)(mark.CreatedAt),
+			ID:           mark.Id,
+			Text:         mark.Text,
+			Level:        consts.PollMarkLevel(mark.Level),
+			Property:     consts.PollMarkProperty(mark.Property),
+			DeprecatedAt: (*time.Time)(mark.DeprecatedAt),
+			UpdatedAt:    (*time.Time)(mark.UpdatedAt),
+			CreatedAt:    (*time.Time)(mark.CreatedAt),
 		}
 	}
 	r := v1.GetPollMarksRes(pollMarks)
