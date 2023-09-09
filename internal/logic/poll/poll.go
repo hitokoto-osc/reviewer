@@ -77,10 +77,12 @@ func (s *sPoll) CreatePollByPending(ctx context.Context, pending *entity.Pending
 			pending.Uuid = uuidInstance.String()
 		}
 		// 修改 pending 状态
-		affectedRows, err := dao.Pending.Ctx(ctx).TX(tx).Where(dao.Pending.Columns().Id, pending.Id).Data(g.Map{
-			dao.Pending.Columns().PollStatus: consts.PollStatusOpen,
-			dao.Pending.Columns().Uuid:       pending.Uuid,
-		}).UpdateAndGetAffected()
+		affectedRows, err := dao.Pending.Ctx(ctx).TX(tx).Unscoped().
+			Where(dao.Pending.Columns().Id, pending.Id).
+			Data(g.Map{
+				dao.Pending.Columns().PollStatus: consts.PollStatusOpen,
+				dao.Pending.Columns().Uuid:       pending.Uuid,
+			}).UpdateAndGetAffected()
 		if err != nil {
 			return err
 		} else if affectedRows == 0 {

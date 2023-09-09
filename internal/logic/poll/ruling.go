@@ -72,7 +72,7 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 				return gerror.Wrapf(e, "从 pending 删除句子 %s 失败", poll.SentenceUuid)
 			}
 			if target == consts.PollStatusApproved {
-				_, e = dao.Sentence.Ctx(ctx).TX(tx).Insert(do.Sentence{
+				_, e = dao.Sentence.Ctx(ctx).TX(tx).Unscoped().Insert(do.Sentence{
 					Uuid:       pending.Uuid,
 					Hitokoto:   pending.Hitokoto,
 					Type:       pending.Type,
@@ -86,7 +86,7 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 					CreatedAt:  pending.CreatedAt,
 				})
 			} else {
-				_, e = dao.Refuse.Ctx(ctx).TX(tx).Insert(do.Refuse{
+				_, e = dao.Refuse.Ctx(ctx).TX(tx).Unscoped().Insert(do.Refuse{
 					Uuid:       pending.Uuid,
 					Hitokoto:   pending.Hitokoto,
 					Type:       pending.Type,
@@ -104,7 +104,7 @@ func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.P
 				return gerror.Wrapf(e, "移动句子 %s 失败", poll.SentenceUuid)
 			}
 		} else { // 亟待修改
-			_, e = dao.Pending.Ctx(ctx).TX(tx).Where(dao.Pending.Columns().Uuid, poll.SentenceUuid).Update(do.Pending{
+			_, e = dao.Pending.Ctx(ctx).TX(tx).Where(dao.Pending.Columns().Uuid, poll.SentenceUuid).Unscoped().Update(do.Pending{
 				PollStatus: int(consts.PollStatusNeedModify),
 				Reviewer:   consts.PollRulingUserID,
 			})
