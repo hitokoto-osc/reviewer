@@ -25,7 +25,7 @@ func CalcReviewerAdoptionRate(ctx context.Context) error {
 			dao.PollUsers.Columns().UserId,
 			dao.PollUsers.Table(),
 			dao.PollUsers.Columns().UserId,
-			dao.Users.Columns().IsReviewer,
+			dao.Users.Columns().Id,
 			dao.Users.Table(),
 			dao.Users.Columns().IsAdmin,
 			dao.Users.Columns().IsReviewer,
@@ -82,7 +82,7 @@ func getUserAdoptions(ctx context.Context, userID uint) (*UserAdoptions, error) 
 		WHEN ( pipeline.`+"`%s`"+` = %d AND log.`+"`%s`"+` = %d ) THEN 1
 		WHEN ( pipeline.`+"`%s`"+` = %d AND log.`+"`%s`"+` = %d ) THEN 1 ELSE 0
 		END
-		) AS adoption
+		) AS adoptions
 		FROM
 		`+"`%s`"+` log
 		JOIN `+"`%s`"+` pipeline ON log.%s = pipeline.%s
