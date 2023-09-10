@@ -37,7 +37,8 @@ type (
 		GetPollMarksByPollIDAndUserID(ctx context.Context, pid, userID int) ([]int, error)
 		GetRulingThreshold(isExpandedPoll bool, totalTickets int) int
 		// DoRuling 处理投票
-		// nolint:gocyclo
+		//
+		//nolint:gocyclo
 		DoRuling(ctx context.Context, poll *entity.Poll, target consts.PollStatus) error
 	}
 )

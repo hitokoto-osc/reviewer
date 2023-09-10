@@ -25,22 +25,27 @@ func (s *sPoll) GetRulingThreshold(isExpandedPoll bool, totalTickets int) int {
 		if totalTickets < consts.PollRulingNeedForCommonUserPollThreshold {
 			threshold = 100000 // 设置一个不可能达到的值
 		} else {
-			threshold = int(math.Round(float64(totalTickets) * consts.PollRulingNeedForCommonUserPollRate))
+			threshold = int(math.Floor(float64(totalTickets) * consts.PollRulingNeedForCommonUserPollRate))
 		}
 	} else {
 		if totalTickets < consts.PollRulingNormalThreshold {
 			threshold = consts.PollRulingInitThreshold
 		} else {
-			threshold = int(math.Round(float64(totalTickets) * consts.PollRulingNormalRate))
+			threshold = int(math.Floor(float64(totalTickets) * consts.PollRulingNormalRate))
 		}
 	}
 	return threshold
 }
 
 // DoRuling 处理投票
-// nolint:gocyclo
-func (s *sPoll) DoRuling(ctx context.Context, poll *entity.Poll, target consts.PollStatus) error {
-	if target != consts.PollStatusRejected && target != consts.PollStatusApproved && target != consts.PollStatusNeedModify {
+//
+//nolint:gocyclo
+func (s *sPoll) DoRuling(
+	ctx context.Context,
+	poll *entity.Poll,
+	target consts.PollStatus,
+) error {
+	if target != consts.PollStatusRejected && target != consts.PollStatusApproved && target != consts.PollStatusNeedModify { //nolint:lll
 		return gerror.New("无效的投票状态")
 	}
 	// 判断是否需要修改
