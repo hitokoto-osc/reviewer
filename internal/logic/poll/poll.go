@@ -312,7 +312,7 @@ func (s *sPoll) Poll(ctx context.Context, in *model.PollInput) error {
 					CreatedAt:    createdAt,
 				})
 			}
-			fmt.Printf("%+v\n", list)
+			// fmt.Printf("%+v\n", list)
 			eg.Go(func() error {
 				_, e := dao.PollMarkRelation.Ctx(egCtx).TX(tx).Data(list).Insert()
 				return e
