@@ -111,10 +111,8 @@ func (s *sUser) GetUserPollLogsWithSentence(
 			if e != nil {
 				return e
 			}
-			userPollLogs[index] = model.UserPollLogWithSentenceAndUserMarks{
-				UserPollLog: value,
-				Sentence:    sentence,
-			}
+			userPollLogs[index].UserPollLog = value
+			userPollLogs[index].Sentence = sentence
 			return nil
 		})
 	}
