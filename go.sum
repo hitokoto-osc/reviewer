@@ -28,8 +28,12 @@ github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.2 h1:tFQP3/4Ivsx9ZkXXbHPIGn+TCi
 github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.2/go.mod h1:k9TrNZlYVBPNPYeqJ2uac0aqcJh75CHk7mWNYpRmrk4=
 github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.2 h1:JzRIXB5J6vvnJGJmh7RfT8ntjXsn2jYXJf1+Q6oFe+A=
 github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.2/go.mod h1:vLNtPgfInF5cXlcjLhVZxijIXD30+IiVjN6hP9sjjhY=
+github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.4 h1:t4Ls/E022VMk5hc3a4IgWO3xGNEQRXicCTOrFymZdDg=
+github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.4/go.mod h1:1P7id3OWFb3lkp1zBKdGqRoVXgYAjATzky++tGh2vxc=
 github.com/gogf/gf/v2 v2.5.2 h1:fACJE7DJH6iTGHGhgiNY1uuZIZtr2IqQkJ52E+wBnt8=
 github.com/gogf/gf/v2 v2.5.2/go.mod h1:7yf5qp0BznfsYx7Sw49m3mQvBsHpwAjJk3Q9ZnKoUEc=
+github.com/gogf/gf/v2 v2.5.4 h1:UBCSw8mInkHmEqL0E1LYc6QhSpaNFY/wHcFrTI/rzTk=
+github.com/gogf/gf/v2 v2.5.4/go.mod h1:7yf5qp0BznfsYx7Sw49m3mQvBsHpwAjJk3Q9ZnKoUEc=
 github.com/golang-jwt/jwt/v4 v4.5.0 h1:7cYmW1XlMY7h7ii7UhUyChSgS5wUJEnm9uZVTGqOWzg=
 github.com/golang-jwt/jwt/v4 v4.5.0/go.mod h1:m21LjoU+eqJr34lmDMbreY2eSTRJ1cv77w39/MY0Ch0=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
