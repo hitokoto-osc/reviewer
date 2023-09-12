@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.2
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.2
-	github.com/gogf/gf/v2 v2.5.2
+	github.com/gogf/gf/v2 v2.5.4
 	github.com/google/uuid v1.3.0
 	github.com/meilisearch/meilisearch-go v0.25.0
 	github.com/rabbitmq/amqp091-go v1.8.1
