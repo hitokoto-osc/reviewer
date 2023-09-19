@@ -3,18 +3,18 @@ module github.com/hitokoto-osc/reviewer
 go 1.20
 
 require (
-	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.2
-	github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.2
-	github.com/gogf/gf/v2 v2.5.2
-	github.com/google/uuid v1.3.0
-	github.com/meilisearch/meilisearch-go v0.25.0
+	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.4
+	github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.4
+	github.com/gogf/gf/v2 v2.5.4
+	github.com/google/uuid v1.3.1
+	github.com/meilisearch/meilisearch-go v0.25.1
 	github.com/rabbitmq/amqp091-go v1.8.1
 	golang.org/x/sync v0.3.0
 )
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
@@ -27,7 +27,7 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grokify/html-strip-tags-go v0.0.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/klauspost/compress v1.15.6 // indirect
+	github.com/klauspost/compress v1.17.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -37,13 +37,13 @@ require (
 	github.com/redis/go-redis/v9 v9.1.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.37.1-0.20220607072126-8a320890c08d // indirect
-	go.opentelemetry.io/otel v1.16.0 // indirect
-	go.opentelemetry.io/otel/metric v1.16.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.16.0 // indirect
-	go.opentelemetry.io/otel/trace v1.16.0 // indirect
-	golang.org/x/net v0.14.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
-	golang.org/x/text v0.12.0 // indirect
+	github.com/valyala/fasthttp v1.50.0 // indirect
+	go.opentelemetry.io/otel v1.18.0 // indirect
+	go.opentelemetry.io/otel/metric v1.18.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.18.0 // indirect
+	go.opentelemetry.io/otel/trace v1.18.0 // indirect
+	golang.org/x/net v0.15.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
