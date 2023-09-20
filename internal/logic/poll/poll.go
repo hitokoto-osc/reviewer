@@ -111,7 +111,7 @@ func (s *sPoll) CreatePollByPending(ctx context.Context, pending *entity.Pending
 	if err != nil {
 		return nil, err
 	}
-	go service.Cache().ClearCacheAfterPollUpdated(ctx, 0, uint(poll.Id), poll.SentenceUuid)
+	service.Cache().ClearCacheAfterPollUpdated(ctx, 0, uint(poll.Id), poll.SentenceUuid)
 	return poll, nil
 }
 
@@ -378,7 +378,7 @@ func (s *sPoll) Poll(ctx context.Context, in *model.PollInput) error {
 		return gerror.Wrap(err, "poll failed")
 	}
 	// Remove caches
-	go service.Cache().ClearCacheAfterPollUpdated(ctx, in.UserID, in.PollID, in.SentenceUUID)
+	service.Cache().ClearCacheAfterPollUpdated(ctx, in.UserID, in.PollID, in.SentenceUUID)
 	return nil
 }
 
@@ -454,7 +454,7 @@ func (s *sPoll) CancelPollByID(ctx context.Context, in *model.CancelPollInput) e
 	if err != nil {
 		return gerror.Wrap(err, "cancel poll failed")
 	}
-	go service.Cache().ClearCacheAfterPollUpdated(ctx, in.UserID, in.PollID, in.SentenceUUID)
+	service.Cache().ClearCacheAfterPollUpdated(ctx, in.UserID, in.PollID, in.SentenceUUID)
 	return nil
 }
 

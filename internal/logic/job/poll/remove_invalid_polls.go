@@ -57,7 +57,7 @@ func RemoveInvalidPolls(ctx context.Context) error {
 					g.Log().Debugf(ctx, "投票 %d: 更新状态失败，可能是因为已经被其他人处理了。", poll.ID)
 					continue
 				}
-				go service.Cache().ClearCacheAfterPollUpdated(ctx, 0, poll.ID, poll.SentenceUUID) // 清除缓存
+				service.Cache().ClearCacheAfterPollUpdated(ctx, 0, poll.ID, poll.SentenceUUID) // 清除缓存
 			} else {
 				g.Log().Debugf(ctx, "投票 %d: 句子 %s 状态为 %s，属于有效投票，跳过……", poll.ID, poll.Sentence.UUID, poll.Sentence.Status)
 			}
