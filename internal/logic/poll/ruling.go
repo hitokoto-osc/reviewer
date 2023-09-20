@@ -180,6 +180,7 @@ func (s *sPoll) DoRuling(
 				return gerror.Wrap(e, "赋予用户积分失败")
 			}
 			service.Cache().ClearPollUserCache(ctx, uint(pollLog.UserId))
+			service.Cache().ClearCacheAfterPollUpdated(ctx, uint(pollLog.UserId), uint(poll.Id), poll.SentenceUuid)
 		}
 
 		// DoReviewedNotification
