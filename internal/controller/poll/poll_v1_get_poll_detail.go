@@ -37,7 +37,7 @@ func (c *ControllerV1) GetPollDetail(ctx context.Context, req *v1.GetPollDetailR
 	eg, egCtx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
 		var e error
-		logs, e = service.Poll().GetPollLogsBySentenceUUID(egCtx, poll.SentenceUuid)
+		logs, e = service.Poll().GetPollLogsByPollID(egCtx, poll.Id)
 		if e != nil {
 			return gerror.WrapCode(gcode.CodeOperationFailed, e, "获取投票日志失败")
 		}

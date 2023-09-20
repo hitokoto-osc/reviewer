@@ -76,7 +76,7 @@ func (s *sCache) ClearCacheAfterPollUpdated(ctx context.Context, userID, pollID 
 		"SelectCache:poll:id:" + gconv.String(pollID),
 		"SelectCache:poll:sentence_uuid:" + sentenceUUID,
 		"SelectCache:poll_log:id:" + gconv.String(pollID),
-		"SelectCache:poll_log:sentence_uuid:" + sentenceUUID,
+		"SelectCache:poll_log:uuid:" + sentenceUUID,
 		"SelectCache:poll_marks:pid:" + gconv.String(pollID),
 		"SelectCache:user:poll:uid:" + gconv.String(userID),
 		"SelectCache:user:poll:unreviewed:uid:" + gconv.String(userID) + ":count",
