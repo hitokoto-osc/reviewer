@@ -5,18 +5,17 @@ import (
 	"math"
 
 	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/hitokoto-osc/reviewer/internal/dao"
+	"github.com/hitokoto-osc/reviewer/internal/model/do"
+	"github.com/hitokoto-osc/reviewer/utility/time"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/hitokoto-osc/reviewer/internal/dao"
+	"github.com/hitokoto-osc/reviewer/internal/consts"
 	"github.com/hitokoto-osc/reviewer/internal/model"
-	"github.com/hitokoto-osc/reviewer/internal/model/do"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
 	"github.com/hitokoto-osc/reviewer/internal/service"
-	"github.com/hitokoto-osc/reviewer/utility/time"
-
-	"github.com/hitokoto-osc/reviewer/internal/consts"
 )
 
 func (s *sPoll) GetRulingThreshold(isExpandedPoll bool, totalTickets int) int {
@@ -48,7 +47,13 @@ func (s *sPoll) DoRuling(
 	if target != consts.PollStatusRejected && target != consts.PollStatusApproved && target != consts.PollStatusNeedModify { //nolint:lll
 		return gerror.New("无效的投票状态")
 	}
-	// 判断是否需要修改
+
+	reviewerUID := consts.PollRulingUserID
+	user := service.BizCtx().GetUser(ctx)
+	if user != nil {
+		reviewerUID = int(user.Id) // 如果是管理员投票，则使用管理员的 UID
+	}
+
 	var (
 		pollLogs []entity.PollLog
 		err      error
@@ -85,7 +90,7 @@ func (s *sPoll) DoRuling(
 					FromWho:    pending.FromWho,
 					Creator:    pending.Creator,
 					CreatorUid: pending.CreatorUid,
-					Reviewer:   consts.PollRulingUserID,
+					Reviewer:   reviewerUID,
 					CommitFrom: pending.CommitFrom,
 					Owner:      pending.Owner,
 					CreatedAt:  pending.CreatedAt,
@@ -100,7 +105,7 @@ func (s *sPoll) DoRuling(
 					Creator:    pending.Creator,
 					CreatorUid: pending.CreatorUid,
 					Owner:      pending.Owner,
-					Reviewer:   consts.PollRulingUserID,
+					Reviewer:   reviewerUID,
 					CommitFrom: pending.CommitFrom,
 					CreatedAt:  pending.CreatedAt,
 				})
@@ -111,7 +116,7 @@ func (s *sPoll) DoRuling(
 		} else { // 亟待修改
 			_, e = dao.Pending.Ctx(ctx).TX(tx).Where(dao.Pending.Columns().Uuid, poll.SentenceUuid).Unscoped().Update(do.Pending{
 				PollStatus: int(consts.PollStatusNeedModify),
-				Reviewer:   consts.PollRulingUserID,
+				Reviewer:   reviewerUID,
 			})
 			if e != nil {
 				return gerror.Wrapf(e, "更新句子 %s 的 pending 信息失败", poll.SentenceUuid)
@@ -137,19 +142,21 @@ func (s *sPoll) DoRuling(
 		pollElement := &model.PollElement{
 			ID:           uint(poll.Id),
 			SentenceUUID: poll.SentenceUuid,
-			Sentence: &model.HitokotoV1Schema{
-				ID:         uint(pending.Id),
-				UUID:       pending.Uuid,
-				Hitokoto:   pending.Hitokoto,
-				Type:       consts.HitokotoType(pending.Type),
-				From:       pending.From,
-				FromWho:    pending.FromWho,
-				Creator:    pending.Creator,
-				CreatorUID: uint(pending.CreatorUid),
-				Reviewer:   0,
-				Status:     consts.HitokotoStatusPending,
+			Sentence: &model.HitokotoV1WithPoll{
+				HitokotoV1: model.HitokotoV1{
+					ID:         uint(pending.Id),
+					UUID:       pending.Uuid,
+					Hitokoto:   pending.Hitokoto,
+					Type:       consts.HitokotoType(pending.Type),
+					From:       pending.From,
+					FromWho:    pending.FromWho,
+					Creator:    pending.Creator,
+					CreatorUID: uint(pending.CreatorUid),
+					Reviewer:   uint(reviewerUID),
+					Status:     consts.HitokotoStatusPending, // FIXME: 应该和 target 一致
+					CreatedAt:  pending.CreatedAt,
+				},
 				PollStatus: consts.PollStatus(poll.Status),
-				CreatedAt:  pending.CreatedAt,
 			},
 			Status:             consts.PollStatus(poll.Status),
 			Approve:            poll.Accept,

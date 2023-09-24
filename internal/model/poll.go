@@ -32,16 +32,16 @@ type PolledData struct {
 }
 
 type PollElement struct {
-	ID                 uint              `json:"id" dc:"投票 ID"`
-	SentenceUUID       string            `json:"sentence_uuid" dc:"句子 UUID"`
-	Sentence           *HitokotoV1Schema `json:"sentence" dc:"句子"`
-	Status             consts.PollStatus `json:"status" dc:"投票状态"`
-	Approve            int               `json:"approve" dc:"赞同票数"`
-	Reject             int               `json:"reject" dc:"反对票数"`
-	NeedModify         int               `json:"need_edited" dc:"需要修改票数"`
-	NeedCommonUserPoll int               `json:"need_common_user_poll" dc:"需要普通用户投票"`
-	CreatedAt          *time.Time        `json:"created_at" dc:"创建时间"`
-	UpdatedAt          *time.Time        `json:"updated_at" dc:"更新时间"`
+	ID                 uint                `json:"id" dc:"投票 ID"`
+	SentenceUUID       string              `json:"sentence_uuid" dc:"句子 UUID"`
+	Sentence           *HitokotoV1WithPoll `json:"sentence" dc:"句子"`
+	Status             consts.PollStatus   `json:"status" dc:"投票状态"`
+	Approve            int                 `json:"approve" dc:"赞同票数"`
+	Reject             int                 `json:"reject" dc:"反对票数"`
+	NeedModify         int                 `json:"need_edited" dc:"需要修改票数"`
+	NeedCommonUserPoll int                 `json:"need_common_user_poll" dc:"需要普通用户投票"`
+	CreatedAt          *time.Time          `json:"created_at" dc:"创建时间"`
+	UpdatedAt          *time.Time          `json:"updated_at" dc:"更新时间"`
 }
 
 type GetPollListInput struct {
@@ -71,12 +71,7 @@ type PollListElement struct {
 	Records    []PollRecord `json:"records" dc:"评论列表"`
 }
 
-type GetPollListOutput struct {
-	Collection []PollListElement `json:"collection" dc:"投票列表"`
-	Total      int               `json:"total" dc:"总数"` // poll 总数
-	Page       int               `json:"page" dc:"页码"`
-	PageSize   int               `json:"page_size" dc:"每页数量"`
-}
+type GetPollListOutput Page[PollListElement]
 
 type PollInput struct {
 	Method       consts.PollMethod `json:"method" dc:"投票方式"`

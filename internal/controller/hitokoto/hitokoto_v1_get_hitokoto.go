@@ -19,8 +19,6 @@ func (c *ControllerV1) GetHitokoto(ctx context.Context, req *v1.GetHitokotoReq) 
 	if hitokoto == nil {
 		return nil, gerror.NewCode(gcode.CodeNotFound, "一言不存在")
 	}
-	res = &v1.GetHitokotoRes{
-		HitokotoV1Schema: *hitokoto,
-	}
+	res = (*v1.GetHitokotoRes)(hitokoto)
 	return
 }

@@ -12,7 +12,7 @@ import (
 )
 
 // convertToSchemaV1 将 Pending/Sentence/Refuse 数据转换为 Schema V1，此操作需要数据库操作查询投票状态
-func (s *sHitokoto) convertToSchemaV1(ctx context.Context, data any) (*model.HitokotoV1Schema, error) {
+func (s *sHitokoto) convertToSchemaV1(ctx context.Context, data any) (*model.HitokotoV1WithPoll, error) {
 	var (
 		sentenceUUID   string
 		sentenceStatus consts.HitokotoStatus
@@ -57,34 +57,47 @@ func (s *sHitokoto) convertToSchemaV1(ctx context.Context, data any) (*model.Hit
 		pollStatus = consts.PollStatus(poll.Status)
 	}
 	o := reflect.ValueOf(data).Elem()
-	hitokoto := &model.HitokotoV1Schema{
-		ID:         uint(o.FieldByName("Id").Int()),
-		UUID:       o.FieldByName("Uuid").String(),
-		Hitokoto:   o.FieldByName("Hitokoto").String(),
-		Type:       consts.HitokotoType(o.FieldByName("Type").String()),
-		From:       o.FieldByName("From").String(),
-		FromWho:    o.FieldByName("FromWho").Interface().(*string),
-		Creator:    o.FieldByName("Creator").String(),
-		CreatorUID: uint(o.FieldByName("CreatorUid").Int()),
-		Status:     sentenceStatus,
+	hitokoto := &model.HitokotoV1WithPoll{
+		HitokotoV1: model.HitokotoV1{
+			ID:         uint(o.FieldByName("Id").Int()),
+			UUID:       o.FieldByName("Uuid").String(),
+			Hitokoto:   o.FieldByName("Hitokoto").String(),
+			Type:       consts.HitokotoType(o.FieldByName("Type").String()),
+			From:       o.FieldByName("From").String(),
+			FromWho:    o.FieldByName("FromWho").Interface().(*string),
+			Creator:    o.FieldByName("Creator").String(),
+			CreatorUID: uint(o.FieldByName("CreatorUid").Int()),
+			Status:     sentenceStatus,
+			CreatedAt:  o.FieldByName("CreatedAt").Interface().(string),
+			CommitFrom: o.FieldByName("CommitFrom").String(),
+		},
 		PollStatus: pollStatus,
-		CreatedAt:  o.FieldByName("CreatedAt").Interface().(string),
 	}
 
 	return hitokoto, nil
 }
 
 // ConvertPendingToSchemaV1 将 Pending 数据转换为 Schema V1
-func (s *sHitokoto) ConvertPendingToSchemaV1(ctx context.Context, pending *entity.Pending) (*model.HitokotoV1Schema, error) {
+func (s *sHitokoto) ConvertPendingToSchemaV1(ctx context.Context, pending *entity.Pending) (*model.HitokotoV1WithPoll, error) {
 	return s.convertToSchemaV1(ctx, pending)
 }
 
 // ConvertSentenceToSchemaV1 将 Sentence 数据转换为 Schema V1
-func (s *sHitokoto) ConvertSentenceToSchemaV1(ctx context.Context, sentence *entity.Sentence) (*model.HitokotoV1Schema, error) {
+func (s *sHitokoto) ConvertSentenceToSchemaV1(ctx context.Context, sentence *entity.Sentence) (*model.HitokotoV1WithPoll, error) {
 	return s.convertToSchemaV1(ctx, sentence)
 }
 
 // ConvertRefuseToSchemaV1 将 Refuse 数据转换为 Schema V1
-func (s *sHitokoto) ConvertRefuseToSchemaV1(ctx context.Context, refuse *entity.Refuse) (*model.HitokotoV1Schema, error) {
+func (s *sHitokoto) ConvertRefuseToSchemaV1(ctx context.Context, refuse *entity.Refuse) (*model.HitokotoV1WithPoll, error) {
 	return s.convertToSchemaV1(ctx, refuse)
+}
+
+var statusToPollStatus = map[consts.HitokotoStatus]consts.PollStatus{
+	consts.HitokotoStatusApproved: consts.PollStatusApproved,
+	consts.HitokotoStatusPending:  consts.PollStatusOpen,
+	consts.HitokotoStatusRejected: consts.PollStatusRejected,
+}
+
+func (s *sHitokoto) ConvertStatusToPollStatus(status consts.HitokotoStatus) consts.PollStatus {
+	return statusToPollStatus[status]
 }

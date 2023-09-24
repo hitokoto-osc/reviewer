@@ -50,8 +50,8 @@ type UserPollLog struct {
 
 type UserPollLogWithSentenceAndUserMarks struct {
 	UserPollLog
-	Sentence  *HitokotoV1Schema `json:"sentence" dc:"句子信息"`
-	UserMarks []int             `json:"user_marks" dc:"用户投票标记"`
+	Sentence  *HitokotoV1WithPoll `json:"sentence" dc:"句子信息"`
+	UserMarks []int               `json:"user_marks" dc:"用户投票标记"`
 }
 
 type UserPollElement struct {
@@ -73,30 +73,15 @@ type GetUserPollLogsInput struct {
 	WithCache bool
 }
 
-type GetUserPollLogsOutput struct {
-	Collection []UserPollLog `json:"collection" dc:"数据"`
-	Total      int           `json:"total" dc:"总数"`
-	Page       int           `json:"page" dc:"当前页数"`
-	PageSize   int           `json:"page_size" dc:"每页数量"`
-}
+type GetUserPollLogsOutput Page[UserPollLog]
 
 type GetUserPollLogsWithSentenceInput = GetUserPollLogsInput
 
-type GetUserPollLogsWithSentenceOutput struct {
-	Collection []UserPollLogWithSentenceAndUserMarks `json:"collection" dc:"数据"`
-	Total      int                                   `json:"total" dc:"总数"`
-	Page       int                                   `json:"page" dc:"当前页数"`
-	PageSize   int                                   `json:"page_size" dc:"每页数量"`
-}
+type GetUserPollLogsWithSentenceOutput Page[UserPollLogWithSentenceAndUserMarks]
 
 type GetUserPollLogsWithPollResultInput = GetUserPollLogsInput
 
-type GetUserPollLogsWithPollResultOutput struct {
-	Collection []UserPollElement `json:"collection" dc:"数据"`
-	Total      int               `json:"total" dc:"总数"`
-	Page       int               `json:"page" dc:"当前页数"`
-	PageSize   int               `json:"page_size" dc:"每页数量"`
-}
+type GetUserPollLogsWithPollResultOutput Page[UserPollElement]
 
 type UserPollScoreInput struct {
 	UserID       uint

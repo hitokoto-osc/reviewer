@@ -79,6 +79,10 @@ linters-settings:
       - name: unused-parameter
         severity: warning
         disabled: true
+  stylecheck:
+    checks:
+      - all
+      - '-ST1003'
 
 linters:
   disable-all: true

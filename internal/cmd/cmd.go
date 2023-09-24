@@ -16,8 +16,6 @@ import (
 
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 
-	"github.com/hitokoto-osc/reviewer/internal/controller/admin"
-
 	"github.com/hitokoto-osc/reviewer/internal/service"
 
 	"github.com/hitokoto-osc/reviewer/internal/controller/index"
@@ -104,7 +102,7 @@ var (
 					group.GET("/poll/mark", poll.NewV1().GetPollMarks) // 此路由无需验证审核员权限
 					group.Group("/admin", func(group *ghttp.RouterGroup) {
 						group.Middleware(service.Middleware().GuardV1(consts.UserRoleAdmin))
-						group.Bind(admin.NewV1())
+						group.Bind(hitokoto.NewAdminV1())
 					})
 				})
 			})

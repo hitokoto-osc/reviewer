@@ -2,6 +2,7 @@ package poll
 
 import (
 	"context"
+
 	"github.com/gogf/gf/v2/crypto/gmd5"
 
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
@@ -30,7 +31,7 @@ func (c *ControllerV1) GetPollDetail(ctx context.Context, req *v1.GetPollDetailR
 	// fetch logs and sentence
 	var (
 		logs       []entity.PollLog
-		sentence   *model.HitokotoV1Schema
+		sentence   *model.HitokotoV1WithPoll
 		marks      []int
 		polledData *model.PolledData
 	)

@@ -59,6 +59,11 @@ func (s *sPoll) GetPollBySentenceUUID(ctx context.Context, sentenceUUID string) 
 	return
 }
 
+func (s *sPoll) GetPollsBySentenceUUIDs(ctx context.Context, sentenceUUIDs []string) (polls []entity.Poll, err error) {
+	err = dao.Poll.Ctx(ctx).Where(dao.Poll.Columns().SentenceUuid, sentenceUUIDs).Scan(&polls)
+	return
+}
+
 func (s *sPoll) CountOpenedPoll(ctx context.Context) (int, error) {
 	return dao.Poll.Ctx(ctx).Where(dao.Poll.Columns().Status, consts.PollStatusOpen).Count()
 }
