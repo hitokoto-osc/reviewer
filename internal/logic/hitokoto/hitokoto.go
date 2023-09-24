@@ -2,13 +2,14 @@ package hitokoto
 
 import (
 	"context"
+	"strconv"
 	"strings"
+
+	"github.com/hitokoto-osc/reviewer/utility/strutils"
 
 	"golang.org/x/sync/errgroup"
 
 	"github.com/samber/lo"
-
-	"github.com/duke-git/lancet/v2/validator"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/hitokoto-osc/reviewer/internal/dao"
@@ -167,8 +168,8 @@ func (s *sHitokoto) GetList(ctx context.Context, in *model.GetHitokotoV1SchemaLi
 
 	if in.Creator != nil {
 		query = query.WhereOrLike(dao.Sentence.Columns().Creator, "%"+*in.Creator+"%")
-		if validator.IsInt(*in.Creator) {
-			query = query.WhereOr(dao.Sentence.Columns().CreatorUid, *in.Creator)
+		if strutils.IsUint(*in.Creator) {
+			query = query.WhereOr(dao.Sentence.Columns().CreatorUid, lo.Must(strconv.Atoi(*in.Creator)))
 		}
 	}
 

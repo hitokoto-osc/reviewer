@@ -3,7 +3,6 @@ module github.com/hitokoto-osc/reviewer
 go 1.20
 
 require (
-	github.com/duke-git/lancet/v2 v2.2.6
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.4
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.4
 	github.com/gogf/gf/v2 v2.5.4
