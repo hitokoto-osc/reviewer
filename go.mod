@@ -8,6 +8,7 @@ require (
 	github.com/gogf/gf/v2 v2.5.4
 	github.com/google/uuid v1.3.1
 	github.com/meilisearch/meilisearch-go v0.25.1
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rabbitmq/amqp091-go v1.8.1
 	github.com/samber/lo v1.38.1
 	golang.org/x/sync v0.3.0

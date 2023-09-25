@@ -2,6 +2,13 @@ package hitokoto
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+
+	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/mitchellh/mapstructure"
+
+	"github.com/gogf/gf/v2/frame/g"
 
 	"github.com/hitokoto-osc/reviewer/internal/service"
 
@@ -19,7 +26,26 @@ func (c *ControllerAdminV1) UpdateOne(ctx context.Context, req *adminV1.UpdateOn
 	if sentence == nil {
 		return nil, gerror.NewCode(gcode.CodeNotFound, "未找到指定的句子")
 	}
-	err = service.Hitokoto().UpdateByUUID(ctx, sentence, &req.DoHitokotoV1Update)
+
+	var do = make(g.Map)
+	err = mapstructure.Decode(req.DoHitokotoV1Update, &do)
+	if err != nil {
+		return nil, gerror.WrapCode(gcode.CodeInternalError, err)
+	}
+	if _, ok := do["from_who"]; !ok && ghttp.RequestFromCtx(ctx).GetBody() != nil {
+		var content = make(g.Map)
+		err = json.Unmarshal(ghttp.RequestFromCtx(ctx).GetBody(), &content)
+		if err != nil {
+			return nil, gerror.WrapCode(gcode.CodeInternalError, err)
+		}
+		if _, ok := content["from_who"]; ok && req.DoHitokotoV1Update.FromWho == nil {
+			do["from_who"] = nil
+		}
+	}
+
+	fmt.Printf("do: %+v", do)
+
+	err = service.Hitokoto().UpdateByUUID(ctx, sentence, do)
 	if err != nil {
 		return nil, err
 	}

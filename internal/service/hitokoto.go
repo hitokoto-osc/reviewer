@@ -8,6 +8,7 @@ package service
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 	"github.com/hitokoto-osc/reviewer/internal/model"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
@@ -33,7 +34,7 @@ type (
 		Move(ctx context.Context, sentence *model.HitokotoV1WithPoll, target consts.HitokotoStatus) error
 		// Delete 使用 UUIDs 删除句子
 		Delete(ctx context.Context, uuids []string) error
-		UpdateByUUID(ctx context.Context, sentence *model.HitokotoV1WithPoll, do *model.DoHitokotoV1Update) error
+		UpdateByUUID(ctx context.Context, sentence *model.HitokotoV1WithPoll, do g.Map) error
 		GetPendingByUUID(ctx context.Context, uuid string) (hitokoto *entity.Pending, err error)
 		TopPendingPollNotOpen(ctx context.Context) (hitokoto *entity.Pending, err error)
 		CountPendingPollNotOpen(ctx context.Context) (count int, err error)

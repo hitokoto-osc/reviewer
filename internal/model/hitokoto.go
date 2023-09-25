@@ -43,19 +43,19 @@ type GetHitokotoV1SchemaListInput struct {
 	From     *string                `json:"from" dc:"句子来源"`
 	FromWho  *string                `json:"from_who" dc:"句子来源者"`
 	Type     *string                `json:"type" dc:"句子类型"`
-	Status   *consts.HitokotoStatus `json:"status" dc:"句子状态" v:"in:pending,approved,refused"`
+	Status   *consts.HitokotoStatus `json:"status" dc:"句子状态" v:"in:pending,approved,rejected"`
 }
 
 type GetHitokotoV1SchemaListOutput Page[HitokotoV1WithPoll]
 
 type DoHitokotoV1Update struct {
-	Hitokoto   *string `json:"hitokoto" dc:"句子内容" v:"length:1,255"`
-	From       *string `json:"from" dc:"句子来源" v:"min-length:1"`
-	FromWho    *string `json:"from_who" dc:"句子来源者" v:"length:1,255"`
-	Type       *string `json:"type" dc:"句子类型" v:"length:1,255"`
-	CommitFrom *string `json:"commit_from" dc:"句子提交来源" v:"length:1,255"`
-	Creator    *string `json:"creator" dc:"句子创建者" v:"length:1,255"`
-	CreatorUID *uint   `json:"creator_uid" dc:"句子创建者 ID" v:"min:1"`
-	Reviewer   *uint   `json:"reviewer" dc:"句子审查者 ID" v:"min:1"`
-	CreatedAt  *string `json:"created_at" dc:"创建时间" v:"length:1,255"`
+	Hitokoto   *string `json:"hitokoto" dc:"句子内容" v:"length:1,255" mapstructure:"hitokoto,omitempty"`
+	From       *string `json:"from" dc:"句子来源" v:"min-length:1" mapstructure:"from,omitempty"`
+	FromWho    *string `json:"from_who" dc:"句子来源者" v:"length:1,255" mapstructure:"from_who,omitempty" `
+	Type       *string `json:"type" dc:"句子类型" v:"length:1,255" mapstructure:"type,omitempty"`
+	CommitFrom *string `json:"commit_from" dc:"句子提交来源" v:"length:1,255" mapstructure:"commit_from,omitempty"`
+	Creator    *string `json:"creator" dc:"句子创建者" v:"length:1,255" mapstructure:"creator,omitempty"`
+	CreatorUID *uint   `json:"creator_uid" dc:"句子创建者 ID" v:"min:1" mapstructure:"creator_uid,omitempty"`
+	Reviewer   *uint   `json:"reviewer" dc:"句子审查者 ID" v:"min:1" mapstructure:"reviewer,omitempty"`
+	CreatedAt  *string `json:"created_at" dc:"创建时间" v:"length:1,255" mapstructure:"created_at,omitempty"`
 }

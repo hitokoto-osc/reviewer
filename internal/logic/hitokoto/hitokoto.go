@@ -328,7 +328,7 @@ func (s *sHitokoto) Delete(ctx context.Context, uuids []string) error {
 	})
 }
 
-func (s *sHitokoto) UpdateByUUID(ctx context.Context, sentence *model.HitokotoV1WithPoll, do *model.DoHitokotoV1Update) error {
+func (s *sHitokoto) UpdateByUUID(ctx context.Context, sentence *model.HitokotoV1WithPoll, do g.Map) error {
 	var query *gdb.Model
 	switch sentence.Status {
 	case consts.HitokotoStatusApproved:
@@ -338,8 +338,7 @@ func (s *sHitokoto) UpdateByUUID(ctx context.Context, sentence *model.HitokotoV1
 	case consts.HitokotoStatusRejected:
 		query = dao.Refuse.Ctx(ctx).Where(dao.Refuse.Columns().Uuid, sentence.UUID).Unscoped()
 	}
-
-	affectedRows, err := query.UpdateAndGetAffected(*do)
+	affectedRows, err := query.UpdateAndGetAffected(do)
 	if err != nil {
 		return gerror.Wrap(err, "更新句子失败")
 	}
