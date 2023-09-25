@@ -2,6 +2,7 @@ package hitokoto
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hitokoto-osc/reviewer/internal/model"
 	"github.com/hitokoto-osc/reviewer/internal/service"
@@ -13,6 +14,7 @@ import (
 )
 
 func (c *ControllerAdminV1) GetList(ctx context.Context, req *adminV1.GetListReq) (res *adminV1.GetListRes, err error) {
+	fmt.Printf("GetList: %+v", req)
 	out, err := service.Hitokoto().GetList(ctx, &model.GetHitokotoV1SchemaListInput{
 		Page:     req.Page,
 		PageSize: req.PageSize,

@@ -101,7 +101,7 @@ var queryFields = []string{
 	dao.Sentence.Columns().Uuid,
 	dao.Sentence.Columns().Hitokoto,
 	dao.Sentence.Columns().Type,
-	dao.Sentence.Columns().From,
+	"`" + dao.Sentence.Columns().From + "`",
 	dao.Sentence.Columns().FromWho,
 	dao.Sentence.Columns().Creator,
 	dao.Sentence.Columns().CreatorUid,
@@ -121,11 +121,7 @@ func (s *sHitokoto) GetList(ctx context.Context, in *model.GetHitokotoV1SchemaLi
 
 	// 判断是否需要获取所有状态的句子
 	if in.Status == nil {
-		query = g.DB().Ctx(ctx).Union(
-			dao.Sentence.Ctx(ctx).Fields(append(queryFields, `"approved" AS status`)),
-			dao.Pending.Ctx(ctx).Fields(append(queryFields, `"pending" AS status`)),
-			dao.Refuse.Ctx(ctx).Fields(append(queryFields, `"refuse" AS status`)),
-		)
+		query = g.DB().Ctx(ctx).Model("hitokoto_sentences_view")
 	} else {
 		switch *in.Status {
 		case consts.HitokotoStatusApproved:
@@ -145,7 +141,7 @@ func (s *sHitokoto) GetList(ctx context.Context, in *model.GetHitokotoV1SchemaLi
 	}
 
 	query = query.Page(in.Page, in.PageSize)
-	query = query.Order(`dao.Sentence.Columns().CreatedAt ` + in.Order)
+	query = query.Order(dao.Sentence.Columns().CreatedAt + ` ` + in.Order)
 
 	if in.Type != nil {
 		query = query.Where(dao.Sentence.Columns().Type, *in.Type)

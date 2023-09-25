@@ -49,13 +49,13 @@ type GetHitokotoV1SchemaListInput struct {
 type GetHitokotoV1SchemaListOutput Page[HitokotoV1WithPoll]
 
 type DoHitokotoV1Update struct {
-	Hitokoto   *string `json:"hitokoto" dc:"句子内容" v:"required|length:1,255" in:"query"`
-	From       *string `json:"from" dc:"句子来源" v:"required|length:1,255" in:"query"`
-	FromWho    *string `json:"from_who" dc:"句子来源者" v:"required|length:1,255" in:"query"`
-	Type       *string `json:"type" dc:"句子类型" v:"required|length:1,255" in:"query"`
-	CommitFrom *string `json:"commit_from" dc:"句子提交来源" v:"required|length:1,255" in:"query"`
-	Creator    *string `json:"creator" dc:"句子创建者" v:"required|length:1,255" in:"query"`
-	CreatorUID *uint   `json:"creator_uid" dc:"句子创建者 ID" v:"required|length:1,255" in:"query"`
-	Reviewer   *uint   `json:"reviewer" dc:"句子审查者 ID" v:"required|length:1,255" in:"query"`
-	CreatedAt  *string `json:"created_at" dc:"创建时间" v:"required|length:1,255" in:"query"`
+	Hitokoto   *string `json:"hitokoto" dc:"句子内容" v:"length:1,255"`
+	From       *string `json:"from" dc:"句子来源" v:"min-length:1"`
+	FromWho    *string `json:"from_who" dc:"句子来源者" v:"length:1,255"`
+	Type       *string `json:"type" dc:"句子类型" v:"length:1,255"`
+	CommitFrom *string `json:"commit_from" dc:"句子提交来源" v:"length:1,255"`
+	Creator    *string `json:"creator" dc:"句子创建者" v:"length:1,255"`
+	CreatorUID *uint   `json:"creator_uid" dc:"句子创建者 ID" v:"min:1"`
+	Reviewer   *uint   `json:"reviewer" dc:"句子审查者 ID" v:"min:1"`
+	CreatedAt  *string `json:"created_at" dc:"创建时间" v:"length:1,255"`
 }
