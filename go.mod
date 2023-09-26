@@ -7,6 +7,7 @@ require (
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.4
 	github.com/gogf/gf/v2 v2.5.4
 	github.com/google/uuid v1.3.1
+	github.com/jinzhu/copier v0.4.0
 	github.com/meilisearch/meilisearch-go v0.25.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rabbitmq/amqp091-go v1.8.1

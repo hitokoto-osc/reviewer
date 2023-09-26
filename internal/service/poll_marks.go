@@ -15,6 +15,7 @@ import (
 type (
 	IPollMarks interface {
 		List(ctx context.Context) ([]entity.PollMark, error)
+		GetByID(ctx context.Context, id int) (*entity.PollMark, error)
 		Update(ctx context.Context, mark *entity.PollMark) error
 		Add(ctx context.Context, mark *do.PollMark) error
 	}

@@ -36,6 +36,12 @@ func (s *sPollMarks) List(ctx context.Context) ([]entity.PollMark, error) {
 	return marks, err
 }
 
+func (s *sPollMarks) GetByID(ctx context.Context, id int) (*entity.PollMark, error) {
+	var mark *entity.PollMark
+	err := dao.PollMark.Ctx(ctx).Where(dao.PollMark.Columns().Id, id).Scan(&mark)
+	return mark, err
+}
+
 func (s *sPollMarks) Update(ctx context.Context, mark *entity.PollMark) error {
 	if mark == nil || mark.Id == 0 {
 		return gerror.New("参数错误")
