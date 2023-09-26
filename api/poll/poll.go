@@ -7,8 +7,14 @@ package poll
 import (
 	"context"
 
+	"github.com/hitokoto-osc/reviewer/api/poll/adminV1"
 	"github.com/hitokoto-osc/reviewer/api/poll/v1"
 )
+
+type IPollAdminV1 interface {
+	AddOneMark(ctx context.Context, req *adminV1.AddOneMarkReq) (res *adminV1.AddOneMarkRes, err error)
+	UpdateOneMark(ctx context.Context, req *adminV1.UpdateOneMarkReq) (res *adminV1.UpdateOneMarkRes, err error)
+}
 
 type IPollV1 interface {
 	CancelPoll(ctx context.Context, req *v1.CancelPollReq) (res *v1.CancelPollRes, err error)

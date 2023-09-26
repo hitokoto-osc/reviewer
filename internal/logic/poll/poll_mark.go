@@ -9,18 +9,7 @@ import (
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/hitokoto-osc/reviewer/internal/dao"
-	"github.com/hitokoto-osc/reviewer/internal/model/entity"
 )
-
-func (s *sPoll) GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error) {
-	var marks []entity.PollMark
-	err := dao.PollMark.Ctx(ctx).Cache(gdb.CacheOption{
-		Duration: time.Hour * 2, // 2 小时
-		Name:     "poll_mark_labels",
-		Force:    false,
-	}).Scan(&marks)
-	return marks, err
-}
 
 // GetPollMarksByPollID 获取指定投票的标签列表（不带用户信息）
 func (s *sPoll) GetPollMarksByPollID(ctx context.Context, pid uint) ([]int, error) {

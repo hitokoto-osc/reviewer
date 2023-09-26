@@ -103,6 +103,7 @@ var (
 					group.Group("/admin", func(group *ghttp.RouterGroup) {
 						group.Middleware(service.Middleware().GuardV1(consts.UserRoleAdmin))
 						group.Bind(hitokoto.NewAdminV1())
+						group.Bind(poll.NewAdminV1())
 					})
 				})
 			})

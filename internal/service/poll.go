@@ -32,7 +32,6 @@ type (
 		CountUserUnreviewedPoll(ctx context.Context, uid uint) (int, error)
 		GetPollLogsBySentenceUUID(ctx context.Context, uuid string) ([]entity.PollLog, error)
 		GetPollLogsByPollID(ctx context.Context, pid int) ([]entity.PollLog, error)
-		GetPollMarkLabels(ctx context.Context) ([]entity.PollMark, error)
 		// GetPollMarksByPollID 获取指定投票的标签列表（不带用户信息）
 		GetPollMarksByPollID(ctx context.Context, pid uint) ([]int, error)
 		GetPollMarksByPollIDAndUserID(ctx context.Context, pid, userID int) ([]int, error)

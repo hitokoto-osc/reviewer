@@ -15,7 +15,7 @@ import (
 )
 
 func (c *ControllerV1) GetPollMarks(ctx context.Context, req *v1.GetPollMarksReq) (res *v1.GetPollMarksRes, err error) {
-	marks, err := service.Poll().GetPollMarkLabels(ctx)
+	marks, err := service.PollMarks().List(ctx)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeOperationFailed, err, "获取投票标签失败")
 	}

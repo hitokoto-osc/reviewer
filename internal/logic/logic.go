@@ -13,6 +13,7 @@ import (
 	_ "github.com/hitokoto-osc/reviewer/internal/logic/middleware"
 	_ "github.com/hitokoto-osc/reviewer/internal/logic/notification"
 	_ "github.com/hitokoto-osc/reviewer/internal/logic/poll"
+	_ "github.com/hitokoto-osc/reviewer/internal/logic/pollMarks"
 	_ "github.com/hitokoto-osc/reviewer/internal/logic/search"
 	_ "github.com/hitokoto-osc/reviewer/internal/logic/user"
 )
