@@ -8,7 +8,7 @@ import (
 type UpdateOneMarkReq struct {
 	g.Meta `path:"poll/mark/:id" method:"PUT" summary:"更新投票标记" tags:"投票标记"`
 	// 投票标记 ID
-	ID           uint        `json:"id" v:"required#投票标记 ID 不能为空" copier:"Id,must"`
+	ID           uint        `json:"id" v:"required#投票标记 ID 不能为空" copier:"Id,must" in:"path"`
 	Text         string      `json:"text"         `  // 标签名称
 	Level        string      `json:"level"        `  // 严重程度
 	Property     int         `json:"property"     `  // 分类属性

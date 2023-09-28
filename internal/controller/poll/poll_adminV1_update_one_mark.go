@@ -22,7 +22,7 @@ func (c *ControllerAdminV1) UpdateOneMark(ctx context.Context, req *adminV1.Upda
 	if mark == nil {
 		return nil, gerror.New("标签不存在")
 	}
-	err = copier.CopyWithOption(mark, req, copier.Option{IgnoreEmpty: true})
+	err = copier.CopyWithOption(mark, req, copier.Option{IgnoreEmpty: false})
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInvalidParameter, err, "参数错误")
 	}
