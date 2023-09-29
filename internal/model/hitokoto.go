@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 )
 
@@ -44,6 +45,8 @@ type GetHitokotoV1SchemaListInput struct {
 	FromWho  *string                `json:"from_who" dc:"句子来源者"`
 	Type     *string                `json:"type" dc:"句子类型"`
 	Status   *consts.HitokotoStatus `json:"status" dc:"句子状态" v:"in:pending,approved,rejected"`
+	Start    *gtime.Time            `json:"start" dc:"开始时间"`
+	End      *gtime.Time            `json:"end" dc:"结束时间"`
 }
 
 type GetHitokotoV1SchemaListOutput Page[HitokotoV1WithPoll]

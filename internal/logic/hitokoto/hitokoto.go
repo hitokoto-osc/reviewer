@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/hitokoto-osc/reviewer/internal/model/entity"
+
 	"github.com/hitokoto-osc/reviewer/utility/strutils"
 
 	"golang.org/x/sync/errgroup"
@@ -112,7 +114,7 @@ var queryFields = []string{
 
 // GetList 获取句子列表
 //
-//nolint:gocyclo
+//nolint:gocyclo,funlen
 func (s *sHitokoto) GetList(ctx context.Context, in *model.GetHitokotoV1SchemaListInput) (*model.GetHitokotoV1SchemaListOutput, error) {
 	if in == nil {
 		return nil, gerror.New("参数错误")
@@ -137,7 +139,7 @@ func (s *sHitokoto) GetList(ctx context.Context, in *model.GetHitokotoV1SchemaLi
 
 	if in.UUID != nil {
 		query = query.Where(dao.Sentence.Columns().Uuid, *in.UUID)
-		goto startQuery
+		goto startQuery // 跳过后续的查询条件
 	}
 
 	query = query.Page(in.Page, in.PageSize)
@@ -169,6 +171,16 @@ func (s *sHitokoto) GetList(ctx context.Context, in *model.GetHitokotoV1SchemaLi
 		}
 	}
 
+	if in.Start != nil || in.End != nil {
+		if in.Start != nil && in.End != nil {
+			query = query.WhereBetween(dao.Sentence.Columns().CreatedAt, in.Start.Format("U"), in.End.Format("U"))
+		} else if in.Start != nil {
+			query = query.Where(dao.Sentence.Columns().CreatedAt+" >= ?", in.Start.Format("U"))
+		} else {
+			query = query.Where(dao.Sentence.Columns().CreatedAt+" <= ?", in.End.Format("U"))
+		}
+	}
+
 startQuery:
 	var results []model.HitokotoV1
 	var total int
@@ -194,24 +206,28 @@ startQuery:
 		return "", false // 不需要查询
 	})
 	// 查询投票状态
-	polls, err := service.Poll().GetPollsBySentenceUUIDs(ctx, uuids)
-	if err != nil {
-		return nil, err
-	}
-	for i := range items {
-		item := &items[i]
-		if item.Status != consts.HitokotoStatusPending {
-			continue // 跳过已经处理的句子
+	var polls = make([]entity.Poll, 0)
+	if len(uuids) > 0 {
+		polls, err = service.Poll().GetPollsBySentenceUUIDs(ctx, uuids)
+		if err != nil {
+			return nil, err
 		}
-		items[i].PollStatus = consts.PollStatusUnknown // 默认为未知
-		for j := range polls {
-			poll := &polls[j]
-			if poll.SentenceUuid == item.UUID {
-				item.PollStatus = consts.PollStatus(poll.Status)
-				break
+		for i := range items {
+			item := &items[i]
+			if item.Status != consts.HitokotoStatusPending {
+				continue // 跳过已经处理的句子
+			}
+			items[i].PollStatus = consts.PollStatusNotOpen // 默认为未开放
+			for j := range polls {
+				poll := &polls[j]
+				if poll.SentenceUuid == item.UUID {
+					item.PollStatus = consts.PollStatus(poll.Status)
+					break
+				}
 			}
 		}
 	}
+
 	out := &model.GetHitokotoV1SchemaListOutput{
 		Total:      total,
 		Page:       in.Page,
@@ -251,6 +267,24 @@ func (s *sHitokoto) Move(ctx context.Context, sentence *model.HitokotoV1WithPoll
 		poll, e := service.Poll().GetPollBySentenceUUID(ctx, sentence.UUID)
 		if e != nil {
 			return gerror.Wrap(e, "获取投票失败")
+		}
+		if poll == nil { // FIXME: 目前直接创建一个投票
+			pending := &entity.Pending{
+				Id:         int(sentence.ID),
+				Uuid:       sentence.UUID,
+				Hitokoto:   sentence.Hitokoto,
+				Type:       string(sentence.Type),
+				From:       sentence.From,
+				FromWho:    sentence.FromWho,
+				Creator:    sentence.Creator,
+				CreatorUid: int(sentence.CreatorUID),
+				CommitFrom: sentence.CommitFrom,
+				CreatedAt:  sentence.CreatedAt,
+			}
+			poll, e = service.Poll().CreatePollByPending(ctx, pending)
+			if e != nil {
+				return gerror.Wrap(e, "创建投票失败")
+			}
 		}
 		e = service.Poll().DoRuling(ctx, poll, s.ConvertStatusToPollStatus(target))
 		if e != nil {

@@ -3,7 +3,6 @@ package hitokoto
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/mitchellh/mapstructure"
@@ -42,9 +41,6 @@ func (c *ControllerAdminV1) UpdateOne(ctx context.Context, req *adminV1.UpdateOn
 			do["from_who"] = nil
 		}
 	}
-
-	fmt.Printf("do: %+v", do)
-
 	err = service.Hitokoto().UpdateByUUID(ctx, sentence, do)
 	if err != nil {
 		return nil, err

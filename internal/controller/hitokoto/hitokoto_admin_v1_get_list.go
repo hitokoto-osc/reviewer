@@ -26,6 +26,8 @@ func (c *ControllerAdminV1) GetList(ctx context.Context, req *adminV1.GetListReq
 		FromWho:  req.FromWho,
 		Type:     req.Type,
 		Status:   req.Status,
+		Start:    req.Start,
+		End:      req.End,
 	})
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "获取句子列表失败")

@@ -30,6 +30,7 @@ type (
 		Poll(ctx context.Context, in *model.PollInput) error
 		CancelPollByID(ctx context.Context, in *model.CancelPollInput) error
 		CountUserUnreviewedPoll(ctx context.Context, uid uint) (int, error)
+		GetPollDetailByID(ctx context.Context, pollID uint, withPolledData bool) (*model.PollListElement, error)
 		GetPollLogsBySentenceUUID(ctx context.Context, uuid string) ([]entity.PollLog, error)
 		GetPollLogsByPollID(ctx context.Context, pid int) ([]entity.PollLog, error)
 		// GetPollMarksByPollID 获取指定投票的标签列表（不带用户信息）
