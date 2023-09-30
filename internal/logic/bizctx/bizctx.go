@@ -44,5 +44,9 @@ func (s *sBizCtx) SetUser(ctx context.Context, ctxUser *model.ContextUser) {
 }
 
 func (s *sBizCtx) GetUser(ctx context.Context) *model.ContextUser {
-	return s.Get(ctx).User
+	c := s.Get(ctx)
+	if c == nil {
+		return nil
+	}
+	return c.User
 }
