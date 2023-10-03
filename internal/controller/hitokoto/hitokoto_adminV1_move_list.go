@@ -4,6 +4,8 @@ import (
 	"context"
 	"sync"
 
+	"github.com/gogf/gf/v2/errors/gerror"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/hitokoto-osc/reviewer/api/hitokoto/adminV1"
 	"github.com/hitokoto-osc/reviewer/internal/service"
@@ -54,7 +56,7 @@ func (c *ControllerAdminV1) MoveList(ctx context.Context, req *adminV1.MoveListR
 		FailedDesc:  make(g.MapStrStr),
 	}
 	for failed := range failedChan {
-		g.Log().Error(ctx, failed.E, failed.UUID)
+		g.Log().Error(ctx, gerror.Stack(failed.E), failed.UUID)
 		res.FailedUUIDs = append(res.FailedUUIDs, failed.UUID)
 		res.FailedDesc[failed.UUID] = failed.E.Error()
 	}
