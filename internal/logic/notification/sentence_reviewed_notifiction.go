@@ -3,6 +3,8 @@ package notification
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/os/gtime"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/hitokoto-osc/reviewer/internal/dao"
 	"github.com/hitokoto-osc/reviewer/internal/model"
@@ -60,7 +62,7 @@ func (s *sNotification) SentenceReviewedNotification(
 		Creator:      poll.Sentence.Creator,
 		CreatorUID:   poll.Sentence.CreatorUID,
 		CreatedAt:    poll.Sentence.CreatedAt,
-		OperatedAt:   poll.UpdatedAt.Format("c"),
+		OperatedAt:   (*gtime.Time)(poll.UpdatedAt).Format("c"),
 		ReviewerName: reviewerName,
 		ReviewerUID:  int(reviewerUID),
 		Status:       int(poll.Status),
