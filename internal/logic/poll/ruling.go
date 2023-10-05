@@ -74,7 +74,10 @@ func (s *sPoll) DoRuling(
 		e = dao.Pending.Ctx(ctx).TX(tx).Where(dao.Pending.Columns().Uuid, poll.SentenceUuid).Scan(&pending)
 		if e != nil {
 			return gerror.Wrapf(e, "获取句子 %s 的 pending 信息失败", poll.SentenceUuid)
+		} else if pending == nil {
+			return gerror.Newf("获取句子 %s 的 pending 信息失败", poll.SentenceUuid)
 		}
+
 		if target == consts.PollStatusApproved || target == consts.PollStatusRejected {
 			// 移动句子
 			_, e = dao.Pending.Ctx(ctx).TX(tx).Where(dao.Pending.Columns().Uuid, poll.SentenceUuid).Delete()

@@ -23,8 +23,7 @@ func (c *ControllerAdminV1) MoveList(ctx context.Context, req *adminV1.MoveListR
 
 	failedChan := make(chan *moveErrCollector, total)
 	for _, uuid := range req.UUIDs {
-		uuid := uuid
-		go func() {
+		go func(uuid string) {
 			defer wg.Done()
 			sentence, err := service.Hitokoto().GetHitokotoV1SchemaByUUID(ctx, uuid)
 			if err != nil {
@@ -42,7 +41,7 @@ func (c *ControllerAdminV1) MoveList(ctx context.Context, req *adminV1.MoveListR
 				}
 				return
 			}
-		}()
+		}(uuid)
 	}
 	go func() {
 		wg.Wait()

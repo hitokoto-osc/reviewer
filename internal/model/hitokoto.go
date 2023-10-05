@@ -38,7 +38,7 @@ type GetHitokotoV1SchemaListInput struct {
 	PageSize int    `json:"page_size" v:"min:0|max:1000" d:"30" dc:"每页数量"`
 	Order    string `json:"order" v:"in:desc,asc" d:"desc" dc:"排序方式"`
 	// 搜索参数
-	UUID     *string                `json:"uuid" dc:"句子 UUID"`
+	UUIDs    []string               `json:"uuids" dc:"句子 UUID"`
 	Keywords *string                `json:"keyword" dc:"句子内容"`
 	Creator  *string                `json:"creator" dc:"句子创建者（或 ID）"`
 	From     *string                `json:"from" dc:"句子来源"`

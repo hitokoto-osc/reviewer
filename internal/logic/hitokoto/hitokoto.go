@@ -137,8 +137,10 @@ func (s *sHitokoto) GetList(ctx context.Context, in *model.GetHitokotoV1SchemaLi
 		}
 	}
 
-	if in.UUID != nil {
-		query = query.Where(dao.Sentence.Columns().Uuid, *in.UUID)
+	if len(in.UUIDs) > 0 {
+		for _, uuid := range in.UUIDs {
+			query = query.WhereOr(dao.Sentence.Columns().Uuid, uuid)
+		}
 		goto startQuery // 跳过后续的查询条件
 	}
 
