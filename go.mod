@@ -12,7 +12,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rabbitmq/amqp091-go v1.9.0
 	github.com/samber/lo v1.38.1
-	golang.org/x/sync v0.3.0
+	golang.org/x/sync v0.5.0
 )
 
 require (
