@@ -11,7 +11,7 @@ require (
 	github.com/meilisearch/meilisearch-go v0.25.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rabbitmq/amqp091-go v1.9.0
-	github.com/samber/lo v1.38.1
+	github.com/samber/lo v1.39.0
 	golang.org/x/sync v0.5.0
 )
 
