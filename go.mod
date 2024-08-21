@@ -8,7 +8,7 @@ require (
 	github.com/gogf/gf/v2 v2.5.7
 	github.com/google/uuid v1.5.0
 	github.com/jinzhu/copier v0.4.0
-	github.com/meilisearch/meilisearch-go v0.26.0
+	github.com/meilisearch/meilisearch-go v0.28.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rabbitmq/amqp091-go v1.9.0
 	github.com/samber/lo v1.39.0
