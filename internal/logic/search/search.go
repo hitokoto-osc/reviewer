@@ -14,7 +14,7 @@ import (
 )
 
 type sSearch struct {
-	meilisearchClient *meilisearch.Client
+	meilisearchClient meilisearch.ServiceManager
 }
 
 func init() {
@@ -36,14 +36,11 @@ func init() {
 	if !ok {
 		panic("meilisearch 配置不存在！")
 	}
-	client := meilisearch.NewClient(meilisearch.ClientConfig{
-		Host:   endpoint,
-		APIKey: apiKey,
-	})
+	client := meilisearch.New(endpoint, meilisearch.WithAPIKey(apiKey))
 	service.RegisterSearch(New(client))
 }
 
-func New(client *meilisearch.Client) service.ISearch {
+func New(client meilisearch.ServiceManager) service.ISearch {
 	return &sSearch{meilisearchClient: client}
 }
 
