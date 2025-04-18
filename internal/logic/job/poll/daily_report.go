@@ -194,7 +194,7 @@ func getPollPipelinesPastDay(ctx context.Context, now *gtime.Time) ([]entity.Pol
 	var pipelines []entity.PollPipeline
 	err := dao.PollPipeline.Ctx(ctx).
 		WhereBetween(dao.PollPipeline.Columns().CreatedAt,
-			now.Add(-time.Hour*24), // nolint:gomnd // 24 小时
+			now.Add(-time.Hour*24), // nolint:mnd // 24 小时
 			now,
 		).Scan(&pipelines)
 	return pipelines, err
@@ -205,7 +205,7 @@ func getUserPollLogsPastDay(ctx context.Context, userID uint, now *gtime.Time) (
 	err := dao.PollLog.Ctx(ctx).
 		Where(dao.PollLog.Columns().UserId, userID).
 		WhereBetween(dao.PollLog.Columns().CreatedAt,
-			now.Add(-time.Hour*24), // nolint:gomnd // 24 小时
+			now.Add(-time.Hour*24), // nolint:mnd // 24 小时
 			now,
 		).Scan(&logs)
 	return logs, err

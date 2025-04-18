@@ -200,10 +200,13 @@ startQuery:
 		if item.Status == consts.HitokotoStatusPending {
 			return item.UUID, true
 		}
-		if item.Status == consts.HitokotoStatusApproved {
+
+		switch item.Status {
+		case consts.HitokotoStatusApproved:
 			items[index].PollStatus = consts.PollStatusApproved
-		} else if item.Status == consts.HitokotoStatusRejected {
+		case consts.HitokotoStatusRejected:
 			items[index].PollStatus = consts.PollStatusRejected
+		default:
 		}
 		return "", false // 不需要查询
 	})
@@ -272,14 +275,14 @@ func (s *sHitokoto) Move(ctx context.Context, sentence *model.HitokotoV1WithPoll
 		}
 		if poll == nil { // FIXME: 目前直接创建一个投票
 			pending := &entity.Pending{
-				Id:         int(sentence.ID),
+				Id:         int(sentence.ID), //nolint:gosec
 				Uuid:       sentence.UUID,
 				Hitokoto:   sentence.Hitokoto,
 				Type:       string(sentence.Type),
 				From:       sentence.From,
 				FromWho:    sentence.FromWho,
 				Creator:    sentence.Creator,
-				CreatorUid: int(sentence.CreatorUID),
+				CreatorUid: int(sentence.CreatorUID), //nolint:gosec
 				CommitFrom: sentence.CommitFrom,
 				CreatedAt:  sentence.CreatedAt,
 			}

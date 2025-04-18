@@ -1,131 +1,133 @@
-linters-settings:
-#  depguard:
-
-  dupl:
-    threshold: 150
-  funlen:
-    lines: -1 # the number of lines (code + empty lines) is not a right metric and leads to code without empty line or one-liner.
-    statements: 50
-  goconst:
-    min-len: 2
-    min-occurrences: 3
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - experimental
-      - opinionated
-      - performance
-      - style
-    disabled-checks:
-      - dupImport # https://github.com/go-critic/go-critic/issues/845
-      - ifElseChain
-      - octalLiteral
-      - whyNoLint
-      - commentedOutCode
-  gocyclo:
-    min-complexity: 15
-  gofmt:
-    rewrite-rules:
-      - pattern: 'interface{}'
-        replacement: 'any'
-  goimports:
-    local-prefixes: github.com/hitokoto-osc/reviewer
-  gomnd:
-    # don't include the "operation" and "assign"
-    checks:
-      - argument
-      - case
-      - condition
-      - return
-    ignored-numbers:
-      - '0'
-      - '1'
-      - '2'
-      - '3'
-    ignored-functions:
-      - strings.SplitN
-
-  govet:
-    check-shadowing: true
-    settings:
-      printf:
-        funcs:
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
-  lll:
-    line-length: 140
-  misspell:
-    locale: US
-  nolintlint:
-    allow-unused: false # report any unused nolint directives
-    require-explanation: false # don't require an explanation for nolint directives
-    require-specific: false # don't require nolint directives to be specific about which linter is being skipped
-  revive:
-    severity: error
-    confidence: 0.5
-    rules:
-      - name: package-comments
-        severity: warning
-      - name: unexported-return
-        severity: warning
-        disabled: true
-      - name: bare-return
-        disabled: true
-      - name: unused-receiver
-        severity: warning
-        disabled: true
-      - name: unused-parameter
-        severity: warning
-        disabled: true
-  stylecheck:
-    checks:
-      - all
-      - '-ST1003'
-
+version: "2"
 linters:
-  disable-all: true
+  default: none
   enable:
     - bodyclose
-#    - depguard
     - dogsled
     - dupl
     - errcheck
-    - exportloopref
     - funlen
-#    - gochecknoinits
     - goconst
     - gocritic
     - gocyclo
-#    - gofmt
-#    - goimports
-    - gomnd
     - goprintffuncname
     - gosec
-    - gosimple
     - govet
     - ineffassign
     - lll
     - misspell
-#    - nakedret
+    - mnd
     - noctx
-#    - nolintlint
     - revive
     - staticcheck
-    - stylecheck
-    - typecheck
     - unconvert
     - unparam
     - unused
     - whitespace
-
-issues:
-  # Excluding configuration per-path, per-linter, per-text and per-source
-  # exclude-rules:
-
-run:
-  timeout: 5m
-  skip-files:
-    - internal/packed/data.go
-    - internal/packed/build_pack_data.go
+  settings:
+    dupl:
+      threshold: 150
+    funlen:
+      lines: -1
+      statements: 50
+    goconst:
+      min-len: 2
+      min-occurrences: 3
+    gocritic:
+      disabled-checks:
+        - dupImport
+        - ifElseChain
+        - octalLiteral
+        - whyNoLint
+        - commentedOutCode
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+    gocyclo:
+      min-complexity: 15
+    govet:
+      enable:
+        - shadow
+      settings:
+        printf:
+          funcs:
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+    lll:
+      line-length: 140
+    misspell:
+      locale: US
+    mnd:
+      checks:
+        - argument
+        - case
+        - condition
+        - return
+      ignored-numbers:
+        - "0"
+        - "1"
+        - "2"
+        - "3"
+      ignored-functions:
+        - strings.SplitN
+    nolintlint:
+      require-explanation: false
+      require-specific: false
+      allow-unused: false
+    revive:
+      confidence: 0.5
+      severity: error
+      rules:
+        - name: package-comments
+          severity: warning
+        - name: unexported-return
+          severity: warning
+          disabled: true
+        - name: bare-return
+          disabled: true
+        - name: unused-receiver
+          severity: warning
+          disabled: true
+        - name: unused-parameter
+          severity: warning
+          disabled: true
+    staticcheck:
+      checks:
+        - all
+        - -ST1003
+    gosec:
+      excludes:
+        - G115
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - internal/packed/data.go
+      - internal/packed/build_pack_data.go
+formatters:
+  settings:
+    gofmt:
+      rewrite-rules:
+        - pattern: interface{}
+          replacement: any
+    goimports:
+      local-prefixes:
+        - github.com/hitokoto-osc/reviewer
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

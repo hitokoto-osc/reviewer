@@ -37,7 +37,7 @@ func (c *ControllerAdminV1) UpdateOne(ctx context.Context, req *adminV1.UpdateOn
 		if err != nil {
 			return nil, gerror.WrapCode(gcode.CodeInternalError, err)
 		}
-		if _, ok := content["from_who"]; ok && req.DoHitokotoV1Update.FromWho == nil {
+		if _, ok := content["from_who"]; ok && req.FromWho == nil {
 			do["from_who"] = nil
 		}
 	}

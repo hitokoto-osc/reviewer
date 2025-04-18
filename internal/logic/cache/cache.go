@@ -25,7 +25,7 @@ func New() service.ICache {
 }
 
 func (s *sCache) RemovePrefix(ctx context.Context, prefix string) error {
-	keysToRemove := make([]any, 0, 20) //nolint:gomnd
+	keysToRemove := make([]any, 0, 20) //nolint:mnd
 	keys, err := s.instance.KeyStrings(ctx)
 	if err != nil {
 		return err
@@ -42,7 +42,7 @@ func (s *sCache) RemovePrefix(ctx context.Context, prefix string) error {
 }
 
 func (s *sCache) RemovePrefixes(ctx context.Context, prefixes []string) error {
-	keysToRemove := make([]any, 0, 20) //nolint:gomnd
+	keysToRemove := make([]any, 0, 20) //nolint:mnd
 	keys, err := s.instance.KeyStrings(ctx)
 	if err != nil {
 		return err
