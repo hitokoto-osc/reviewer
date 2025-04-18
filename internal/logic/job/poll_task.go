@@ -2,8 +2,6 @@ package job
 
 import (
 	"context"
-	"sync"
-
 	"github.com/hitokoto-osc/reviewer/internal/logic/job/poll"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -19,31 +17,15 @@ const (
 // const PollDailyTaskCron = "@every 30s"
 
 func DoPollTickTask(ctx context.Context) {
-	wg := sync.WaitGroup{}
-	wg.Add(2)
-	e := make(chan error, 2)
-	go func() {
-		defer wg.Done()
-		err := poll.RemoveInvalidPolls(ctx)
-		if err != nil {
-			e <- err
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err := poll.MoveOverduePolls(ctx)
-		if err != nil {
-			e <- err
-		}
-	}()
-	go func() {
-		wg.Wait()
-		close(e)
-	}()
-	for err := range e {
+	err := poll.RemoveInvalidPolls(ctx)
+	if err != nil {
 		g.Log().Error(ctx, err)
 	}
-	err := poll.DoPollRuling(ctx)
+	err = poll.DoPollRuling(ctx)
+	if err != nil {
+		g.Log().Error(ctx, err)
+	}
+	err = poll.MoveOverduePolls(ctx)
 	if err != nil {
 		g.Log().Error(ctx, err)
 	}

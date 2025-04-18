@@ -34,7 +34,7 @@ func MoveOverduePolls(ctx context.Context) error {
 	query := dao.Poll.Ctx(ctx).
 		Where(dao.Poll.Columns().Status, consts.PollStatusOpen).
 		Wheref("%s < DATE_SUB(now(), INTERVAL %d DAY)", dao.Poll.Columns().CreatedAt, consts.PollOverdueDays) // 15 天
-	total, err := query.Clone().Fields("1").Count()
+	total, err := query.Clone().Count()
 	if err != nil {
 		return gerror.Wrap(err, "获取过期投票数量失败")
 	}

@@ -38,7 +38,7 @@ func DoPollRuling(ctx context.Context) error {
 		Where(dao.Poll.Columns().Status, consts.PollStatusProcessing).
 		WhereOr(dao.Poll.Columns().Status, consts.PollStatusOpen).
 		WhereOr(dao.Poll.Columns().Status, consts.PollStatusOpenForCommonUser)
-	total, err := query.Clone().Fields("1").Count()
+	total, err := query.Clone().Count()
 	if err != nil {
 		return gerror.Wrap(err, "获取投票数量失败")
 	}
