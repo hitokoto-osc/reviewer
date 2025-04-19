@@ -24,6 +24,7 @@ func DoPollTickTask(ctx context.Context) {
 	err = poll.DoPollRuling(ctx)
 	if err != nil {
 		g.Log().Error(ctx, err)
+		return
 	}
 	err = poll.MoveOverduePolls(ctx)
 	if err != nil {
