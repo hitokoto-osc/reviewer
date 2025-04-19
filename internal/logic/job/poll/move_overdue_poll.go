@@ -2,11 +2,10 @@ package poll
 
 import (
 	"context"
-	"math"
-
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/hitokoto-osc/reviewer/internal/model"
-
 	"github.com/hitokoto-osc/reviewer/internal/model/do"
+	"math"
 
 	"github.com/hitokoto-osc/reviewer/internal/service"
 
@@ -14,7 +13,6 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/hitokoto-osc/reviewer/internal/model/entity"
 
-	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/hitokoto-osc/reviewer/internal/consts"
 	"github.com/hitokoto-osc/reviewer/internal/dao"
 )
@@ -51,12 +49,8 @@ func MoveOverduePolls(ctx context.Context) error {
 			return gerror.Wrapf(err, "获取第 %d 页记录失败", page)
 		}
 		// 获取 pollLogs
-		var (
-			poll    *entity.Poll
-			userIDs []uint
-		)
 		for i := 0; i < len(polls); i++ {
-			poll = &polls[i]
+			poll := &polls[i]
 			pollLogs, e := service.Poll().GetPollLogsByPollID(ctx, poll.Id)
 			if e != nil {
 				return gerror.Wrapf(e, "获取投票 %d 的投票记录失败", poll.Id)
@@ -65,49 +59,51 @@ func MoveOverduePolls(ctx context.Context) error {
 				g.Log().Debugf(ctx, "投票 %d 没有投票记录，跳过", poll.Id)
 				continue
 			}
-			userIDs = make([]uint, len(pollLogs))
+			userIDs := make([]uint, len(pollLogs))
 			for j := 0; j < len(pollLogs); j++ {
 				userIDs[j] = uint(pollLogs[j].UserId)
 			}
-		}
-		// 事务更新结果
-		e := g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
-			// 更新投票状态
-			_, e := dao.Poll.Ctx(ctx).TX(tx).Where(dao.Poll.Columns().Id, poll.Id).Update(do.Poll{
-				Status: int(consts.PollStatusNeedModify),
-			})
-			if e != nil {
-				return gerror.Wrap(e, "更新投票状态失败")
-			}
-			// 新增操作日记
-			_, e = dao.PollPipeline.Ctx(ctx).TX(tx).Insert(do.PollPipeline{
-				PollId:       poll.Id,
-				SentenceUuid: poll.SentenceUuid,
-				Operate:      consts.PollStatusNeedModify,
-				Mark:         "超时自动处理",
-			})
-			if e != nil {
-				return gerror.Wrap(e, "新增操作日记失败")
-			}
-			// 赋予用户积分
-			for userID := range userIDs {
-				e = service.User().IncreaseUserPollScore(ctx, &model.UserPollScoreInput{
-					UserID:       uint(userID),
-					PollID:       uint(poll.Id),
-					Score:        consts.PollParticipantScore,
-					SentenceUUID: poll.SentenceUuid,
-					Reason:       "感谢参与，投票超时自动处理",
-					Tx:           tx,
+			g.Log().Debugf(ctx,  "处理投票 %d，涉及用户 %v", poll.Id, userIDs)
+			// 事务更新结果
+			e = g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
+				// 更新投票状态
+				_, e := dao.Poll.Ctx(ctx).TX(tx).Where(dao.Poll.Columns().Id, poll.Id).Update(do.Poll{
+					Status: int(consts.PollStatusNeedModify),
 				})
 				if e != nil {
-					return gerror.Wrap(e, "赋予用户积分失败")
+					return gerror.Wrap(e, "更新投票状态失败")
 				}
+				// 新增操作日记
+				_, e = dao.PollPipeline.Ctx(ctx).TX(tx).Insert(do.PollPipeline{
+					PollId:       poll.Id,
+					SentenceUuid: poll.SentenceUuid,
+					Operate:      consts.PollStatusNeedModify,
+					Mark:         "超时自动处理",
+				})
+				if e != nil {
+					return gerror.Wrap(e, "新增操作日记失败")
+				}
+				// 赋予用户积分
+				for userID := range userIDs {
+					e = service.User().IncreaseUserPollScore(ctx, &model.UserPollScoreInput{
+						UserID:       uint(userID),
+						PollID:       uint(poll.Id),
+						Score:        consts.PollParticipantScore,
+						SentenceUUID: poll.SentenceUuid,
+						Reason:       "感谢参与，投票超时自动处理",
+						Tx:           tx,
+					})
+					if e != nil {
+						return gerror.Wrap(e, "赋予用户积分失败")
+					}
+				}
+				return nil
+			})
+			if e != nil {
+				return gerror.Wrapf(e, "更新投票 %d 状态失败", poll.Id)
 			}
-			return nil
-		})
-		if e != nil {
-			return gerror.Wrap(e, "更新投票状态失败")
 		}
+
 		page++
 		if page > totalPage {
 			break
