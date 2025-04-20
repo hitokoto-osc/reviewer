@@ -84,9 +84,10 @@ func MoveOverduePolls(ctx context.Context) error {
 					return gerror.Wrap(e, "新增操作日记失败")
 				}
 				// 赋予用户积分
-				for userID := range userIDs {
+				for _, userID := range userIDs {
+					g.Log().Debugf(ctx, "<UNK> %d <UNK>", userID)
 					e = service.User().IncreaseUserPollScore(ctx, &model.UserPollScoreInput{
-						UserID:       uint(userID),
+						UserID: uint(userID),
 						PollID:       uint(poll.Id),
 						Score:        consts.PollParticipantScore,
 						SentenceUUID: poll.SentenceUuid,
