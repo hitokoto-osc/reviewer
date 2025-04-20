@@ -94,7 +94,7 @@ func MoveOverduePolls(ctx context.Context) error {
 						Tx:           tx,
 					})
 					if e != nil {
-						return gerror.Wrap(e, "赋予用户积分失败")
+						return gerror.Wrapf(e, "赋予用户 %d 积分失败", userID)
 					}
 				}
 				return nil
