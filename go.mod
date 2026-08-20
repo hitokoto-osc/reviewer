@@ -2,7 +2,7 @@ module github.com/hitokoto-osc/reviewer
 
 go 1.23.0
 
-toolchain go1.24.2
+toolchain go1.27.0
 
 require (
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.9.0
